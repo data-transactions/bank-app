@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard — NexaBank</title>
+    <meta name="description" content="Your NexaBank personal dashboard." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/output.css" />
+    <style>
+        .balance-card {
+            background: linear-gradient(135deg, var(--color-brand-600) 0%, var(--color-brand-800) 100%);
+            box-shadow: 0 20px 40px -12px rgba(37, 99, 235, 0.3);
+        }
+
+        .grid-dash {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .tx-divider {
+            height: 1px;
+            background: #f1f5f9;
+            margin: 0 20px;
+        }
+
+        .spinner {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #1a56db;
+            animation: spin 0.8s linear infinite;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100">
+    <!-- ══════════ SIDEBAR OVERLAY ══════════ -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ══════════ SIDEBAR ══════════ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo mb-8">
+            <div class="logo-mark" style="width:34px;height:34px;">N</div>
+            <span>NexaBank</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a class="sidebar-item active" id="nav-overview" onclick="showSection('overview')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                </svg>
+                Overview
+            </a>
+            <a class="sidebar-item" id="nav-transactions" onclick="showSection('transactions')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <line x1="12" y1="1" x2="12" y2="23" />
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+                Transactions
+            </a>
+            <a class="sidebar-item" id="nav-profile" onclick="showSection('profile')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+                Profile
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <button class="sidebar-item w-full" onclick="Auth.logout()"
+                style="width:100%; cursor:pointer; background:none; border:none; text-align:left;">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Log Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- ══════════ MAIN CONTENT ══════════ -->
+    <main class="dashboard-main">
+        <!-- Topbar -->
+        <div class="dashboard-topbar">
+            <div class="flex items-center gap-3">
+                <button class="topbar-hamburger" id="topbarHamburger" onclick="toggleSidebar()">
+                    <svg width="22" height="22" fill="none" stroke="#334155" stroke-width="2" viewBox="0 0 24 24">
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                </button>
+                <div>
+                    <h2 class="font-bold text-slate-800 text-base" id="topbar-title">Dashboard</h2>
+                    <p class="text-xs text-slate-400 hidden sm:block" id="topbar-date"></p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <p class="text-sm font-semibold text-slate-800" id="topbar-name">Loading…</p>
+                    <p class="text-xs text-slate-400" id="topbar-account"></p>
+                </div>
+                <div id="topbar-avatar" class="avatar cursor-pointer" onclick="showSection('profile')"
+                    title="View profile"></div>
+            </div>
+        </div>
+
+        <!-- ══════ SECTION: OVERVIEW ══════ -->
+        <section id="section-overview" class="dashboard-content">
+            <!-- Welcome banner -->
+            <div class="mb-6 fade-in-up">
+                <h1 class="text-2xl font-extrabold text-slate-900">Good <span id="greeting-time">morning</span>, <span
+                        id="greeting-name">there</span> 👋</h1>
+                <p class="text-slate-500 text-sm mt-1">Here's your financial snapshot for today.</p>
+            </div>
+
+            <!-- Balance card + quick actions row -->
+            <div class="grid lg:grid-cols-3 gap-6 mb-6">
+                <!-- Balance card -->
+                <div class="lg:col-span-2 balance-card rounded-2xl p-10 text-white relative overflow-hidden fade-in-up">
+                    <div class="absolute inset-0 opacity-20"
+                        style="background-image: radial-gradient(circle at 80% 20%, rgba(255,255,255,0.4), transparent 60%);">
+                    </div>
+                    <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/5 rounded-full blur-2xl"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-start mb-10">
+                            <div>
+                                <p class="text-white/50 text-[10px] uppercase tracking-widest font-bold mb-3">Total
+                                    Balance
+                                </p>
+                                <p class="text-4xl lg:text-5xl font-extrabold tracking-tight font-display"
+                                    id="main-balance">
+                                    <span class="skeleton h-10 w-48 block rounded-xl bg-white/10"></span>
+                                </p>
+                            </div>
+                            <div
+                                class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center font-extrabold text-2xl border border-white/10">
+                                N</div>
+                        </div>
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <p class="text-white/40 text-[10px] uppercase tracking-widest font-bold mb-1">Account
+                                    Number</p>
+                                <p class="font-mono font-semibold tracking-widest text-sm opacity-90"
+                                    id="main-account-num">————</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-white/50 text-xs mb-1">Status</p>
+                                <span class="badge badge-success text-xs">● Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick actions card -->
+                <div class="card fade-in-up stagger-1">
+                    <h3 class="font-bold text-slate-800 text-sm mb-4">Quick Actions</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button class="quick-action-btn" onclick="openModal('sendModal')">
+                            <div class="quick-action-icon" style="background:#eff6ff;">
+                                <svg width="20" height="20" fill="none" stroke="#1a56db" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <line x1="22" y1="2" x2="11" y2="13" />
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                </svg>
+                            </div>
+                            <span>Send</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="openModal('depositModal')">
+                            <div class="quick-action-icon" style="background:#f0fdf4;">
+                                <svg width="20" height="20" fill="none" stroke="#10b981" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <polyline points="19 12 12 19 5 12" />
+                                </svg>
+                            </div>
+                            <span>Deposit</span>
+                        </button>
+                        <button class="quick-action-btn" onclick="showSection('transactions')">
+                            <div class="quick-action-icon" style="background:#fdf4ff;">
+                                <svg width="20" height="20" fill="none" stroke="#9333ea" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <line x1="8" y1="6" x2="21" y2="6" />
+                                    <line x1="8" y1="12" x2="21" y2="12" />
+                                    <line x1="8" y1="18" x2="21" y2="18" />
+                                    <line x1="3" y1="6" x2="3.01" y2="6" />
+                                    <line x1="3" y1="12" x2="3.01" y2="12" />
+                                    <line x1="3" y1="18" x2="3.01" y2="18" />
+                                </svg>
+                            </div>
+                            <span>History</span>
+                        </button>
+                        <button class="quick-action-btn" id="dlStatementBtn" onclick="handleDownloadStatement()">
+                            <div class="quick-action-icon" style="background:#fff7ed;">
+                                <svg width="20" height="20" fill="none" stroke="#ea580c" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                    <polyline points="14 2 14 8 20 8" />
+                                </svg>
+                            </div>
+                            <span>Statement</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats row -->
+            <div class="grid sm:grid-cols-3 gap-5 mb-6">
+                <div class="stat-card fade-in-up stagger-1">
+                    <div class="stat-icon" style="background:#eff6ff;">
+                        <svg width="20" height="20" fill="none" stroke="#1a56db" stroke-width="2" viewBox="0 0 24 24">
+                            <line x1="12" y1="1" x2="12" y2="23" />
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        </svg>
+                    </div>
+                    <p class="stat-label">Current Balance</p>
+                    <p class="stat-value" id="stat-balance">—</p>
+                </div>
+                <div class="stat-card fade-in-up stagger-2">
+                    <div class="stat-icon" style="background:#f0fdf4;">
+                        <svg width="20" height="20" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                            <polyline points="17 6 23 6 23 12" />
+                        </svg>
+                    </div>
+                    <p class="stat-label">Transaction Volume</p>
+                    <p class="stat-value" id="stat-volume">—</p>
+                </div>
+                <div class="stat-card fade-in-up stagger-3">
+                    <div class="stat-icon" style="background:#fff7ed;">
+                        <svg width="20" height="20" fill="none" stroke="#d97706" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                    </div>
+                    <p class="stat-label">Transaction Limit</p>
+                    <p class="stat-value" id="stat-limit">$500,000</p>
+                </div>
+            </div>
+
+            <!-- Recent transactions -->
+            <div class="card fade-in-up">
+                <div class="flex items-center justify-between mb-5">
+                    <h3 class="font-bold text-slate-800">Recent Transactions</h3>
+                    <button class="btn btn-outline btn-sm" onclick="showSection('transactions')">View all</button>
+                </div>
+                <div id="recent-tx-list">
+                    <!-- Skeleton -->
+                    <div class="space-y-3">
+                        <div class="skeleton h-14 rounded-xl"></div>
+                        <div class="skeleton h-14 rounded-xl"></div>
+                        <div class="skeleton h-14 rounded-xl"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════ SECTION: TRANSACTIONS ══════ -->
+        <section id="section-transactions" class="dashboard-content" style="display:none;">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-900">Transaction History</h1>
+                    <p class="text-slate-500 text-sm mt-1">All your deposits and transfers.</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="btn btn-primary btn-sm" onclick="openModal('depositModal')">+ Deposit</button>
+                    <button class="btn btn-outline btn-sm" onclick="openModal('sendModal')">Send Money</button>
+                </div>
+            </div>
+            <div class="card">
+                <div id="all-tx-list">
+                    <div class="flex flex-col items-center justify-center py-16 text-slate-400">
+                        <div class="spinner mb-4 mx-auto" style="border-top-color:#1a56db;"></div>
+                        <span class="text-sm">Loading transactions…</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══════ SECTION: PROFILE ══════ -->
+        <section id="section-profile" class="dashboard-content" style="display:none;">
+            <div class="mb-6">
+                <h1 class="text-2xl font-extrabold text-slate-900">My Profile</h1>
+                <p class="text-slate-500 text-sm mt-1">Manage your personal information and profile picture.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Avatar card -->
+                <div class="card text-center">
+                    <div class="avatar-upload mx-auto mb-4" style="display:inline-block;">
+                        <div id="profile-avatar-display" class="avatar avatar-xl mx-auto"></div>
+                        <div class="avatar-upload-overlay" onclick="document.getElementById('avatarFileInput').click()">
+                            <svg width="18" height="18" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
+                            </svg>
+                            <span style="font-size:10px;">Upload</span>
+                        </div>
+                    </div>
+                    <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp" class="hidden" />
+                    <p class="font-bold text-lg text-slate-900" id="profile-name-display">—</p>
+                    <p class="text-slate-400 text-sm" id="profile-email-display">—</p>
+                    <p class="font-mono text-xs bg-slate-100 px-3 py-1 rounded-full mt-2 inline-block text-slate-600"
+                        id="profile-acct-display">—</p>
+                    <button class="btn btn-outline btn-sm mt-4 w-full"
+                        onclick="document.getElementById('avatarFileInput').click()">
+                        Change Photo
+                    </button>
+                    <p class="text-xs text-slate-400 mt-2">JPG, PNG or WebP, max 5MB</p>
+                </div>
+
+                <!-- Edit info card -->
+                <div class="card lg:col-span-2">
+                    <h3 class="font-bold text-slate-800 mb-5">Personal Information</h3>
+                    <form id="profileForm" novalidate>
+                        <div class="space-y-5">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" id="profileName" class="form-input" placeholder="Your name" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" id="profileEmail" class="form-input" disabled
+                                    style="opacity:0.6;cursor:not-allowed;" />
+                                <p class="text-xs text-slate-400 mt-1">Email cannot be changed.</p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Account Number</label>
+                                <input type="text" id="profileAcct" class="form-input font-mono" disabled
+                                    style="opacity:0.6;cursor:not-allowed;" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Member Since</label>
+                                <input type="text" id="profileCreated" class="form-input" disabled
+                                    style="opacity:0.6;cursor:not-allowed;" />
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="profileSaveBtn">
+                                <span id="profileSaveBtnText">Save Changes</span>
+                                <span id="profileSaveSpinner" class="hidden">
+                                    <svg class="animate-spin" width="16" height="16" fill="none" stroke="white"
+                                        stroke-width="2" viewBox="0 0 24 24">
+                                        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                                    </svg>
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ══════════ MODALS ══════════ -->
+    <!-- Deposit Modal -->
+    <div class="modal-overlay" id="depositModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">💰 Deposit Funds</h2>
+                <button class="modal-close" onclick="closeModal('depositModal')">✕</button>
+            </div>
+            <div class="space-y-5">
+                <p class="text-slate-500 text-sm">Simulate adding funds to your NexaBank account.</p>
+                <div class="form-group">
+                    <label class="form-label">Amount (USD)</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon font-bold text-sm">$</span>
+                        <input type="number" id="depositAmount" class="form-input" placeholder="0.00" min="1"
+                            step="0.01" />
+                    </div>
+                </div>
+                <!-- Preset amounts -->
+                <div class="flex gap-2 flex-wrap">
+                    <button class="btn btn-outline btn-sm" onclick="setDeposit(100)">$100</button>
+                    <button class="btn btn-outline btn-sm" onclick="setDeposit(500)">$500</button>
+                    <button class="btn btn-outline btn-sm" onclick="setDeposit(1000)">$1,000</button>
+                    <button class="btn btn-outline btn-sm" onclick="setDeposit(5000)">$5,000</button>
+                </div>
+                <button class="btn btn-success w-full" id="depositBtn" onclick="handleDeposit()"
+                    style="width:100%;border-radius:12px;">
+                    <span id="depositBtnText">Deposit Funds</span>
+                    <span id="depositBtnSpinner" class="hidden">
+                        <svg class="animate-spin" width="16" height="16" fill="none" stroke="white" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Money Modal -->
+    <div class="modal-overlay" id="sendModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">➤ Send Money</h2>
+                <button class="modal-close" onclick="closeModal('sendModal')">✕</button>
+            </div>
+            <div class="space-y-5">
+                <div class="form-group">
+                    <label class="form-label">Recipient Account Number</label>
+                    <input type="text" id="sendRecipient" class="form-input font-mono" placeholder="NX0123456789" />
+                    <span class="form-error" id="sendRecipientError"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Amount (USD)</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon font-bold text-sm">$</span>
+                        <input type="number" id="sendAmount" class="form-input" placeholder="0.00" min="0.01"
+                            step="0.01" />
+                    </div>
+                    <span class="form-error" id="sendAmountError"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description <span
+                            class="text-slate-400 font-normal">(optional)</span></label>
+                    <input type="text" id="sendDescription" class="form-input" placeholder="e.g. Rent payment"
+                        maxlength="100" />
+                </div>
+                <!-- Current balance display -->
+                <div class="flex items-center justify-between bg-slate-50 rounded-xl p-3">
+                    <span class="text-sm text-slate-500">Your balance:</span>
+                    <span class="font-bold text-slate-800" id="send-modal-balance">—</span>
+                </div>
+                <button class="btn btn-primary w-full" id="sendBtn" onclick="handleSend()"
+                    style="width:100%;border-radius:12px;">
+                    <span id="sendBtnText">Send Money</span>
+                    <span id="sendBtnSpinner" class="hidden">
+                        <svg class="animate-spin" width="16" height="16" fill="none" stroke="white" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Detail Modal -->
+    <div class="modal-overlay" id="txDetailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Transaction Details</h2>
+                <button class="modal-close" onclick="closeModal('txDetailModal')">✕</button>
+            </div>
+            <div id="txDetailContent"></div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/ui.js"></script>
+    <script>
+        // Auth guard
+        if (!Auth.requireAuth()) throw new Error('Not authenticated');
+
+        // ─── State ───
+        let state = { user: null, account: null, stats: null, transactions: [] };
+
+        // ─── Init ───
+        document.addEventListener('DOMContentLoaded', () => {
+            setDate();
+            loadDashboard();
+
+            // Profile form
+            document.getElementById('profileForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('profileName').value.trim();
+                if (!name) return Toast.warning('Name cannot be empty');
+                const btn = document.getElementById('profileSaveBtn');
+                const txt = document.getElementById('profileSaveBtnText');
+                const spin = document.getElementById('profileSaveSpinner');
+                btn.disabled = true; txt.classList.add('hidden'); spin.classList.remove('hidden');
+                try {
+                    const user = await NexaAPI.updateMe({ name });
+                    state.user = user;
+                    updateProfileUI();
+                    updateTopbar();
+                    Toast.success('Profile updated!');
+                } catch (e) { Toast.error(e.message); }
+                btn.disabled = false; txt.classList.remove('hidden'); spin.classList.add('hidden');
+            });
+
+            // Avatar upload
+            document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                Toast.info('Uploading photo…');
+                try {
+                    const user = await NexaAPI.uploadAvatar(file);
+                    state.user = user;
+                    updateProfileUI();
+                    updateTopbar();
+                    Toast.success('Profile photo updated!');
+                } catch (e) { Toast.error(e.message); }
+                e.target.value = '';
+            });
+
+            // Sidebar overlay click
+            document.getElementById('sidebarOverlay').addEventListener('click', () => {
+                closeSidebar();
+            });
+        });
+
+        function setDate() {
+            const now = new Date();
+            document.getElementById('topbar-date').textContent =
+                now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const hour = now.getHours();
+            document.getElementById('greeting-time').textContent =
+                hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+        }
+
+        async function loadDashboard() {
+            try {
+                [state.user, state.account, state.stats, state.transactions] = await Promise.all([
+                    NexaAPI.getMe(),
+                    NexaAPI.getAccount(),
+                    NexaAPI.getStats(),
+                    NexaAPI.getTransactions(20),
+                ]);
+                renderAll();
+            } catch (e) {
+                Toast.error('Failed to load dashboard. ' + e.message);
+            }
+        }
+
+        function renderAll() {
+            updateTopbar();
+            updateBalanceCard();
+            updateStats();
+            renderRecentTx();
+            updateProfileUI();
+            document.getElementById('greeting-name').textContent = state.user.name.split(' ')[0];
+        }
+
+        function updateTopbar() {
+            const u = state.user, a = state.account;
+            document.getElementById('topbar-name').textContent = u.name;
+            document.getElementById('topbar-account').textContent = a ? a.account_number : '';
+            const avatarEl = document.getElementById('topbar-avatar');
+            renderAvatar(avatarEl, u, 48);
+        }
+
+        function renderAvatar(el, user, size = 48) {
+            if (user.profile_image_url) {
+                el.innerHTML = '';
+                el.style.backgroundImage = `url(${user.profile_image_url})`;
+                el.style.backgroundSize = 'cover';
+                el.style.backgroundPosition = 'center';
+            } else {
+                el.innerHTML = getInitials(user.name);
+                el.style.backgroundImage = '';
+            }
+        }
+
+        function updateBalanceCard() {
+            const a = state.account;
+            const balEl = document.getElementById('main-balance');
+            balEl.textContent = formatCurrency(a.balance);
+            document.getElementById('main-account-num').textContent = a.account_number;
+            document.getElementById('send-modal-balance').textContent = formatCurrency(a.balance);
+        }
+
+        function updateStats() {
+            const s = state.stats;
+            document.getElementById('stat-balance').textContent = formatCurrency(s.balance);
+            document.getElementById('stat-volume').textContent = formatCurrency(s.total_volume);
+            document.getElementById('stat-limit').textContent = formatCurrency(s.transaction_limit);
+        }
+
+        function renderRecentTx() {
+            const container = document.getElementById('recent-tx-list');
+            const allContainer = document.getElementById('all-tx-list');
+            const txs = state.transactions;
+
+            const renderList = (txs, limit = 999) => {
+                if (!txs.length) {
+                    return `<div class="flex flex-col items-center py-12 text-slate-400">
+                        <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        <p class="mt-3 text-sm font-medium">No transactions yet</p>
+                        <p class="text-xs mt-1">Make a deposit to get started!</p>
+                    </div>`;
+                }
+
+                return txs.slice(0, limit).map(tx => {
+                    const isCredit = tx.receiver_account_id === state.account?.id && tx.transaction_type !== 'transfer_out';
+                    const isDeposit = tx.transaction_type === 'deposit';
+                    const credit = isDeposit || (tx.receiver_account_id === state.account.id && tx.sender_account_id !== state.account.id);
+                    const icon = credit
+                        ? `<div class="tx-icon" style="background:#dcfce7;"><svg width="16" height="16" fill="none" stroke="#16a34a" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg></div>`
+                        : `<div class="tx-icon" style="background:#fee2e2;"><svg width="16" height="16" fill="none" stroke="#dc2626" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg></div>`;
+
+                    const counterpart = credit
+                        ? (tx.sender_account_number ? `From ${tx.sender_account_number}` : 'NexaBank Deposit')
+                        : `To ${tx.receiver_account_number || '—'}`;
+
+                    return `<div class="tx-row group" onclick="showTxDetail(${tx.id})">
+                        ${icon}
+                        <div class="tx-info">
+                            <p class="tx-name group-hover:text-brand-600 transition-colors">${tx.transaction_type === 'deposit' ? 'Deposit' : 'Transfer'}</p>
+                            <p class="tx-date text-[11px] opacity-70">${counterpart} · ${formatRelativeTime(tx.timestamp)}</p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="text-right">
+                                <p class="tx-amount ${credit ? 'credit' : 'debit'} font-bold">${credit ? '+' : '-'}${formatCurrency(tx.amount)}</p>
+                                <p class="text-[9px] uppercase tracking-tighter font-bold opacity-40">${tx.status}</p>
+                            </div>
+                            <button class="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-brand-50 group-hover:text-brand-600 transition-all" onclick="event.stopPropagation(); downloadTxReceipt(${tx.id}, '${tx.transaction_reference}')">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tx-divider"></div>`;
+                }).join('');
+            };
+
+            container.innerHTML = renderList(txs, 5);
+            allContainer.innerHTML = renderList(txs);
+        }
+
+        function showTxDetail(txId) {
+            const tx = state.transactions.find(t => t.id === txId);
+            if (!tx) return;
+            const credit = tx.transaction_type === 'deposit' || tx.receiver_account_id === state.account.id;
+            document.getElementById('txDetailContent').innerHTML = `
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center text-2xl"
+                        style="background:${credit ? '#dcfce7' : '#fee2e2'};">
+                        ${credit ? '⬆' : '⬇'}
+                    </div>
+                    <p class="text-3xl font-extrabold" style="color:${credit ? '#16a34a' : '#dc2626'};">
+                        ${credit ? '+' : '-'}${formatCurrency(tx.amount)}
+                    </p>
+                    <span class="badge badge-success mt-2">${tx.status.toUpperCase()}</span>
+                </div>
+                <div class="space-y-3">
+                    ${txDetailRow('Reference', tx.transaction_reference)}
+                    ${txDetailRow('Type', tx.transaction_type.charAt(0).toUpperCase() + tx.transaction_type.slice(1))}
+                    ${txDetailRow('Date', formatDate(tx.timestamp))}
+                    ${tx.sender_account_number ? txDetailRow('From', tx.sender_account_number) : ''}
+                    ${tx.receiver_account_number ? txDetailRow('To', tx.receiver_account_number) : ''}
+                    ${tx.description ? txDetailRow('Note', tx.description) : ''}
+                </div>
+                <button class="btn btn-primary w-full mt-6" style="width:100%;border-radius:12px;"
+                    onclick="downloadTxReceipt(${tx.id}, '${tx.transaction_reference}'); closeModal('txDetailModal');">
+                    <svg width="16" height="16" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download Receipt PDF
+                </button>
+            `;
+            openModal('txDetailModal');
+        }
+
+        function txDetailRow(label, value) {
+            return `<div class="flex justify-between py-3 border-b border-slate-100">
+                <span class="text-sm text-slate-500">${label}</span>
+                <span class="text-sm font-semibold text-slate-800 text-right max-w-xs break-all">${value}</span>
+            </div>`;
+        }
+
+        async function downloadTxReceipt(txId, ref) {
+            Toast.info('Generating receipt PDF…');
+            await downloadPDF(`/api/pdf/receipt/${txId}`, `receipt-${ref}.pdf`);
+            Toast.success('Receipt downloaded!');
+        }
+
+        async function handleDownloadStatement() {
+            Toast.info('Generating statement PDF…');
+            await downloadPDF(`/api/pdf/statement`, `statement-${state.account?.account_number || 'nexabank'}.pdf`);
+            Toast.success('Statement downloaded!');
+        }
+
+        // ─── Deposit ───
+        function setDeposit(val) { document.getElementById('depositAmount').value = val; }
+
+        async function handleDeposit() {
+            const amount = parseFloat(document.getElementById('depositAmount').value);
+            if (!amount || amount <= 0) return Toast.warning('Enter a valid amount');
+            const btn = document.getElementById('depositBtn');
+            const txt = document.getElementById('depositBtnText');
+            const spin = document.getElementById('depositBtnSpinner');
+            btn.disabled = true; txt.classList.add('hidden'); spin.classList.remove('hidden');
+            try {
+                const res = await NexaAPI.deposit(amount);
+                state.account.balance = res.balance_after;
+                state.stats.balance = res.balance_after;
+                state.stats.total_volume += amount;
+                state.transactions.unshift(res);
+                updateBalanceCard();
+                updateStats();
+                renderRecentTx();
+                closeModal('depositModal');
+                document.getElementById('depositAmount').value = '';
+                Toast.success(`$${formatCurrency(amount)} deposited successfully!`);
+            } catch (e) { Toast.error(e.message); }
+            btn.disabled = false; txt.classList.remove('hidden'); spin.classList.add('hidden');
+        }
+
+        // ─── Send Money ───
+        async function handleSend() {
+            const recipient = document.getElementById('sendRecipient').value.trim();
+            const amount = parseFloat(document.getElementById('sendAmount').value);
+            const desc = document.getElementById('sendDescription').value.trim();
+
+            document.getElementById('sendRecipientError').classList.remove('visible');
+            document.getElementById('sendAmountError').classList.remove('visible');
+
+            let valid = true;
+            if (!recipient) {
+                document.getElementById('sendRecipientError').textContent = 'Recipient account number is required';
+                document.getElementById('sendRecipientError').classList.add('visible');
+                valid = false;
+            }
+            if (!amount || amount <= 0) {
+                document.getElementById('sendAmountError').textContent = 'Enter a valid amount';
+                document.getElementById('sendAmountError').classList.add('visible');
+                valid = false;
+            }
+            if (!valid) return;
+
+            const btn = document.getElementById('sendBtn');
+            const txt = document.getElementById('sendBtnText');
+            const spin = document.getElementById('sendBtnSpinner');
+            btn.disabled = true; txt.classList.add('hidden'); spin.classList.remove('hidden');
+            try {
+                const res = await NexaAPI.transfer(recipient, amount, desc || undefined);
+                state.account.balance = res.balance_after;
+                state.stats.balance = res.balance_after;
+                state.stats.total_volume += amount;
+                state.transactions.unshift(res);
+                updateBalanceCard();
+                updateStats();
+                renderRecentTx();
+                closeModal('sendModal');
+                document.getElementById('sendRecipient').value = '';
+                document.getElementById('sendAmount').value = '';
+                document.getElementById('sendDescription').value = '';
+                Toast.success(`${formatCurrency(amount)} sent successfully!`);
+            } catch (e) { Toast.error(e.message); }
+            btn.disabled = false; txt.classList.remove('hidden'); spin.classList.add('hidden');
+        }
+
+        // ─── Profile UI ───
+        function updateProfileUI() {
+            const u = state.user, a = state.account;
+            document.getElementById('profileName').value = u.name;
+            document.getElementById('profileEmail').value = u.email;
+            document.getElementById('profileAcct').value = a ? a.account_number : '—';
+            document.getElementById('profileCreated').value = u.created_at
+                ? new Date(u.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                : '—';
+            document.getElementById('profile-name-display').textContent = u.name;
+            document.getElementById('profile-email-display').textContent = u.email;
+            document.getElementById('profile-acct-display').textContent = a ? a.account_number : '—';
+            const avatarEl = document.getElementById('profile-avatar-display');
+            renderAvatar(avatarEl, u, 100);
+            avatarEl.style.width = '100px';
+            avatarEl.style.height = '100px';
+            avatarEl.style.fontSize = '36px';
+        }
+
+        // ─── Section nav ───
+        function showSection(name) {
+            ['overview', 'transactions', 'profile'].forEach(s => {
+                document.getElementById(`section-${s}`).style.display = s === name ? 'block' : 'none';
+                const navEl = document.getElementById(`nav-${s}`);
+                if (navEl) navEl.classList.toggle('active', s === name);
+            });
+            const titles = { overview: 'Dashboard', transactions: 'Transactions', profile: 'My Profile' };
+            document.getElementById('topbar-title').textContent = titles[name] || 'Dashboard';
+            if (name === 'transactions' && state.transactions) renderRecentTx();
+            closeSidebar();
+            window.scrollTo(0, 0);
+        }
+
+        // ─── Sidebar toggle ───
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('open');
+        }
+    </script>
+</body>
+
+</html>

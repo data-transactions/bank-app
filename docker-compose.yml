@@ -1,0 +1,66 @@
+version: '3.3'
+services:
+  db:
+    image: mysql:8.0
+    container_name: nexabank_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: bankdb
+      MYSQL_USER: bankuser
+      MYSQL_PASSWORD: bankpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - bank_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "bankuser", "-pbankpassword"]
+      timeout: 10s
+      retries: 10
+      interval: 5s
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: nexabank_phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_USER: bankuser
+      PMA_PASSWORD: bankpassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "8080:80"
+    networks:
+      - bank_net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: docker/Dockerfile.backend
+    container_name: nexabank_backend
+    restart: unless-stopped
+    depends_on:
+      - db
+    env_file:
+      - ./backend/.env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/app:/app/backend/app
+      - ./backend/migrations:/app/migrations
+      - ./backend/alembic.ini:/app/alembic.ini
+      # Mount frontend as static files served by FastAPI
+      - ./frontend:/app/static_frontend
+    networks:
+      - bank_net
+
+volumes:
+  mysql_data:
+
+networks:
+  bank_net:
+    driver: bridge

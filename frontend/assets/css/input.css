@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+/* Design Tokens & Theme Extensions */
+@theme {
+    /* Brand Colors - Refined Palette */
+    --color-brand-50: #eff6ff;
+    --color-brand-100: #dbeafe;
+    --color-brand-200: #bfdbfe;
+    --color-brand-300: #93c5fd;
+    --color-brand-400: #60a5fa;
+    --color-brand-500: #3b82f6;
+    --color-brand-600: #2563eb;
+    --color-brand-700: #1d4ed8;
+    --color-brand-800: #1e40af;
+    --color-brand-900: #1e3a8a;
+    --color-brand-950: #172554;
+
+    /* Primary Brand Mappings */
+    --color-brand: var(--color-brand-600);
+    --color-brand-dark: #0f172a;
+    --color-brand-accent: #06b6d4;
+
+    /* Typography */
+    --font-sans: "Inter", "DM Sans", "sans-serif";
+    --font-display: "DM Sans", "Inter", "sans-serif";
+
+    /* Premium Shadows */
+    --shadow-premium-sm: 0 2px 8px -2px rgba(15, 23, 42, 0.08), 0 1px 4px -1px rgba(15, 23, 42, 0.04);
+    --shadow-premium-md: 0 12px 24px -8px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+    --shadow-premium-lg: 0 32px 64px -16px rgba(15, 23, 42, 0.16), 0 16px 32px -8px rgba(15, 23, 42, 0.08);
+
+    /* Animation Timings */
+    --animate-float: float 6s ease-in-out infinite;
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+}
+
+/* Include existing custom components and styles */
+@import "./main.css";
