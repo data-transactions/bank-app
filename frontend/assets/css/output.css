@@ -1184,11 +1184,6 @@
   --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
 html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
@@ -1966,6 +1961,19 @@ body {
 .fade-in-up.visible {
   opacity: 1;
   transform: translateY(0);
+}
+@keyframes scroll-bounce {
+  0%, 100% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+  50% {
+    transform: translateY(8px);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+}
+.animate-bounce {
+  animation: scroll-bounce 1s ease-in-out infinite;
 }
 .stagger-1 {
   transition-delay: 0.1s;
