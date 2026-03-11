@@ -11,5 +11,6 @@ class Account(Base):
     account_number = Column(String(20), unique=True, nullable=False, index=True)
     balance = Column(Numeric(15, 2), default=0.00, nullable=False)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 
     user = relationship("User", backref="account")
