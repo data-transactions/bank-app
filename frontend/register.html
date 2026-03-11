@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register — NexaBank</title>
+  <meta name="description" content="Create a NexaBank account and start managing your finances today." />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-icon">N</div>
+        <span>NexaBank</span>
+      </div>
+
+      <h1>Create account</h1>
+      <p class="subtitle">Join NexaBank and take control of your money</p>
+
+      <div class="alert alert-error"   id="regError"></div>
+      <div class="alert alert-success" id="regSuccess"></div>
+
+      <form id="registerForm" novalidate>
+        <div class="form-group">
+          <label for="fullName">Full name</label>
+          <input type="text" id="fullName" name="full_name" placeholder="Jane Doe" autocomplete="name" required />
+          <span class="form-error" id="nameErr">Full name is required.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" required />
+          <span class="form-error" id="emailErr">Please enter a valid email.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Min 8 chars, upper, lower, special" autocomplete="new-password" required />
+          <span class="form-error" id="passwordErr">Password requirements not met.</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
+          Create account
+        </button>
+      </form>
+
+      <p style="text-align:center;margin-top:1.5rem;font-size:0.88rem;color:var(--text-muted)">
+        Already have an account? <a href="/login.html">Sign in</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    const form = document.getElementById('registerForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const errBox = document.getElementById('regError');
+    const sucBox = document.getElementById('regSuccess');
+
+    if (getToken()) window.location.href = '/dashboard.html';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearErrors();
+
+      const full_name = document.getElementById('fullName').value.trim();
+      const email     = document.getElementById('email').value.trim();
+      const password  = document.getElementById('password').value;
+      let valid = true;
+
+      if (!full_name) { showFieldError('fullName', 'nameErr'); valid = false; }
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showFieldError('email', 'emailErr'); valid = false;
+      }
+      if (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[^a-zA-Z0-9]/.test(password)) {
+        showFieldError('password', 'passwordErr'); valid = false;
+      }
+      if (!valid) return;
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span> Creating…';
+
+      try {
+        await apiPost('/api/auth/register', { full_name, email, password });
+        showAlert(sucBox, 'Account created! Redirecting to login…', 'success');
+        setTimeout(() => window.location.href = '/login.html', 1800);
+      } catch (err) {
+        showAlert(errBox, err.message || 'Registration failed. Please try again.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Create account';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,66 +1,72 @@
-version: '3.3'
+version: '3.8'
+
 services:
   db:
-    image: mysql:8.0
+    image: mysql:8
     container_name: nexabank_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: bankdb
-      MYSQL_USER: bankuser
-      MYSQL_PASSWORD: bankpassword
-    ports:
-      - "3306:3306"
+      MYSQL_DATABASE: nexabank_db
+      MYSQL_USER: nexabank_user
+      MYSQL_PASSWORD: nexabank_password
+      MYSQL_ROOT_PASSWORD: root_password
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - bank_net
+      - nexabank_net
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "bankuser", "-pbankpassword"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "nexabank_user", "-pnexabank_password"]
+      interval: 5s
       timeout: 10s
       retries: 10
-      interval: 5s
+
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nexabank_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - nexabank_net
+    command: gunicorn app.main:app -c gunicorn.conf.py
+
+  nginx:
+    image: nginx:alpine
+    container_name: nexabank_nginx
+    restart: unless-stopped
+    ports:
+      - "5500:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - nexabank_net
 
   phpmyadmin:
     image: phpmyadmin:latest
     container_name: nexabank_phpmyadmin
     restart: unless-stopped
-    depends_on:
-      - db
+    ports:
+      - "8181:80"
     environment:
       PMA_HOST: db
-      PMA_USER: bankuser
-      PMA_PASSWORD: bankpassword
-      MYSQL_ROOT_PASSWORD: rootpassword
-    ports:
-      - "8080:80"
-    networks:
-      - bank_net
-
-  backend:
-    build:
-      context: ./backend
-      dockerfile: docker/Dockerfile.backend
-    container_name: nexabank_backend
-    restart: unless-stopped
+      PMA_USER: nexabank_user
+      PMA_PASSWORD: nexabank_password
     depends_on:
       - db
-    env_file:
-      - ./backend/.env
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./backend/app:/app/backend/app
-      - ./backend/migrations:/app/migrations
-      - ./backend/alembic.ini:/app/alembic.ini
-      # Mount frontend as static files served by FastAPI
-      - ./frontend:/app/static_frontend
     networks:
-      - bank_net
+      - nexabank_net
 
 volumes:
   mysql_data:
 
 networks:
-  bank_net:
+  nexabank_net:
     driver: bridge

@@ -1,19 +1,18 @@
 import sys
-import os
 from pathlib import Path
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 
-# Add project root to path
+# Ensure the app package is importable
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from backend.app.database import Base
-from backend.app.models.user import User
-from backend.app.models.account import Account
-from backend.app.models.transaction import Transaction
-from backend.app.config import settings
+from app.database import Base
+from app.models.user import User
+from app.models.account import Account
+from app.models.transaction import Transaction
+from app.config import settings
 
 config = context.config
 
@@ -28,9 +27,8 @@ def get_url():
 
 
 def run_migrations_offline() -> None:
-    url = get_url()
     context.configure(
-        url=url,
+        url=get_url(),
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
