@@ -381,17 +381,19 @@
             align-items: flex-start;
         }
 
-        .gc-welcome .greeting-left h2 {
-            font-size: 14px;
-            font-weight: 400;
-            opacity: .8;
+        .gc-welcome .greeting-left .greet-text {
+            font-size: 24px;
+            font-weight: 300;
+            opacity: .9;
+            line-height: 1.2;
+            display: block;
         }
 
-        .gc-welcome .greeting-left h2 span {
-            font-weight: 700;
-            font-size: 18px;
+        .gc-welcome .greeting-left .greet-name {
+            font-weight: 800;
+            font-size: 36px;
             display: block;
-            margin-top: 2px;
+            margin-top: 4px;
         }
 
         .gc-welcome .greeting-right {
@@ -581,12 +583,16 @@
 
         .gc-credit-card {
             background: linear-gradient(135deg, #1e293b, #334155);
-            border-radius: 14px;
-            padding: 22px;
+            border-radius: 16px;
+            padding: 24px;
             color: #fff;
             position: relative;
             overflow: hidden;
-            width: 260px;
+            width: 320px;
+            height: 190px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .gc-credit-card::after {
@@ -604,7 +610,6 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 20px;
         }
 
         .gc-credit-card .card-bank {
@@ -1014,6 +1019,10 @@
         .gc-help-panel button:hover {
             background: var(--gc-bg);
         }
+
+        .style-option { transition: 0.2s; border: 2px solid transparent !important; }
+        .style-option.active { border-color: var(--gc-blue) !important; background: #f0f9ff !important; }
+        .style-option:hover:not(.active) { background: #f1f5f9 !important; border-color: var(--gc-border) !important; }
 
         /* FOOTER */
         .gc-footer {
@@ -1790,8 +1799,8 @@
                     <div class="gc-welcome">
                         <div class="greeting">
                             <div class="greeting-left">
-                                <h2>Good <span id="greetingTime">Morning</span> <span id="greetingName">there</span>
-                                </h2>
+                                <span class="greet-text" id="greetingTime">Good Morning</span>
+                                <span class="greet-name" id="greetingName">there</span>
                             </div>
                             <div class="greeting-right">
                                 <div class="time" id="clockDisplay">00:00:00</div>
@@ -1858,8 +1867,8 @@
                                 </div>
                             </div>
                             <div>
-                                <div class="gc-card-info"><span>American Express Black</span><strong
-                                        id="cardBalance">USD 0.00</strong></div>
+                                <div class="gc-card-info" style="display:none;"><span>American Express Black</span><strong
+                                        id="cardBalance"></strong></div>
                                 <div class="gc-card-details-btn" onclick="showSection('cardDetails')">View Details</div>
                             </div>
                         </div>
@@ -1879,12 +1888,15 @@
                                     <th>Type</th>
                                     <th>Status</th>
                                     <th>Reference ID</th>
+                                    <th>Description</th>
+                                    <th>Scope</th>
                                     <th>Created</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="recentTxBody">
                                 <tr>
-                                    <td colspan="6" style="text-align:center;padding:30px;color:var(--gc-text-light);">
+                                    <td colspan="9" style="text-align:center;padding:30px;color:var(--gc-text-light);">
                                         Loading transactions...</td>
                                 </tr>
                             </tbody>
@@ -1945,19 +1957,25 @@
 
         <!-- TRANSACTIONS SECTION -->
         <section id="section-transactions" class="gc-content" style="display:none;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
                 <div>
-                    <h2 style="font-size:22px;font-weight:800;color:var(--gc-dark);">Transaction History</h2>
-                    <p style="font-size:13px;color:var(--gc-text-light);">All your deposits and transfers.</p>
+                    <h2 style="font-size:24px;font-weight:800;color:var(--gc-dark);">Transactions</h2>
+                    <p style="font-size:13px;color:var(--gc-text-light);">Dashboard &gt; Transactions</p>
                 </div>
-                <div style="display:flex;gap:8px;">
-                    <button class="btn-topup"
-                        style="padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:var(--gc-blue);color:#fff;"
-                        onclick="openModal('depositModal')">+ Deposit</button>
-                    <button
-                        style="padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--gc-border);background:#fff;color:var(--gc-text);"
-                        onclick="openModal('sendModal')">Send Money</button>
+                <div style="display:flex;gap:12px;">
+                    <button class="gc-btn-secondary" onclick="openModal('filterModal')" style="display:flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;border:1px solid var(--gc-border);background:#fff;font-weight:600;cursor:pointer;">
+                        <i class="fas fa-filter" style="color:var(--gc-text-light);"></i> Filter
+                    </button>
+                    <button class="gc-btn-primary" onclick="openModal('exportModal')" style="display:flex;align-items:center;gap:8px;padding:10px 24px;border-radius:10px;border:none;background:var(--gc-blue);color:#fff;font-weight:600;cursor:pointer;">
+                        <i class="fas fa-file-export"></i> Export
+                    </button>
                 </div>
+            </div>
+
+            <div style="position:relative;margin-bottom:24px;">
+                <i class="fas fa-search" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);color:var(--gc-text-light);font-size:18px;"></i>
+                <input type="text" id="txSearchInput" oninput="handleTxSearch()" placeholder="Search by transaction reference..." 
+                    style="width:100%;padding:18px 20px 18px 54px;border-radius:12px;border:1px solid var(--gc-border);background:#fff;font-size:15px;outline:none;transition:0.2s;box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
             </div>
             <div class="gc-tx-section">
                 <table class="gc-tx-table">
@@ -1968,12 +1986,15 @@
                             <th>Type</th>
                             <th>Status</th>
                             <th>Reference ID</th>
+                            <th>Description</th>
+                            <th>Scope</th>
                             <th>Created</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="allTxBody">
                         <tr>
-                            <td colspan="6" style="text-align:center;padding:30px;color:var(--gc-text-light);">Loading
+                            <td colspan="9" style="text-align:center;padding:30px;color:var(--gc-text-light);">Loading
                                 transactions...</td>
                         </tr>
                     </tbody>
@@ -2444,6 +2465,134 @@
         </div>
     </div>
 
+    <!-- FILTER MODAL -->
+    <div class="gc-modal-overlay" id="filterModal">
+        <div class="gc-modal" style="max-width: 400px; text-align: center;">
+            <button class="gc-modal-close" onclick="closeModal('filterModal')" style="position: absolute; right: 20px; top: 20px;">✕</button>
+            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: #0ea5e9; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);">
+                    <i class="fas fa-filter"></i>
+                </div>
+            </div>
+            <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 6px;">Filter Transactions</h2>
+            <p style="font-size: 13px; color: var(--gc-text-light); margin-bottom: 24px;">Customize your transaction view</p>
+
+            <div style="text-align: left;">
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Date Range</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <div style="flex: 1;">
+                            <small style="display: block; font-size: 11px; margin-bottom: 5px; color: var(--gc-text-light);">From</small>
+                            <input type="date" id="filterDateFrom" class="form-input" style="padding: 10px;">
+                        </div>
+                        <div style="flex: 1;">
+                            <small style="display: block; font-size: 11px; margin-bottom: 5px; color: var(--gc-text-light);">To</small>
+                            <input type="date" id="filterDateTo" class="form-input" style="padding: 10px;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Status</label>
+                    <select id="filterStatus" class="form-input" style="cursor: pointer;">
+                        <option value="">Select status</option>
+                        <option value="completed">Processed</option>
+                        <option value="pending">Pending</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Sort by</label>
+                    <select id="filterSort" class="form-input" style="cursor: pointer;">
+                        <option value="newest">Newest first (DESC)</option>
+                        <option value="oldest">Oldest first (ASC)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Per page</label>
+                    <select id="filterPerPage" class="form-input" style="cursor: pointer;">
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; margin-top: 10px;">
+                <button onclick="closeModal('filterModal')" style="flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--gc-border); background: #fff; font-weight: 600; cursor: pointer;">Cancel</button>
+                <button onclick="applyFilters()" style="flex: 1; padding: 12px; border-radius: 10px; border: none; background: var(--gc-blue); color: #fff; font-weight: 600; cursor: pointer;">Apply Filters</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXPORT MODAL -->
+    <div class="gc-modal-overlay" id="exportModal">
+        <div class="gc-modal" style="max-width: 400px; text-align: center;">
+            <button class="gc-modal-close" onclick="closeModal('exportModal')" style="position: absolute; right: 20px; top: 20px;">✕</button>
+            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: #0ea5e9; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);">
+                    <i class="fas fa-download"></i>
+                </div>
+            </div>
+            <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 6px;">Export Transactions</h2>
+            <p style="font-size: 13px; color: var(--gc-text-light); margin-bottom: 24px;">Download or receive your transaction data</p>
+
+            <div style="text-align: left;">
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">File Format</label>
+                    <select id="exportFormat" class="form-input" style="cursor: pointer;">
+                        <option value="pdf">PDF</option>
+                        <option value="csv">CSV</option>
+                        <option value="excel">Excel</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Export as</label>
+                    <select id="exportMethod" class="form-input" style="cursor: pointer;">
+                        <option value="download">How do you want to receive this file?</option>
+                        <option value="download_now">Download directly</option>
+                        <option value="email">Send to email</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Statement Style</label>
+                    <div style="display: flex; gap: 12px;">
+                        <div id="styleModern" class="style-option active" onclick="selectStyle('modern')" style="flex: 1; padding: 16px; border-radius: 12px; border: 2px solid var(--gc-blue); background: #f0f9ff; cursor: pointer; text-align: center;">
+                            <div style="color: var(--gc-text-light); margin-bottom: 8px;"><i class="fas fa-th-large" style="font-size: 18px;"></i></div>
+                            <div style="font-size: 12px; font-weight: 600;">Modern</div>
+                        </div>
+                        <div id="styleClassic" class="style-option" onclick="selectStyle('classic')" style="flex: 1; padding: 16px; border-radius: 12px; border: 1px solid var(--gc-border); background: #f8fafc; cursor: pointer; text-align: center;">
+                            <div style="color: var(--gc-text-light); margin-bottom: 8px;"><i class="fas fa-file-lines" style="font-size: 18px;"></i></div>
+                            <div style="font-size: 12px; font-weight: 600;">Classic</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="handleExport()" style="width: 100%; margin-top: 20px; padding: 14px; border-radius: 10px; border: none; background: var(--gc-blue); color: #fff; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i class="fas fa-download"></i> Export Transactions
+            </button>
+        </div>
+    </div>
+
+    <!-- RECEIPT MODAL -->
+    <div class="gc-modal-overlay" id="receiptModal">
+        <div class="gc-modal" style="max-width: 680px; padding: 0; background: #f1f5f9; overflow: hidden;">
+            <div style="display: flex; justify-content: flex-end; gap: 10px; padding: 20px;">
+                <button onclick="window.print()" style="padding: 10px 20px; border-radius: 8px; border: none; background: #1e293b; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-print"></i> Print Receipt
+                </button>
+                <button onclick="closeModal('receiptModal')" style="padding: 10px 20px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #334155; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-home"></i> Dashboard
+                </button>
+            </div>
+            <div id="receiptContent" style="padding: 0 40px 40px;"></div>
+        </div>
+    </div>
+
     <script src="/assets/js/api.js"></script>
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/ui.js"></script>
@@ -2489,7 +2638,10 @@
             document.getElementById('topbarDate').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
             document.getElementById('clockDate').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
             const h = now.getHours();
-            document.getElementById('greetingTime').textContent = h < 12 ? 'Morning' : h < 17 ? 'Afternoon' : 'Evening';
+            let g = 'Good evening';
+            if (h < 12) g = 'Good morning';
+            else if (h < 17) g = 'Good afternoon';
+            document.getElementById('greetingTime').textContent = g;
         }
 
         function startClock() {
@@ -2508,7 +2660,11 @@
 
         function updateAllUI() {
             const u = state.user, a = state.account, s = state.stats;
-            const fmt = (v) => '$' + Number(v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const fmt = (v) => {
+                const num = Number(v || 0);
+                if (num % 1 === 0) return '$' + num.toLocaleString('en-US');
+                return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            };
 
             const fullName = u.full_name || (u.first_name + ' ' + (u.last_name || '')).trim() || 'User';
             const firstName = u.first_name || fullName.split(' ')[0];
@@ -2523,11 +2679,11 @@
             // Names
             document.getElementById('sidebarName').textContent = fullName;
             document.getElementById('sidebarAcctId').textContent = 'ID: ' + (a ? a.account_number : '—');
-            document.getElementById('greetingName').textContent = firstName;
+            document.getElementById('greetingName').textContent = firstName.trim() || 'User';
             document.getElementById('profileNameDisplay').textContent = fullName;
             document.getElementById('profileEmailDisplay').textContent = u.email;
             document.getElementById('profileAcctDisplay').textContent = a ? a.account_number : '—';
-            document.getElementById('cardHolder').textContent = firstName.toUpperCase();
+            document.getElementById('cardHolder').textContent = fullName.toUpperCase();
 
             // Balances
             document.getElementById('topbarBalance').textContent = fmt(a.balance);
@@ -2535,7 +2691,7 @@
             document.getElementById('mainBalance').textContent = fmt(a.balance) + ' USD';
             document.getElementById('mainAcctNum').textContent = a.account_number;
             document.getElementById('sendModalBalance').textContent = fmt(a.balance);
-            document.getElementById('cardBalance').textContent = 'USD ' + Number(a.balance * 0.0225).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('cardBalance').textContent = '';
 
             // Stats
             document.getElementById('statLimit').textContent = fmt(s.transaction_limit);
@@ -2553,10 +2709,188 @@
             updateCardDetailsUI();
         }
 
-        function renderTransactions() {
-            const txs = state.transactions;
+        function handleTxSearch() {
+            const query = document.getElementById('txSearchInput').value.toLowerCase().trim();
+            if (!query) {
+                renderTransactions();
+                return;
+            }
+            const filtered = state.transactions.filter(tx => 
+                (tx.reference_code && tx.reference_code.toLowerCase().includes(query)) ||
+                (tx.description && tx.description.toLowerCase().includes(query)) ||
+                (tx.scope && tx.scope.toLowerCase().includes(query))
+            );
+            renderTransactions(filtered);
+        }
+
+        function applyFilters() {
+            const from = document.getElementById('filterDateFrom').value;
+            const to = document.getElementById('filterDateTo').value;
+            const status = document.getElementById('filterStatus').value;
+            const sort = document.getElementById('filterSort').value;
+            const perPage = parseInt(document.getElementById('filterPerPage').value) || 10;
+
+            let filtered = [...state.transactions];
+
+            if (from) {
+                const fromDate = new Date(from);
+                filtered = filtered.filter(tx => new Date(tx.created_at) >= fromDate);
+            }
+            if (to) {
+                const toDate = new Date(to);
+                toDate.setHours(23, 59, 59, 999);
+                filtered = filtered.filter(tx => new Date(tx.created_at) <= toDate);
+            }
+            if (status) {
+                filtered = filtered.filter(tx => tx.status === status);
+            }
+
+            if (sort === 'newest') {
+                filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            } else {
+                filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+            }
+
+            const results = filtered.slice(0, perPage);
+            renderTransactions(results);
+            closeModal('filterModal');
+            Toast.info(filtered.length + ' transactions found');
+        }
+
+        let exportStyle = 'modern';
+        function selectStyle(style) {
+            exportStyle = style;
+            document.getElementById('styleModern').classList.toggle('active', style === 'modern');
+            document.getElementById('styleClassic').classList.toggle('active', style === 'classic');
+        }
+
+        function handleExport() {
+            const format = document.getElementById('exportFormat').value;
+            const method = document.getElementById('exportMethod').value;
+            
+            const btn = document.querySelector('#exportModal .btn-submit') || { disabled: false, innerHTML: '' };
+            const oldText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+
+            setTimeout(() => {
+                closeModal('exportModal');
+                btn.disabled = false;
+                btn.innerHTML = oldText;
+                
+                if (method === 'email') {
+                    Toast.success('Statement has been sent to ' + state.user.email);
+                } else {
+                    Toast.success('Statement download started (' + format.toUpperCase() + ')');
+                }
+            }, 1800);
+        }
+
+        function showReceipt(txId) {
+            const tx = state.transactions.find(t => t.id === txId); 
+            if (!tx) return;
+            const u = state.user;
             const a = state.account;
-            const fmt = (v) => '$' + Number(v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            
+            const credit = tx.transaction_type === 'deposit' || tx.receiver_account_id === a.id;
+            const amountStr = Number(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+            const dateObj = new Date(tx.created_at);
+            const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+            const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+            document.getElementById('receiptContent').innerHTML = `
+                <div style="background:#fff; padding:40px; border-radius:12px; max-width:600px; margin:0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:40px;">
+                        <h1 style="font-size:24px; font-weight:900; color:var(--gc-dark); letter-spacing:-1px;">GRAND</h1>
+                        <span style="background:#dcfce7; color:#166534; padding:6px 16px; border-radius:20px; font-size:12px; font-weight:700; display:flex; align-items:center; gap:6px;">
+                            <i class="fas fa-check-circle"></i> Successful
+                        </span>
+                    </div>
+
+                    <h3 style="font-size:18px; font-weight:700; color:var(--gc-dark); margin-bottom:8px;">Transaction Details</h3>
+                    <p style="font-size:13px; color:var(--gc-text-light); margin-bottom:24px;">You have successfully ${credit ? 'received' : 'transferred'} $${amountStr}.</p>
+
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px; background:#f8fafc; padding:24px; border-radius:12px; margin-bottom:32px;">
+                        <div>
+                            <div style="font-size:11px; color:var(--gc-text-light); text-transform:uppercase; font-weight:600; margin-bottom:4px;">Transaction Date</div>
+                            <div style="font-size:14px; font-weight:600; color:var(--gc-dark); display:flex; align-items:center; gap:6px;">
+                                <i class="far fa-calendar" style="font-size:12px;"></i> ${dateStr}
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-size:11px; color:var(--gc-text-light); text-transform:uppercase; font-weight:600; margin-bottom:4px;">Transaction Time</div>
+                            <div style="font-size:14px; font-weight:600; color:var(--gc-dark); display:flex; align-items:center; gap:6px;">
+                                <i class="far fa-clock" style="font-size:12px;"></i> ${timeStr}
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-size:11px; color:var(--gc-text-light); text-transform:uppercase; font-weight:600; margin-bottom:4px;">Payment Method</div>
+                            <div style="font-size:14px; font-weight:600; color:var(--gc-dark); display:flex; align-items:center; gap:6px;">
+                                <i class="far fa-credit-card" style="font-size:12px;"></i> ${tx.scope || 'Local transfer'}
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-size:11px; color:var(--gc-text-light); text-transform:uppercase; font-weight:600; margin-bottom:4px;">Reference ID</div>
+                            <div style="font-size:14px; font-weight:600; color:var(--gc-dark);"># ${tx.reference_code || '—'}</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom:32px;">
+                        <h4 style="font-size:14px; font-weight:700; color:var(--gc-dark); display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+                            <i class="far fa-user" style="font-size:13px;"></i> Recipient Details
+                        </h4>
+                        <div style="background:#fff; border:1px solid var(--gc-border); border-radius:12px; padding:20px;">
+                            <div style="font-size:11px; color:var(--gc-text-light); text-transform:uppercase; font-weight:600; margin-bottom:4px;">Description</div>
+                            <div style="font-size:14px; color:var(--gc-dark);">${tx.description || '—'}</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 style="font-size:14px; font-weight:700; color:var(--gc-dark); display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+                            <i class="fas fa-dollar-sign" style="font-size:13px;"></i> Financial Details
+                        </h4>
+                        <div style="background:#fff; border:1px solid var(--gc-border); border-radius:12px; padding:20px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                                <div>
+                                    <div style="font-size:11px; color:var(--gc-text-light); text-transform:uppercase; font-weight:600; margin-bottom:4px;">Amount ${credit ? 'Received' : 'Sent'}</div>
+                                    <div style="font-size:18px; font-weight:800; color:var(--gc-dark);">$${amountStr}</div>
+                                </div>
+                                <div style="text-align:right;">
+                                    <div style="font-size:11px; color:var(--gc-text-light); text-transform:uppercase; font-weight:600; margin-bottom:4px;">Handling & Charges</div>
+                                    <div style="font-size:18px; font-weight:800; color:var(--gc-dark);">$0</div>
+                                </div>
+                            </div>
+                            <div style="border-top:1px dashed var(--gc-border); padding-top:16px; display:flex; justify-content:space-between; align-items:center;">
+                                <div style="font-size:13px; font-weight:700; color:var(--gc-dark);">Available Balance</div>
+                                <div style="font-size:13px; font-weight:700; color:var(--gc-dark);">$</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align:center; margin-top:40px;">
+                        <div style="display:flex; justify-content:center; margin-bottom:16px;">
+                            <div style="width:32px; height:32px; border-radius:50%; border:1px solid var(--gc-border); display:flex; align-items:center; justify-content:center; color:var(--gc-text-light);">
+                                <i class="fas fa-shield-alt" style="font-size:14px;"></i>
+                            </div>
+                        </div>
+                        <p style="font-size:11px; color:var(--gc-text-light); line-height:1.6; max-width:400px; margin:0 auto;">
+                            This receipt serves as confirmation of this transaction. For any issues or inquiries regarding this transaction, please contact support.<br>
+                            © 2026 Grand Chase Online Bank. All rights reserved.
+                        </p>
+                    </div>
+                </div>
+            `;
+            openModal('receiptModal');
+        }
+
+        function renderTransactions(overrideTxs) {
+            const txs = overrideTxs || state.transactions;
+            const a = state.account;
+            const fmt = (v) => {
+                const num = Number(v || 0);
+                if (num % 1 === 0) return '$' + num.toLocaleString('en-US');
+                return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            };
 
             const renderRow = (tx) => {
                 const isDeposit = tx.transaction_type === 'deposit';
@@ -2565,7 +2899,8 @@
                 const iconClass = credit ? 'credit' : 'debit';
                 const icon = credit ? '+' : '−';
                 const refId = tx.reference_code || '—';
-                const date = formatRelativeTime(tx.created_at);
+                const desc = tx.description || '—';
+                const scope = tx.scope || '—';
 
                 return '<tr style="cursor:pointer;" onclick="showTxDetail(' + tx.id + ')">' +
                     '<td class="tx-icon-cell"><div class="gc-tx-icon-circle ' + iconClass + '">' + icon + '</div></td>' +
@@ -2573,10 +2908,13 @@
                     '<td><span class="gc-tx-type-badge ' + iconClass + '">' + type + '</span></td>' +
                     '<td><span class="gc-tx-status processed">Processed</span></td>' +
                     '<td class="gc-tx-ref">' + refId + '</td>' +
-                    '<td class="gc-tx-date">' + date + '</td></tr>';
+                    '<td>' + desc + '</td>' +
+                    '<td>' + scope + '</td>' +
+                    '<td>' + formatDate(tx.created_at) + '</td>' +
+                    '<td><a href="#" class="gc-receipt-link" onclick="event.stopPropagation(); showReceipt(' + tx.id + ');" style="color:var(--gc-blue);text-decoration:none;font-size:12px;font-weight:600;"><i class="far fa-file-alt"></i> Receipt</a></td></tr>';
             };
 
-            const empty = '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--gc-text-light);">No transactions yet. Make a deposit to get started!</td></tr>';
+            const empty = '<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--gc-text-light);">No transactions yet. Make a deposit to get started!</td></tr>';
             document.getElementById('recentTxBody').innerHTML = txs.length ? txs.slice(0, 5).map(renderRow).join('') : empty;
             document.getElementById('allTxBody').innerHTML = txs.length ? txs.map(renderRow).join('') : empty;
         }
@@ -2697,12 +3035,17 @@
         function updateCardDetailsUI() {
             if (!state.account) return;
             const a = state.account, u = state.user;
-            const fmt = (v) => '$' + Number(v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const fmt = (v) => {
+                const num = Number(v || 0);
+                if (num % 1 === 0) return '$' + num.toLocaleString('en-US');
+                return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            };
 
             const fullName = u.full_name || (u.first_name + ' ' + (u.last_name || '')).trim() || 'User';
             const firstName = u.first_name || fullName.split(' ')[0];
-            document.getElementById('cdCardHolder').textContent = firstName.toUpperCase();
-            document.getElementById('cdBalance').textContent = fmt(a.balance * 0.0225);
+            document.getElementById('cdCardHolder').textContent = fullName.toUpperCase();
+            document.getElementById('cdBalance').textContent = '';
+            document.getElementById('cdBalance').parentElement.style.display = 'none';
             const last4 = a.account_number.slice(-4);
             document.getElementById('cdCardLast4').textContent = last4;
 
