@@ -83,18 +83,33 @@
 
             <form id="signupForm" novalidate>
                 <div class="space-y-5">
-                    <div class="form-group">
-                        <label class="form-label" for="fullName">Full Name</label>
-                        <div class="input-wrapper">
-                            <svg class="input-icon" width="16" height="16" fill="none" stroke="currentColor"
-                                stroke-width="2" viewBox="0 0 24 24">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                                <circle cx="12" cy="7" r="4" />
-                            </svg>
-                            <input type="text" id="fullName" class="form-input" placeholder="Jane Doe"
-                                autocomplete="name" required />
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label class="form-label" for="firstName">First Name</label>
+                            <div class="input-wrapper">
+                                <svg class="input-icon" width="16" height="16" fill="none" stroke="currentColor"
+                                    stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                                <input type="text" id="firstName" class="form-input" placeholder="Jane"
+                                    autocomplete="given-name" required />
+                            </div>
+                            <span class="form-error" id="firstNameError"></span>
                         </div>
-                        <span class="form-error" id="nameError"></span>
+                        <div class="form-group">
+                            <label class="form-label" for="lastName">Last Name</label>
+                            <div class="input-wrapper">
+                                <svg class="input-icon" width="16" height="16" fill="none" stroke="currentColor"
+                                    stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                                <input type="text" id="lastName" class="form-input" placeholder="Doe"
+                                    autocomplete="family-name" required />
+                            </div>
+                            <span class="form-error" id="lastNameError"></span>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -184,7 +199,7 @@
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/ui.js"></script>
     <script>
-        if (NexaAPI.getToken()) window.location.href = '/dashboard/';
+        if (NexaAPI.getToken()) redirectToDashboard();
 
         // Password toggle
         const pwToggle = document.getElementById('pwToggle');
@@ -218,7 +233,8 @@
         const form = document.getElementById('signupForm');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = document.getElementById('fullName').value.trim();
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
             const confirm = document.getElementById('confirmPassword').value;
@@ -227,14 +243,20 @@
             const spinner = document.getElementById('signupBtnSpinner');
 
             // Reset
-            ['nameError', 'emailError', 'passwordError', 'confirmError'].forEach(id => {
-                document.getElementById(id).classList.remove('visible');
+            ['firstNameError', 'lastNameError', 'emailError', 'passwordError', 'confirmError'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.remove('visible');
             });
 
             let valid = true;
-            if (!name) {
-                document.getElementById('nameError').textContent = 'Full name is required';
-                document.getElementById('nameError').classList.add('visible');
+            if (!firstName) {
+                document.getElementById('firstNameError').textContent = 'First name is required';
+                document.getElementById('firstNameError').classList.add('visible');
+                valid = false;
+            }
+            if (!lastName) {
+                document.getElementById('lastNameError').textContent = 'Last name is required';
+                document.getElementById('lastNameError').classList.add('visible');
                 valid = false;
             }
             if (!email || !email.includes('@')) {
@@ -260,7 +282,7 @@
             spinner.classList.remove('hidden');
 
             try {
-                await NexaAPI.signup(name, email, password);
+                await NexaAPI.signup(firstName, lastName, email, password);
                 Toast.success('Account created! Redirecting to login…');
                 setTimeout(() => { window.location.href = '/login/'; }, 1200);
             } catch (err) {

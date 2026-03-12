@@ -15,7 +15,8 @@ def _validate_password(v: str) -> str:
 
 
 class RegisterRequest(BaseModel):
-    full_name: str
+    first_name: str
+    last_name: str
     email: EmailStr
     password: str
 
@@ -23,7 +24,6 @@ class RegisterRequest(BaseModel):
     @classmethod
     def password_policy(cls, v):
         return _validate_password(v)
-
 
 class LoginRequest(BaseModel):
     email: EmailStr
@@ -33,3 +33,16 @@ class LoginRequest(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+
+class UserResponse(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    full_name: str
+    email: EmailStr
+    is_admin: bool
+    created_at: datetime.datetime
+
+    class Config:
+        from_attributes = True
