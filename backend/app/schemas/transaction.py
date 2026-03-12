@@ -29,6 +29,7 @@ class TransferRequest(BaseModel):
     receiver_account_number: str
     amount: float
     description: Optional[str] = None
+    scope: str = "Local transfer"
 
     @field_validator("amount")
     @classmethod
@@ -45,6 +46,7 @@ class TransactionResponse(BaseModel):
     transaction_type: str
     amount: float
     description: Optional[str] = None
+    scope: str
     status: str
     reference_code: str
     created_at: datetime

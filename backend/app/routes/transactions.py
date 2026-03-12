@@ -22,6 +22,7 @@ def _fmt(tx: Transaction, db: Session) -> dict:
         "transaction_type": tx.transaction_type.value if tx.transaction_type else None,
         "amount": float(tx.amount),
         "description": tx.description,
+        "scope": tx.scope,
         "status": tx.status.value if tx.status else None,
         "reference_code": tx.reference_code,
         "created_at": tx.created_at.isoformat(),
@@ -34,23 +35,55 @@ def _fmt(tx: Transaction, db: Session) -> dict:
 def get_transactions(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
+    search: str = Query(None),
+    status_filter: str = Query(None, alias="status"),
+    date_from: str = Query(None),
+    date_to: str = Query(None),
+    sort_by: str = Query("desc"),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    from datetime import datetime
+    
     account = db.query(Account).filter(Account.user_id == current_user.id).first()
     if not account:
         return []
-    txs = (
-        db.query(Transaction)
-        .filter(
-            (Transaction.sender_account_id == account.id) |
-            (Transaction.receiver_account_id == account.id)
-        )
-        .order_by(Transaction.created_at.desc())
-        .offset(skip)
-        .limit(limit)
-        .all()
+        
+    query = db.query(Transaction).filter(
+        (Transaction.sender_account_id == account.id) |
+        (Transaction.receiver_account_id == account.id)
     )
+
+    if search:
+        query = query.filter(Transaction.reference_code.ilike(f"%{search}%"))
+        
+    if status_filter:
+        try:
+            status_enum = TransactionStatus(status_filter.lower())
+            query = query.filter(Transaction.status == status_enum)
+        except ValueError:
+            pass
+            
+    if date_from:
+        try:
+            df = datetime.fromisoformat(date_from)
+            query = query.filter(Transaction.created_at >= df)
+        except Exception:
+            pass
+            
+    if date_to:
+        try:
+            dt = datetime.fromisoformat(date_to)
+            query = query.filter(Transaction.created_at <= dt)
+        except Exception:
+            pass
+            
+    if sort_by.lower() == "asc":
+        query = query.order_by(Transaction.created_at.asc())
+    else:
+        query = query.order_by(Transaction.created_at.desc())
+
+    txs = query.offset(skip).limit(limit).all()
     return [_fmt(tx, db) for tx in txs]
 
 
@@ -70,6 +103,7 @@ def deposit(
         transaction_type=TransactionType.deposit,
         amount=Decimal(str(payload.amount)),
         description="Deposit",
+        scope="Local transfer",
         status=TransactionStatus.completed,
         reference_code=generate_reference_code(),
     )
@@ -99,6 +133,7 @@ def withdraw(
         transaction_type=TransactionType.withdrawal,
         amount=Decimal(str(payload.amount)),
         description="Withdrawal",
+        scope="Local transfer",
         status=TransactionStatus.completed,
         reference_code=generate_reference_code(),
     )
@@ -140,6 +175,7 @@ def transfer(
         transaction_type=TransactionType.transfer,
         amount=amount,
         description=payload.description,
+        scope=payload.scope,
         status=TransactionStatus.completed,
         reference_code=generate_reference_code(),
     )

@@ -26,6 +26,7 @@ class Transaction(Base):
     amount = Column(Numeric(15, 2), nullable=False)
     description = Column(String(255), nullable=True)
     status = Column(Enum(TransactionStatus), default=TransactionStatus.completed, nullable=False)
+    scope = Column(String(50), default="Local transfer", nullable=False)
     reference_code = Column(String(50), unique=True, nullable=False, index=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
