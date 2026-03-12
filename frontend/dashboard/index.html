@@ -1020,9 +1020,20 @@
             background: var(--gc-bg);
         }
 
-        .style-option { transition: 0.2s; border: 2px solid transparent !important; }
-        .style-option.active { border-color: var(--gc-blue) !important; background: #f0f9ff !important; }
-        .style-option:hover:not(.active) { background: #f1f5f9 !important; border-color: var(--gc-border) !important; }
+        .style-option {
+            transition: 0.2s;
+            border: 2px solid transparent !important;
+        }
+
+        .style-option.active {
+            border-color: var(--gc-blue) !important;
+            background: #f0f9ff !important;
+        }
+
+        .style-option:hover:not(.active) {
+            background: #f1f5f9 !important;
+            border-color: var(--gc-border) !important;
+        }
 
         /* FOOTER */
         .gc-footer {
@@ -1808,7 +1819,14 @@
                             </div>
                         </div>
                         <div class="balance-section">
-                            <div class="balance-label">Available Balance</div>
+                            <div class="balance-label" style="display:flex;align-items:center;gap:8px;">
+                                Available Balance
+                                <button id="balanceToggleBtn" onclick="toggleBalanceVisibility()"
+                                    title="Show/hide balance"
+                                    style="background:none;border:none;cursor:pointer;padding:2px 4px;opacity:0.7;color:inherit;font-size:14px;line-height:1;transition:opacity .2s;">
+                                    <i class="far fa-eye" id="balanceEyeIcon"></i>
+                                </button>
+                            </div>
                             <div class="balance-value" id="mainBalance">$0.00</div>
                         </div>
                         <div class="account-row">
@@ -1867,8 +1885,8 @@
                                 </div>
                             </div>
                             <div>
-                                <div class="gc-card-info" style="display:none;"><span>American Express Black</span><strong
-                                        id="cardBalance"></strong></div>
+                                <div class="gc-card-info" style="display:none;"><span>American Express
+                                        Black</span><strong id="cardBalance"></strong></div>
                                 <div class="gc-card-details-btn" onclick="showSection('cardDetails')">View Details</div>
                             </div>
                         </div>
@@ -1963,18 +1981,22 @@
                     <p style="font-size:13px;color:var(--gc-text-light);">Dashboard &gt; Transactions</p>
                 </div>
                 <div style="display:flex;gap:12px;">
-                    <button class="gc-btn-secondary" onclick="openModal('filterModal')" style="display:flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;border:1px solid var(--gc-border);background:#fff;font-weight:600;cursor:pointer;">
+                    <button class="gc-btn-secondary" onclick="openModal('filterModal')"
+                        style="display:flex;align-items:center;gap:8px;padding:10px 20px;border-radius:10px;border:1px solid var(--gc-border);background:#fff;font-weight:600;cursor:pointer;">
                         <i class="fas fa-filter" style="color:var(--gc-text-light);"></i> Filter
                     </button>
-                    <button class="gc-btn-primary" onclick="openModal('exportModal')" style="display:flex;align-items:center;gap:8px;padding:10px 24px;border-radius:10px;border:none;background:var(--gc-blue);color:#fff;font-weight:600;cursor:pointer;">
+                    <button class="gc-btn-primary" onclick="openModal('exportModal')"
+                        style="display:flex;align-items:center;gap:8px;padding:10px 24px;border-radius:10px;border:none;background:var(--gc-blue);color:#fff;font-weight:600;cursor:pointer;">
                         <i class="fas fa-file-export"></i> Export
                     </button>
                 </div>
             </div>
 
             <div style="position:relative;margin-bottom:24px;">
-                <i class="fas fa-search" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);color:var(--gc-text-light);font-size:18px;"></i>
-                <input type="text" id="txSearchInput" oninput="handleTxSearch()" placeholder="Search by transaction reference..." 
+                <i class="fas fa-search"
+                    style="position:absolute;left:20px;top:50%;transform:translateY(-50%);color:var(--gc-text-light);font-size:18px;"></i>
+                <input type="text" id="txSearchInput" oninput="handleTxSearch()"
+                    placeholder="Search by transaction reference..."
                     style="width:100%;padding:18px 20px 18px 54px;border-radius:12px;border:1px solid var(--gc-border);background:#fff;font-size:15px;outline:none;transition:0.2s;box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
             </div>
             <div class="gc-tx-section">
@@ -2468,32 +2490,40 @@
     <!-- FILTER MODAL -->
     <div class="gc-modal-overlay" id="filterModal">
         <div class="gc-modal" style="max-width: 400px; text-align: center;">
-            <button class="gc-modal-close" onclick="closeModal('filterModal')" style="position: absolute; right: 20px; top: 20px;">✕</button>
+            <button class="gc-modal-close" onclick="closeModal('filterModal')"
+                style="position: absolute; right: 20px; top: 20px;">✕</button>
             <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-                <div style="width: 60px; height: 60px; border-radius: 50%; background: #0ea5e9; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);">
+                <div
+                    style="width: 60px; height: 60px; border-radius: 50%; background: #0ea5e9; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);">
                     <i class="fas fa-filter"></i>
                 </div>
             </div>
             <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 6px;">Filter Transactions</h2>
-            <p style="font-size: 13px; color: var(--gc-text-light); margin-bottom: 24px;">Customize your transaction view</p>
+            <p style="font-size: 13px; color: var(--gc-text-light); margin-bottom: 24px;">Customize your transaction
+                view</p>
 
             <div style="text-align: left;">
                 <div class="form-group">
-                    <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Date Range</label>
+                    <label class="form-label"
+                        style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Date
+                        Range</label>
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <div style="flex: 1;">
-                            <small style="display: block; font-size: 11px; margin-bottom: 5px; color: var(--gc-text-light);">From</small>
+                            <small
+                                style="display: block; font-size: 11px; margin-bottom: 5px; color: var(--gc-text-light);">From</small>
                             <input type="date" id="filterDateFrom" class="form-input" style="padding: 10px;">
                         </div>
                         <div style="flex: 1;">
-                            <small style="display: block; font-size: 11px; margin-bottom: 5px; color: var(--gc-text-light);">To</small>
+                            <small
+                                style="display: block; font-size: 11px; margin-bottom: 5px; color: var(--gc-text-light);">To</small>
                             <input type="date" id="filterDateTo" class="form-input" style="padding: 10px;">
                         </div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Status</label>
+                    <label class="form-label"
+                        style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Status</label>
                     <select id="filterStatus" class="form-input" style="cursor: pointer;">
                         <option value="">Select status</option>
                         <option value="completed">Processed</option>
@@ -2502,7 +2532,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Sort by</label>
+                    <label class="form-label"
+                        style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Sort
+                        by</label>
                     <select id="filterSort" class="form-input" style="cursor: pointer;">
                         <option value="newest">Newest first (DESC)</option>
                         <option value="oldest">Oldest first (ASC)</option>
@@ -2510,7 +2542,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Per page</label>
+                    <label class="form-label"
+                        style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Per
+                        page</label>
                     <select id="filterPerPage" class="form-input" style="cursor: pointer;">
                         <option value="10">10</option>
                         <option value="20">20</option>
@@ -2520,8 +2554,11 @@
             </div>
 
             <div style="display: flex; gap: 12px; margin-top: 10px;">
-                <button onclick="closeModal('filterModal')" style="flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--gc-border); background: #fff; font-weight: 600; cursor: pointer;">Cancel</button>
-                <button onclick="applyFilters()" style="flex: 1; padding: 12px; border-radius: 10px; border: none; background: var(--gc-blue); color: #fff; font-weight: 600; cursor: pointer;">Apply Filters</button>
+                <button onclick="closeModal('filterModal')"
+                    style="flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--gc-border); background: #fff; font-weight: 600; cursor: pointer;">Cancel</button>
+                <button onclick="applyFilters()"
+                    style="flex: 1; padding: 12px; border-radius: 10px; border: none; background: var(--gc-blue); color: #fff; font-weight: 600; cursor: pointer;">Apply
+                    Filters</button>
             </div>
         </div>
     </div>
@@ -2529,18 +2566,23 @@
     <!-- EXPORT MODAL -->
     <div class="gc-modal-overlay" id="exportModal">
         <div class="gc-modal" style="max-width: 400px; text-align: center;">
-            <button class="gc-modal-close" onclick="closeModal('exportModal')" style="position: absolute; right: 20px; top: 20px;">✕</button>
+            <button class="gc-modal-close" onclick="closeModal('exportModal')"
+                style="position: absolute; right: 20px; top: 20px;">✕</button>
             <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-                <div style="width: 60px; height: 60px; border-radius: 50%; background: #0ea5e9; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);">
+                <div
+                    style="width: 60px; height: 60px; border-radius: 50%; background: #0ea5e9; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);">
                     <i class="fas fa-download"></i>
                 </div>
             </div>
             <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 6px;">Export Transactions</h2>
-            <p style="font-size: 13px; color: var(--gc-text-light); margin-bottom: 24px;">Download or receive your transaction data</p>
+            <p style="font-size: 13px; color: var(--gc-text-light); margin-bottom: 24px;">Download or receive your
+                transaction data</p>
 
             <div style="text-align: left;">
                 <div class="form-group">
-                    <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">File Format</label>
+                    <label class="form-label"
+                        style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">File
+                        Format</label>
                     <select id="exportFormat" class="form-input" style="cursor: pointer;">
                         <option value="pdf">PDF</option>
                         <option value="csv">CSV</option>
@@ -2549,7 +2591,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Export as</label>
+                    <label class="form-label"
+                        style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Export
+                        as</label>
                     <select id="exportMethod" class="form-input" style="cursor: pointer;">
                         <option value="download">How do you want to receive this file?</option>
                         <option value="download_now">Download directly</option>
@@ -2558,21 +2602,28 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Statement Style</label>
+                    <label class="form-label"
+                        style="font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--gc-text-light);">Statement
+                        Style</label>
                     <div style="display: flex; gap: 12px;">
-                        <div id="styleModern" class="style-option active" onclick="selectStyle('modern')" style="flex: 1; padding: 16px; border-radius: 12px; border: 2px solid var(--gc-blue); background: #f0f9ff; cursor: pointer; text-align: center;">
-                            <div style="color: var(--gc-text-light); margin-bottom: 8px;"><i class="fas fa-th-large" style="font-size: 18px;"></i></div>
+                        <div id="styleModern" class="style-option active" onclick="selectStyle('modern')"
+                            style="flex: 1; padding: 16px; border-radius: 12px; border: 2px solid var(--gc-blue); background: #f0f9ff; cursor: pointer; text-align: center;">
+                            <div style="color: var(--gc-text-light); margin-bottom: 8px;"><i class="fas fa-th-large"
+                                    style="font-size: 18px;"></i></div>
                             <div style="font-size: 12px; font-weight: 600;">Modern</div>
                         </div>
-                        <div id="styleClassic" class="style-option" onclick="selectStyle('classic')" style="flex: 1; padding: 16px; border-radius: 12px; border: 1px solid var(--gc-border); background: #f8fafc; cursor: pointer; text-align: center;">
-                            <div style="color: var(--gc-text-light); margin-bottom: 8px;"><i class="fas fa-file-lines" style="font-size: 18px;"></i></div>
+                        <div id="styleClassic" class="style-option" onclick="selectStyle('classic')"
+                            style="flex: 1; padding: 16px; border-radius: 12px; border: 1px solid var(--gc-border); background: #f8fafc; cursor: pointer; text-align: center;">
+                            <div style="color: var(--gc-text-light); margin-bottom: 8px;"><i class="fas fa-file-lines"
+                                    style="font-size: 18px;"></i></div>
                             <div style="font-size: 12px; font-weight: 600;">Classic</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <button onclick="handleExport()" style="width: 100%; margin-top: 20px; padding: 14px; border-radius: 10px; border: none; background: var(--gc-blue); color: #fff; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <button onclick="handleExport()"
+                style="width: 100%; margin-top: 20px; padding: 14px; border-radius: 10px; border: none; background: var(--gc-blue); color: #fff; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
                 <i class="fas fa-download"></i> Export Transactions
             </button>
         </div>
@@ -2582,10 +2633,12 @@
     <div class="gc-modal-overlay" id="receiptModal">
         <div class="gc-modal" style="max-width: 680px; padding: 0; background: #f1f5f9; overflow: hidden;">
             <div style="display: flex; justify-content: flex-end; gap: 10px; padding: 20px;">
-                <button onclick="window.print()" style="padding: 10px 20px; border-radius: 8px; border: none; background: #1e293b; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                <button onclick="window.print()"
+                    style="padding: 10px 20px; border-radius: 8px; border: none; background: #1e293b; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-print"></i> Print Receipt
                 </button>
-                <button onclick="closeModal('receiptModal')" style="padding: 10px 20px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #334155; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                <button onclick="closeModal('receiptModal')"
+                    style="padding: 10px 20px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; color: #334155; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                     <i class="fas fa-home"></i> Dashboard
                 </button>
             </div>
@@ -2685,10 +2738,13 @@
             document.getElementById('profileAcctDisplay').textContent = a ? a.account_number : '—';
             document.getElementById('cardHolder').textContent = fullName.toUpperCase();
 
-            // Balances
-            document.getElementById('topbarBalance').textContent = fmt(a.balance);
-            document.getElementById('statBalance').textContent = fmt(a.balance);
-            document.getElementById('mainBalance').textContent = fmt(a.balance) + ' USD';
+            // Balances — use helper so eye-toggle state is preserved
+            const _fmtBal = fmt(a.balance) + ' USD';
+            const _balEl = document.getElementById('mainBalance');
+            if (_balEl) {
+                _balEl.dataset.actualValue = _fmtBal;
+                _balEl.textContent = _balanceHidden ? '••••••' : _fmtBal;
+            }
             document.getElementById('mainAcctNum').textContent = a.account_number;
             document.getElementById('sendModalBalance').textContent = fmt(a.balance);
             document.getElementById('cardBalance').textContent = '';
@@ -2715,7 +2771,7 @@
                 renderTransactions();
                 return;
             }
-            const filtered = state.transactions.filter(tx => 
+            const filtered = state.transactions.filter(tx =>
                 (tx.reference_code && tx.reference_code.toLowerCase().includes(query)) ||
                 (tx.description && tx.description.toLowerCase().includes(query)) ||
                 (tx.scope && tx.scope.toLowerCase().includes(query))
@@ -2767,7 +2823,7 @@
         function handleExport() {
             const format = document.getElementById('exportFormat').value;
             const method = document.getElementById('exportMethod').value;
-            
+
             const btn = document.querySelector('#exportModal .btn-submit') || { disabled: false, innerHTML: '' };
             const oldText = btn.innerHTML;
             btn.disabled = true;
@@ -2777,7 +2833,7 @@
                 closeModal('exportModal');
                 btn.disabled = false;
                 btn.innerHTML = oldText;
-                
+
                 if (method === 'email') {
                     Toast.success('Statement has been sent to ' + state.user.email);
                 } else {
@@ -2787,11 +2843,11 @@
         }
 
         function showReceipt(txId) {
-            const tx = state.transactions.find(t => t.id === txId); 
+            const tx = state.transactions.find(t => t.id === txId);
             if (!tx) return;
             const u = state.user;
             const a = state.account;
-            
+
             const credit = tx.transaction_type === 'deposit' || tx.receiver_account_id === a.id;
             const amountStr = Number(tx.amount).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
             const dateObj = new Date(tx.created_at);
@@ -3073,6 +3129,43 @@
             document.getElementById('cardsTabTotalBal').textContent = fmt(a.balance * 0.0225);
             document.getElementById('cardsTabCardBal').textContent = 'USD ' + Number(a.balance * 0.0225).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('cardsTabLast4').textContent = last4;
+        }
+
+        // ── Balance visibility toggle ──
+        let _balanceHidden = false;
+        let _balanceActual = null;
+
+        function toggleBalanceVisibility() {
+            const balanceEl = document.getElementById('mainBalance');
+            const eyeIcon = document.getElementById('balanceEyeIcon');
+            if (!balanceEl) return;
+
+            _balanceHidden = !_balanceHidden;
+
+            if (_balanceHidden) {
+                // Store the real value and replace with asterisks
+                if (!balanceEl.dataset.actualValue) {
+                    balanceEl.dataset.actualValue = balanceEl.textContent;
+                }
+                balanceEl.textContent = '••••••';
+                eyeIcon.className = 'far fa-eye-slash';
+            } else {
+                // Restore the real value
+                const actual = balanceEl.dataset.actualValue || balanceEl.textContent;
+                balanceEl.textContent = actual;
+                eyeIcon.className = 'far fa-eye';
+            }
+        }
+
+        // After balance updates, keep hidden state consistent
+        const _origSetBalance = window._setMainBalance;
+        function _syncBalanceDisplay(newValue) {
+            const balanceEl = document.getElementById('mainBalance');
+            if (!balanceEl) return;
+            balanceEl.dataset.actualValue = newValue;
+            if (!_balanceHidden) {
+                balanceEl.textContent = newValue;
+            }
         }
 
     </script>
