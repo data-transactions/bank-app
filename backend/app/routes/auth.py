@@ -19,7 +19,8 @@ def register(payload: RegisterRequest, db: Session = Depends(get_db)):
             detail="An account with this email already exists.",
         )
     user = User(
-        full_name=payload.full_name,
+        first_name=payload.first_name,
+        last_name=payload.last_name,
         email=payload.email,
         password_hash=hash_password(payload.password),
         is_admin=False,
