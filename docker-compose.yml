@@ -30,6 +30,8 @@ services:
       - db
     env_file:
       - .env
+    ports:
+      - "8000:8000"
     networks:
       - nexabank_net
     command: gunicorn app.main:app -c gunicorn.conf.py

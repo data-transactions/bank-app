@@ -55,7 +55,12 @@ const api = {
 
     // Auth
     login: (email, password) => api.post('/api/auth/login', { email, password }),
-    signup: (name, email, password) => api.post('/api/auth/signup', { name, email, password }),
+    signup: (firstName, lastName, email, password) => api.post('/api/auth/register', { 
+        first_name: firstName, 
+        last_name: lastName, 
+        email, 
+        password 
+    }),
 
     // Users
     getMe: () => api.get('/api/users/me'),

@@ -14,7 +14,9 @@ def _user_row(user: User, db: Session) -> dict:
     account = db.query(Account).filter(Account.user_id == user.id).first()
     return {
         "id": user.id,
-        "full_name": user.full_name,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "full_name": f"{user.first_name} {user.last_name}",
         "email": user.email,
         "is_admin": user.is_admin,
         "created_at": user.created_at.isoformat(),

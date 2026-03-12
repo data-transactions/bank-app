@@ -1,6 +1,30 @@
 /**
  * NexaBank Auth Helpers
  */
+
+/** Decode a JWT payload without verifying the signature. */
+function parseJwt(token) {
+    try {
+        const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+        return JSON.parse(atob(base64));
+    } catch {
+        return null;
+    }
+}
+window.parseJwt = parseJwt;
+
+/**
+ * Redirect to the correct dashboard based on the is_admin claim in the JWT.
+ * Admins  → /admin/
+ * Regular → /dashboard/
+ */
+function redirectToDashboard() {
+    const token = NexaAPI.getToken();
+    const payload = token ? parseJwt(token) : null;
+    window.location.href = payload?.is_admin ? '/admin/' : '/dashboard/';
+}
+window.redirectToDashboard = redirectToDashboard;
+
 const Auth = {
     requireAuth() {
         const token = NexaAPI.getToken();
@@ -14,7 +38,7 @@ const Auth = {
     requireGuest() {
         const token = NexaAPI.getToken();
         if (token) {
-            window.location.href = '/dashboard/';
+            redirectToDashboard();
             return false;
         }
         return true;
