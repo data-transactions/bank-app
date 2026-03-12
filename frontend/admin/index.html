@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin — NexaBank</title>
+    <meta name="description" content="NexaBank admin dashboard: manage users, view all transactions and system statistics." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/output.css" />
+    <style>
+        .admin-badge {
+            background: linear-gradient(135deg, #7c3aed, #4f46e5);
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .stat-ring {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 20px;
+            padding: 28px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-ring::before {
+            content: '';
+            position: absolute;
+            top: -30px; right: -30px;
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.04);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo mb-8">
+            <div class="logo-mark" style="width:34px;height:34px;">N</div>
+            <div>
+                <span>NexaBank</span>
+                <span class="admin-badge ml-2">Admin</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a class="sidebar-item active" id="nav-overview" onclick="showSection('overview')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
+                </svg>
+                Overview
+            </a>
+            <a class="sidebar-item" id="nav-users" onclick="showSection('users')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+                Users
+            </a>
+            <a class="sidebar-item" id="nav-transactions" onclick="showSection('transactions')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" />
+                    <line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" />
+                    <line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+                </svg>
+                Transactions
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <button class="sidebar-item w-full" onclick="Auth.logout()"
+                style="width:100%; cursor:pointer; background:none; border:none; text-align:left;">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                Log Out
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="dashboard-main">
+        <!-- Topbar -->
+        <div class="dashboard-topbar">
+            <div class="flex items-center gap-3">
+                <button class="topbar-hamburger" id="topbarHamburger" onclick="toggleSidebar()">
+                    <svg width="22" height="22" fill="none" stroke="#334155" stroke-width="2" viewBox="0 0 24 24">
+                        <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="18" x2="21" y2="18" />
+                    </svg>
+                </button>
+                <div>
+                    <h2 class="font-bold text-slate-800 text-base" id="topbar-title">Admin Overview</h2>
+                    <p class="text-xs text-slate-400 hidden sm:block" id="topbar-date"></p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <p class="text-sm font-semibold text-slate-800" id="topbar-name">Loading…</p>
+                    <span class="admin-badge">Admin</span>
+                </div>
+                <div id="topbar-avatar" class="avatar"></div>
+            </div>
+        </div>
+
+        <!-- SECTION: OVERVIEW -->
+        <section id="section-overview" class="dashboard-content">
+            <div class="mb-6 fade-in-up">
+                <h1 class="text-2xl font-extrabold text-slate-900">Admin Overview</h1>
+                <p class="text-slate-500 text-sm mt-1">System-wide statistics and platform management.</p>
+            </div>
+
+            <div class="grid sm:grid-cols-3 gap-5 mb-6">
+                <div class="stat-ring fade-in-up">
+                    <p class="text-white/50 text-xs uppercase tracking-widest mb-2">Total Users</p>
+                    <p class="text-3xl font-extrabold" id="stat-users">—</p>
+                </div>
+                <div class="stat-ring fade-in-up stagger-1">
+                    <p class="text-white/50 text-xs uppercase tracking-widest mb-2">Total Volume</p>
+                    <p class="text-3xl font-extrabold" id="stat-volume">—</p>
+                </div>
+                <div class="stat-ring fade-in-up stagger-2">
+                    <p class="text-white/50 text-xs uppercase tracking-widest mb-2">Total Transactions</p>
+                    <p class="text-3xl font-extrabold" id="stat-txns">—</p>
+                </div>
+            </div>
+
+            <div class="card fade-in-up">
+                <div class="flex items-center justify-between mb-5">
+                    <h3 class="font-bold text-slate-800">Recent Transactions</h3>
+                    <button class="btn btn-outline btn-sm" onclick="showSection('transactions')">View all</button>
+                </div>
+                <div id="recent-txns-list">
+                    <div class="space-y-3">
+                        <div class="skeleton h-14 rounded-xl"></div>
+                        <div class="skeleton h-14 rounded-xl"></div>
+                        <div class="skeleton h-14 rounded-xl"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: USERS -->
+        <section id="section-users" class="dashboard-content" style="display:none;">
+            <div class="mb-6">
+                <h1 class="text-2xl font-extrabold text-slate-900">Users</h1>
+                <p class="text-slate-500 text-sm mt-1">All registered accounts on the platform.</p>
+            </div>
+            <div class="card">
+                <div class="overflow-x-auto">
+                    <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+                        <thead>
+                            <tr style="border-bottom:2px solid #f1f5f9;">
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Name</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Email</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Account No.</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Balance</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Role</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-body">
+                            <tr><td colspan="6" style="text-align:center;padding:32px;color:#94a3b8;">Loading…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: TRANSACTIONS -->
+        <section id="section-transactions" class="dashboard-content" style="display:none;">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-900">All Transactions</h1>
+                    <p class="text-slate-500 text-sm mt-1">Full platform ledger across all accounts.</p>
+                </div>
+                <div class="flex gap-3">
+                    <select id="typeFilter" class="form-input" style="width:auto;padding:8px 12px;font-size:0.85rem;">
+                        <option value="">All Types</option>
+                        <option value="deposit">Deposit</option>
+                        <option value="withdrawal">Withdrawal</option>
+                        <option value="transfer">Transfer</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card">
+                <div class="overflow-x-auto">
+                    <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                        <thead>
+                            <tr style="border-bottom:2px solid #f1f5f9;">
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Date</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Type</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">From</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">To</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Amount</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Status</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Reference</th>
+                            </tr>
+                        </thead>
+                        <tbody id="txns-body">
+                            <tr><td colspan="7" style="text-align:center;padding:32px;color:#94a3b8;">Loading…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script src="/assets/js/ui.js"></script>
+    <script>
+        // ── Auth guard: must be admin ──
+        (function () {
+            const token = NexaAPI.getToken();
+            if (!token) { window.location.href = '/login/'; return; }
+            const payload = parseJwt(token);
+            if (!payload || payload.exp < Date.now() / 1000) {
+                NexaAPI.clearToken();
+                window.location.href = '/login/';
+                return;
+            }
+            if (!payload.is_admin) {
+                window.location.href = '/dashboard/';
+            }
+        })();
+
+        // ── State ──
+        let allUsers = [], allTxns = [];
+
+        // ── Init ──
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set date
+            document.getElementById('topbar-date').textContent =
+                new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+            // Set admin name from token
+            const payload = parseJwt(NexaAPI.getToken());
+            document.getElementById('topbar-name').textContent = payload?.sub ? 'Admin' : '—';
+
+            loadAdminData();
+
+            // Sidebar overlay
+            document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+
+            // Transaction type filter
+            document.getElementById('typeFilter').addEventListener('change', renderTxns);
+        });
+
+        async function loadAdminData() {
+            try {
+                const [stats, users, txns] = await Promise.all([
+                    NexaAPI.get('/api/admin/stats'),
+                    NexaAPI.get('/api/admin/users'),
+                    NexaAPI.get('/api/admin/transactions'),
+                ]);
+
+                // Stats
+                document.getElementById('stat-users').textContent = stats.total_users ?? '—';
+                document.getElementById('stat-volume').textContent =
+                    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(stats.total_volume ?? 0);
+                document.getElementById('stat-txns').textContent = stats.total_transactions ?? '—';
+
+                // Set admin name
+                if (users && users.length) {
+                    const meId = parseJwt(NexaAPI.getToken())?.sub;
+                    const me = users.find(u => String(u.id) === String(meId));
+                    if (me) {
+                        document.getElementById('topbar-name').textContent = me.full_name;
+                        const av = document.getElementById('topbar-avatar');
+                        av.textContent = me.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+                    }
+                }
+
+                allUsers = users || [];
+                allTxns = txns || [];
+
+                renderRecentTxns();
+                renderUsers();
+                renderTxns();
+            } catch (e) {
+                Toast.error('Failed to load admin data: ' + e.message);
+            }
+        }
+
+        function renderRecentTxns() {
+            const container = document.getElementById('recent-txns-list');
+            const recent = allTxns.slice(0, 5);
+            if (!recent.length) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-8 text-sm">No transactions yet.</p>';
+                return;
+            }
+            container.innerHTML = recent.map(tx => `
+                <div class="tx-row">
+                    <div class="tx-icon" style="background:${tx.transaction_type === 'deposit' ? '#dcfce7' : '#fee2e2'};">
+                        <svg width="14" height="14" fill="none" stroke="${tx.transaction_type === 'deposit' ? '#16a34a' : '#dc2626'}" stroke-width="2.5" viewBox="0 0 24 24">
+                            ${tx.transaction_type === 'deposit'
+                                ? '<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>'
+                                : '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>'}
+                        </svg>
+                    </div>
+                    <div class="tx-info">
+                        <p class="tx-name">${capitalize(tx.transaction_type)}</p>
+                        <p class="tx-date">${formatRelativeTime(tx.timestamp)}</p>
+                    </div>
+                    <p class="tx-amount ${tx.transaction_type === 'deposit' ? 'credit' : 'debit'} font-bold">
+                        ${tx.transaction_type === 'deposit' ? '+' : '-'}${formatCurrency(tx.amount)}
+                    </p>
+                </div>
+                <div style="height:1px;background:#f1f5f9;margin:0 16px;"></div>
+            `).join('');
+        }
+
+        function renderUsers() {
+            const tbody = document.getElementById('users-body');
+            if (!allUsers.length) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#94a3b8;">No users found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = allUsers.map(u => `
+                <tr style="border-bottom:1px solid #f1f5f9;">
+                    <td style="padding:14px 16px;font-weight:500;color:#1e293b;">${escHtml(u.full_name)}</td>
+                    <td style="padding:14px 16px;color:#64748b;">${escHtml(u.email)}</td>
+                    <td style="padding:14px 16px;font-family:monospace;color:#475569;">${escHtml(u.account_number || '—')}</td>
+                    <td style="padding:14px 16px;font-weight:600;color:#1e293b;">${formatCurrency(u.balance ?? 0)}</td>
+                    <td style="padding:14px 16px;">
+                        <span style="background:${u.is_admin ? '#ede9fe' : '#f0fdf4'};color:${u.is_admin ? '#7c3aed' : '#16a34a'};padding:2px 10px;border-radius:9999px;font-size:11px;font-weight:700;">
+                            ${u.is_admin ? 'Admin' : 'User'}
+                        </span>
+                    </td>
+                    <td style="padding:14px 16px;color:#94a3b8;font-size:0.8rem;">${new Date(u.created_at).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderTxns() {
+            const filter = document.getElementById('typeFilter').value;
+            const tbody = document.getElementById('txns-body');
+            const txns = filter ? allTxns.filter(t => t.transaction_type === filter) : allTxns;
+
+            if (!txns.length) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:#94a3b8;">No transactions found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = txns.map(tx => `
+                <tr style="border-bottom:1px solid #f1f5f9;">
+                    <td style="padding:12px 16px;color:#64748b;font-size:0.8rem;">${new Date(tx.timestamp).toLocaleString()}</td>
+                    <td style="padding:12px 16px;">
+                        <span style="background:${typeColor(tx.transaction_type).bg};color:${typeColor(tx.transaction_type).fg};padding:2px 10px;border-radius:9999px;font-size:11px;font-weight:700;">
+                            ${capitalize(tx.transaction_type)}
+                        </span>
+                    </td>
+                    <td style="padding:12px 16px;font-family:monospace;font-size:0.8rem;color:#475569;">${escHtml(tx.sender_account_number || '—')}</td>
+                    <td style="padding:12px 16px;font-family:monospace;font-size:0.8rem;color:#475569;">${escHtml(tx.receiver_account_number || '—')}</td>
+                    <td style="padding:12px 16px;font-weight:700;color:#1e293b;">${formatCurrency(tx.amount)}</td>
+                    <td style="padding:12px 16px;">
+                        <span style="background:${statusColor(tx.status).bg};color:${statusColor(tx.status).fg};padding:2px 10px;border-radius:9999px;font-size:11px;font-weight:700;">
+                            ${capitalize(tx.status)}
+                        </span>
+                    </td>
+                    <td style="padding:12px 16px;font-family:monospace;font-size:0.75rem;color:#94a3b8;">${escHtml(tx.transaction_reference || '—')}</td>
+                </tr>
+            `).join('');
+        }
+
+        // ── Section nav ──
+        function showSection(name) {
+            ['overview', 'users', 'transactions'].forEach(s => {
+                document.getElementById(`section-${s}`).style.display = s === name ? 'block' : 'none';
+                const navEl = document.getElementById(`nav-${s}`);
+                if (navEl) navEl.classList.toggle('active', s === name);
+            });
+            const titles = { overview: 'Admin Overview', users: 'Users', transactions: 'All Transactions' };
+            document.getElementById('topbar-title').textContent = titles[name] || 'Admin';
+            closeSidebar();
+            window.scrollTo(0, 0);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('open');
+        }
+
+        // ── Helpers ──
+        function formatCurrency(n) {
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
+        }
+        function formatRelativeTime(iso) {
+            const diff = Date.now() - new Date(iso).getTime();
+            const m = Math.floor(diff / 60000);
+            if (m < 1) return 'just now';
+            if (m < 60) return `${m}m ago`;
+            const h = Math.floor(m / 60);
+            if (h < 24) return `${h}h ago`;
+            return `${Math.floor(h / 24)}d ago`;
+        }
+        function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+        function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        function typeColor(t) {
+            const m = { deposit: { bg:'#dcfce7', fg:'#16a34a' }, withdrawal: { bg:'#fee2e2', fg:'#dc2626' }, transfer: { bg:'#eff6ff', fg:'#2563eb' }};
+            return m[t] || { bg:'#f1f5f9', fg:'#64748b' };
+        }
+        function statusColor(s) {
+            const m = { completed: { bg:'#dcfce7', fg:'#16a34a' }, pending: { bg:'#fef9c3', fg:'#ca8a04' }, failed: { bg:'#fee2e2', fg:'#dc2626' }};
+            return m[s] || { bg:'#f1f5f9', fg:'#64748b' };
+        }
+    </script>
+</body>
+
+</html>

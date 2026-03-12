@@ -129,7 +129,7 @@
     <script src="/assets/js/ui.js"></script>
     <script>
         // Redirect if already logged in
-        if (NexaAPI.getToken()) window.location.href = '/dashboard/';
+        if (NexaAPI.getToken()) redirectToDashboard();
 
         // Password toggle
         const pwToggle = document.getElementById('pwToggle');
@@ -175,7 +175,7 @@
                 const data = await NexaAPI.login(email, password);
                 NexaAPI.setToken(data.access_token);
                 Toast.success('Welcome back! Redirecting…');
-                setTimeout(() => { window.location.href = '/dashboard/'; }, 800);
+                setTimeout(() => { redirectToDashboard(); }, 800);
             } catch (err) {
                 Toast.error(err.message);
                 btn.disabled = false;
