@@ -1811,7 +1811,7 @@
                         <div class="greeting">
                             <div class="greeting-left">
                                 <span class="greet-text" id="greetingTime">Good Morning</span>
-                                <span class="greet-name" id="greetingName">there</span>
+                                <span class="greet-name" id="greetingName">User</span>
                             </div>
                             <div class="greeting-right">
                                 <div class="time" id="clockDisplay">00:00:00</div>
@@ -2704,14 +2704,29 @@
 
         async function loadDashboard() {
             try {
-                [state.user, state.account, state.stats, state.transactions] = await Promise.all([
-                    NexaAPI.getMe(), NexaAPI.getAccount(), NexaAPI.getStats(), NexaAPI.getTransactions(20)
+                // Parallel requests, but handle stats failure gracefully so names still show
+                const results = await Promise.allSettled([
+                    NexaAPI.getMe(),
+                    NexaAPI.getAccount(),
+                    NexaAPI.getStats(),
+                    NexaAPI.getTransactions(20)
                 ]);
-                updateAllUI();
-            } catch (e) { Toast.error('Failed to load dashboard: ' + e.message); }
-        }
 
-        function updateAllUI() {
+                if (results[0].status === 'fulfilled') state.user = results[0].value;
+                if (results[1].status === 'fulfilled') state.account = results[1].value;
+                if (results[2].status === 'fulfilled') state.stats = results[2].value;
+                if (results[3].status === 'fulfilled') state.transactions = results[3].value;
+
+                updateAllUI();
+
+                // If critical data failed, show specific error
+                if (results[0].status === 'rejected') throw results[0].reason;
+            } catch (e) {
+                console.error('Failed to load dashboard:', e);
+                Toast.error('Failed to load dashboard: ' + e.message);
+            }
+        }
+ function updateAllUI() {
             const u = state.user, a = state.account, s = state.stats;
             const fmt = (v) => {
                 const num = Number(v || 0);
@@ -2737,6 +2752,7 @@
             document.getElementById('profileEmailDisplay').textContent = u.email;
             document.getElementById('profileAcctDisplay').textContent = a ? a.account_number : '—';
             document.getElementById('cardHolder').textContent = fullName.toUpperCase();
+            document.getElementById('cdCardHolder').textContent = fullName.toUpperCase();
 
             // Balances — use helper so eye-toggle state is preserved
             const _fmtBal = fmt(a.balance) + ' USD';

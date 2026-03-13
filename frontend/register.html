@@ -82,7 +82,10 @@
       submitBtn.innerHTML = '<span class="spinner"></span> Creating…';
 
       try {
-        await apiPost('/api/auth/register', { full_name, email, password });
+        const parts = full_name.split(' ');
+        const first_name = parts[0];
+        const last_name = parts.slice(1).join(' ') || ' ';
+        await apiPost('/api/auth/register', { first_name, last_name, email, password });
         showAlert(sucBox, 'Account created! Redirecting to login…', 'success');
         setTimeout(() => window.location.href = '/login.html', 1800);
       } catch (err) {
