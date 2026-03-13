@@ -1721,6 +1721,153 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+
+        /* SUPPORT SECTION */
+        .gc-support-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid var(--gc-border);
+            padding: 40px;
+        }
+
+        .gc-support-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .gc-support-icon-circle {
+            width: 80px;
+            height: 80px;
+            background: #38bdf8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: #fff;
+            font-size: 32px;
+            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.2);
+        }
+
+        .gc-support-header h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--gc-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .gc-support-header h2 i {
+            color: var(--gc-blue);
+            font-size: 20px;
+        }
+
+        .gc-support-header p {
+            font-size: 14px;
+            color: var(--gc-text-light);
+        }
+
+        .gc-support-form-group {
+            margin-bottom: 24px;
+        }
+
+        .gc-support-form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gc-text);
+            margin-bottom: 10px;
+        }
+
+        .gc-input-wrapper {
+            position: relative;
+        }
+
+        .gc-input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gc-text-light);
+            font-size: 14px;
+        }
+
+        .gc-input-wrapper .form-input, .gc-input-wrapper select {
+            padding-left: 44px;
+            height: 48px;
+        }
+
+        .gc-input-wrapper textarea.form-input {
+            padding-top: 14px;
+            height: auto;
+            min-height: 120px;
+        }
+
+        .gc-support-form-group small {
+            display: block;
+            font-size: 11px;
+            color: var(--gc-text-light);
+            margin-top: 6px;
+        }
+
+        .gc-info-box {
+            background: #f0f9ff;
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            gap: 14px;
+            margin-bottom: 30px;
+            border: 1px solid #e0f2fe;
+        }
+
+        .gc-info-box i {
+            color: var(--gc-blue);
+            font-size: 16px;
+            margin-top: 2px;
+        }
+
+        .gc-info-box div {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .gc-info-box strong {
+            display: block;
+            color: var(--gc-blue);
+            margin-bottom: 2px;
+            font-weight: 700;
+        }
+
+        .gc-info-box p {
+            color: #0369a1;
+            opacity: 0.9;
+        }
+
+        .gc-submit-ticket-btn {
+            background: var(--gc-blue);
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: .2s;
+        }
+
+        .gc-submit-ticket-btn:hover {
+            background: var(--gc-blue-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+        }
     </style>
 </head>
 
@@ -1767,7 +1914,8 @@
         <div class="gc-nav-label">Account</div>
         <div class="gc-nav-item" id="nav-profile" onclick="showSection('profile')"><i class="fas fa-cog"></i> Settings
         </div>
-        <div class="gc-nav-item"><i class="fas fa-headset"></i> Support Ticket</div>
+        <div class="gc-nav-item" id="nav-support" onclick="showSection('support')"><i
+                class="fas fa-headset"></i> Support Ticket</div>
 
         <div class="gc-sidebar-footer"><i class="fas fa-lock"></i> Secure Banking &nbsp; v1.2.0</div>
     </aside>
@@ -1907,14 +2055,11 @@
                                     <th>Status</th>
                                     <th>Reference ID</th>
                                     <th>Description</th>
-                                    <th>Scope</th>
-                                    <th>Created</th>
-                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="recentTxBody">
                                 <tr>
-                                    <td colspan="9" style="text-align:center;padding:30px;color:var(--gc-text-light);">
+                                    <td colspan="6" style="text-align:center;padding:30px;color:var(--gc-text-light);">
                                         Loading transactions...</td>
                                 </tr>
                             </tbody>
@@ -2236,6 +2381,65 @@
                             Changes</button>
                     </form>
                 </div>
+            </div>
+        </section>
+
+        <!-- SUPPORT SECTION -->
+        <section id="section-support" class="gc-content" style="display:none;">
+            <div class="gc-support-container">
+                <div class="gc-support-header">
+                    <div class="gc-support-icon-circle">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <h2><i class="fas fa-plus-circle" style="font-size: 18px; color: var(--gc-blue);"></i> Submit a Support Ticket</h2>
+                    <p>We're here to help. Tell us about your issue and we'll find a solution.</p>
+                </div>
+
+                <form id="supportForm" onsubmit="handleSupportSubmit(event)">
+                    <div class="gc-support-form-group">
+                        <label>Ticket Title</label>
+                        <div class="gc-input-wrapper">
+                            <i class="far fa-bookmark"></i>
+                            <input type="text" id="ticketTitle" class="form-input" placeholder="Briefly describe your issue" required>
+                        </div>
+                        <small>Be specific to help us understand your issue</small>
+                    </div>
+
+                    <div class="gc-support-form-group">
+                        <label>Priority Level</label>
+                        <div class="gc-input-wrapper">
+                            <i class="far fa-flag"></i>
+                            <select id="ticketPriority" class="form-input" required>
+                                <option value="low">Low Priority</option>
+                                <option value="medium">Medium Priority</option>
+                                <option value="high">High Priority</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                        <small>Select based on urgency of your request</small>
+                    </div>
+
+                    <div class="gc-support-form-group">
+                        <label>Describe Your Issue</label>
+                        <div class="gc-input-wrapper">
+                            <i class="far fa-comment-alt"></i>
+                            <textarea id="ticketDescription" class="form-input" placeholder="Please provide all relevant details about your issue so we can help you better" required></textarea>
+                        </div>
+                        <small>Include any relevant details that might help us resolve your issue</small>
+                    </div>
+
+                    <div class="gc-info-box">
+                        <i class="fas fa-info-circle"></i>
+                        <div>
+                            <strong>Support Information</strong>
+                            <p>Our support team typically responds within 24 hours. For urgent matters, please select "High Priority" and we'll do our best to assist you sooner.</p>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="gc-submit-ticket-btn" id="supportSubmitBtn">
+                        <i class="fas fa-paper-plane"></i> Submit Ticket
+                    </button>
+                </form>
             </div>
         </section>
 
@@ -2964,7 +3168,7 @@
                 return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             };
 
-            const renderRow = (tx) => {
+            const renderRow = (tx, isShort = false) => {
                 const isDeposit = tx.transaction_type === 'deposit';
                 const credit = isDeposit || (tx.receiver_account_id === a.id && tx.sender_account_id !== a.id);
                 const type = credit ? 'Credit' : 'Debit';
@@ -2974,21 +3178,28 @@
                 const desc = tx.description || '—';
                 const scope = tx.scope || '—';
 
-                return '<tr style="cursor:pointer;" onclick="showTxDetail(' + tx.id + ')">' +
+                let html = '<tr style="cursor:pointer;" onclick="showTxDetail(' + tx.id + ')">' +
                     '<td class="tx-icon-cell"><div class="gc-tx-icon-circle ' + iconClass + '">' + icon + '</div></td>' +
                     '<td><strong>' + fmt(tx.amount) + ' USD</strong></td>' +
                     '<td><span class="gc-tx-type-badge ' + iconClass + '">' + type + '</span></td>' +
                     '<td><span class="gc-tx-status processed">Processed</span></td>' +
                     '<td class="gc-tx-ref">' + refId + '</td>' +
-                    '<td>' + desc + '</td>' +
-                    '<td>' + scope + '</td>' +
-                    '<td>' + formatDate(tx.created_at) + '</td>' +
-                    '<td><a href="#" class="gc-receipt-link" onclick="event.stopPropagation(); showReceipt(' + tx.id + ');" style="color:var(--gc-blue);text-decoration:none;font-size:12px;font-weight:600;"><i class="far fa-file-alt"></i> Receipt</a></td></tr>';
+                    '<td>' + desc + '</td>';
+
+                if (!isShort) {
+                    html += '<td>' + scope + '</td>' +
+                        '<td>' + formatDate(tx.created_at) + '</td>' +
+                        '<td><a href="#" class="gc-receipt-link" onclick="event.stopPropagation(); showReceipt(' + tx.id + ');" style="color:var(--gc-blue);text-decoration:none;font-size:12px;font-weight:600;"><i class="far fa-file-alt"></i> Receipt</a></td>';
+                }
+
+                html += '</tr>';
+                return html;
             };
 
-            const empty = '<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--gc-text-light);">No transactions yet. Make a deposit to get started!</td></tr>';
-            document.getElementById('recentTxBody').innerHTML = txs.length ? txs.slice(0, 5).map(renderRow).join('') : empty;
-            document.getElementById('allTxBody').innerHTML = txs.length ? txs.map(renderRow).join('') : empty;
+            const empty = (cols) => '<tr><td colspan="' + cols + '" style="text-align:center;padding:30px;color:var(--gc-text-light);">No transactions yet. Make a deposit to get started!</td></tr>';
+            
+            document.getElementById('recentTxBody').innerHTML = txs.length ? txs.slice(0, 5).map(tx => renderRow(tx, true)).join('') : empty(6);
+            document.getElementById('allTxBody').innerHTML = txs.length ? txs.map(tx => renderRow(tx, false)).join('') : empty(9);
         }
 
         function showTxDetail(txId) {
@@ -3010,7 +3221,7 @@
         function txRow(l, v) { return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f8fafc;"><span style="font-size:13px;color:var(--gc-text-light);">' + l + '</span><span style="font-size:13px;font-weight:600;">' + v + '</span></div>'; }
 
         function showSection(name) {
-            ['overview', 'transactions', 'profile', 'cardDetails', 'cards'].forEach(s => {
+            ['overview', 'transactions', 'profile', 'cardDetails', 'cards', 'support'].forEach(s => {
                 const el = document.getElementById('section-' + s);
                 if (el) el.style.display = s === name ? 'block' : 'none';
 
@@ -3145,6 +3356,29 @@
             document.getElementById('cardsTabTotalBal').textContent = fmt(a.balance * 0.0225);
             document.getElementById('cardsTabCardBal').textContent = 'USD ' + Number(a.balance * 0.0225).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('cardsTabLast4').textContent = last4;
+        }
+
+        async function handleSupportSubmit(event) {
+            event.preventDefault();
+            const title = document.getElementById('ticketTitle').value.trim();
+            const priority = document.getElementById('ticketPriority').value;
+            const description = document.getElementById('ticketDescription').value.trim();
+            
+            if (!title || !description) return Toast.warning('Please fill in all required fields');
+            
+            const btn = document.getElementById('supportSubmitBtn');
+            const oldHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            
+            // Mock submission delay
+            setTimeout(() => {
+                Toast.success('Support ticket submitted successfully! Reference: NX-' + Math.floor(Math.random() * 900000 + 100000));
+                document.getElementById('supportForm').reset();
+                btn.disabled = false;
+                btn.innerHTML = oldHtml;
+                showSection('overview');
+            }, 1500);
         }
 
         // ── Balance visibility toggle ──
