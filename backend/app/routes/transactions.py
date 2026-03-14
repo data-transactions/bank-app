@@ -7,6 +7,7 @@ from ..models.account import Account
 from ..models.transaction import Transaction, TransactionType, TransactionStatus
 from ..schemas.transaction import DepositRequest, WithdrawRequest, TransferRequest
 from ..core.dependencies import get_current_user
+from ..models.notification import Notification
 from ..services.account_service import generate_reference_code
 
 router = APIRouter(prefix="/api/transactions", tags=["transactions"])
@@ -112,6 +113,17 @@ def deposit(
     db.commit()
     db.refresh(tx)
     db.refresh(account)
+
+    # Create notification
+    notif = Notification(
+        user_id=current_user.id,
+        title="Deposit Successful",
+        message=f"Successfully deposited ${payload.amount:.2f} into your account.",
+        type="success"
+    )
+    db.add(notif)
+    db.commit()
+
     return {**_fmt(tx, db), "balance_after": float(account.balance)}
 
 
@@ -142,6 +154,17 @@ def withdraw(
     db.commit()
     db.refresh(tx)
     db.refresh(account)
+
+    # Create notification
+    notif = Notification(
+        user_id=current_user.id,
+        title="Withdrawal Successful",
+        message=f"Successfully withdrew ${payload.amount:.2f} from your account.",
+        type="warning"
+    )
+    db.add(notif)
+    db.commit()
+
     return {**_fmt(tx, db), "balance_after": float(account.balance)}
 
 
@@ -185,4 +208,27 @@ def transfer(
     db.commit()
     db.refresh(tx)
     db.refresh(sender_acc)
+
+    # Create notification for sender
+    sender_notif = Notification(
+        user_id=current_user.id,
+        title="Transfer Sent",
+        message=f"Successfully transferred ${payload.amount:.2f} to {payload.receiver_account_number}.",
+        type="info"
+    )
+    db.add(sender_notif)
+
+    # Create notification for receiver
+    receiver_user = db.query(User).join(Account).filter(Account.id == receiver_acc.id).first()
+    if receiver_user:
+        receiver_notif = Notification(
+            user_id=receiver_user.id,
+            title="Transfer Received",
+            message=f"You received ${payload.amount:.2f} from {sender_acc.account_number}.",
+            type="success"
+        )
+        db.add(receiver_notif)
+
+    db.commit()
+
     return {**_fmt(tx, db), "balance_after": float(sender_acc.balance)}

@@ -256,6 +256,7 @@
         }
 
         .gc-topbar-icon {
+            position: relative;
             width: 36px;
             height: 36px;
             border-radius: 50%;
@@ -1868,6 +1869,188 @@
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
         }
+
+        /* NOTIFICATIONS */
+        .gc-topbar-icon {
+            position: relative;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: .2s;
+        }
+
+        .gc-topbar-icon:hover {
+            background: var(--gc-bg);
+        }
+
+        .gc-notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--gc-red);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: none;
+        }
+
+        .gc-notification-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 320px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--gc-border);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        @media (max-width: 992px) {
+            .gc-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .gc-sidebar.open {
+                transform: translateX(0);
+            }
+            .gc-main {
+                margin-left: 0;
+            }
+            .gc-topbar-mobile-toggle {
+                display: flex !important;
+            }
+            .gc-grid {
+                grid-template-columns: 1fr;
+            }
+            .gc-stat-row {
+                flex-wrap: wrap;
+            }
+            .gc-stat-card {
+                flex: 1 1 calc(50% - 16px);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .gc-stat-card {
+                flex: 1 1 100%;
+            }
+            .gc-actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .gc-credit-card {
+                width: 100%;
+            }
+            .gc-welcome h2 {
+                font-size: 24px;
+            }
+            .gc-topbar {
+                padding: 12px 16px;
+            }
+            .gc-content {
+                padding: 16px;
+            }
+        }
+    </style>
+        .gc-notification-header {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--gc-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .gc-notification-header h4 {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .gc-notification-header a {
+            font-size: 11px;
+            color: var(--gc-blue);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .gc-notification-list {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .gc-notification-item {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--gc-border);
+            display: flex;
+            gap: 12px;
+            cursor: pointer;
+            transition: .15s;
+        }
+
+        .gc-notification-item:hover {
+            background: #f8fafc;
+        }
+
+        .gc-notification-item.unread {
+            background: #f0f9ff;
+        }
+
+        .gc-notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .gc-notif-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .gc-notif-icon.info { background: #e0f2fe; color: #0ea5e9; }
+        .gc-notif-icon.success { background: #dcfce7; color: #10b981; }
+        .gc-notif-icon.warning { background: #fef3c7; color: #f59e0b; }
+        .gc-notif-icon.danger { background: #fee2e2; color: #ef4444; }
+
+        .gc-notif-content {
+            flex: 1;
+        }
+
+        .gc-notif-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gc-dark);
+            margin-bottom: 2px;
+        }
+
+        .gc-notif-msg {
+            font-size: 12px;
+            color: var(--gc-text-light);
+            line-height: 1.4;
+        }
+
+        .gc-notif-time {
+            font-size: 10px;
+            color: var(--gc-text-light);
+            margin-top: 4px;
+        }
+
+        .gc-notif-empty {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--gc-text-light);
+            font-size: 13px;
+        }
     </style>
 </head>
 
@@ -1924,10 +2107,27 @@
     <div class="gc-main">
         <!-- TOPBAR -->
         <div class="gc-topbar">
-            <div class="gc-topbar-left"><i class="far fa-calendar-alt"></i> <span id="topbarDate"></span></div>
+            <div class="gc-topbar-left" style="display: flex; align-items: center; gap: 12px;">
+                <div class="gc-topbar-mobile-toggle" onclick="toggleSidebar()" style="display: none; cursor: pointer; font-size: 20px; color: var(--gc-text);">
+                    <i class="fas fa-bars"></i>
+                </div>
+                <i class="far fa-calendar-alt"></i> <span id="topbarDate"></span></div>
             <div class="gc-topbar-right">
                 <div class="gc-balance-badge"><i class="fas fa-wallet"></i> <span id="topbarBalance">$0.00</span></div>
-                <div class="gc-topbar-icon"><i class="far fa-bell"></i></div>
+                <div class="gc-topbar-icon" onclick="toggleNotifications(event)">
+                    <i class="far fa-bell"></i>
+                    <div class="gc-notification-badge" id="notifBadge"></div>
+                    
+                    <div class="gc-notification-dropdown" id="notifDropdown" onclick="event.stopPropagation()">
+                        <div class="gc-notification-header">
+                            <h4>Notifications</h4>
+                            <a onclick="markAllNotificationsAsRead()">Mark all as read</a>
+                        </div>
+                        <div class="gc-notification-list" id="notifList">
+                            <div class="gc-notif-empty">Loading notifications...</div>
+                        </div>
+                    </div>
+                </div>
                 <div class="gc-topbar-avatar" id="topbarAvatar"></div>
             </div>
         </div>
@@ -2931,6 +3131,11 @@
             }
         }
  function updateAllUI() {
+            if (!state.notificationsInitialized) {
+                fetchNotifications();
+                setInterval(fetchNotifications, 60000);
+                state.notificationsInitialized = true;
+            }
             const u = state.user, a = state.account, s = state.stats;
             const fmt = (v) => {
                 const num = Number(v || 0);
@@ -3252,6 +3457,7 @@
                 state.transactions.unshift(res); updateAllUI(); closeModal('depositModal');
                 document.getElementById('depositAmount').value = '';
                 Toast.success('Deposited successfully!');
+                addLocalNotification('Deposit Received', `A deposit of $${amount.toLocaleString()} has been credited to your account.`, 'success');
             } catch (e) { Toast.error(e.message); }
             btn.disabled = false; btn.textContent = 'Deposit Funds';
         }
@@ -3270,6 +3476,7 @@
                 state.transactions.unshift(res); updateAllUI(); closeModal('sendModal');
                 document.getElementById('sendRecipient').value = ''; document.getElementById('sendAmount').value = ''; document.getElementById('sendDescription').value = '';
                 Toast.success('Sent successfully!');
+                addLocalNotification('Transfer Sent', `You have successfully sent $${amount.toLocaleString()} to account ${recipient}.`, 'success');
             } catch (e) { Toast.error(e.message); }
             btn.disabled = false; btn.textContent = 'Send Money';
         }
@@ -3379,6 +3586,107 @@
                 btn.innerHTML = oldHtml;
                 showSection('overview');
             }, 1500);
+        }
+
+        // ── Notifications ──
+        let notifications = [];
+
+        // ── Sidebar Toggle (Mobile) ──
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.gc-sidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        async function fetchNotifications() {
+            try {
+                const res = await NexaAPI.get('/api/notifications');
+                notifications = res;
+                renderNotifications();
+            } catch (err) {
+                console.error("Failed to fetch notifications", err);
+            }
+        }
+
+        function renderNotifications() {
+            const list = document.getElementById('notifList');
+            const badge = document.getElementById('notifBadge');
+            
+            const unreadCount = notifications.filter(n => !n.is_read).length;
+            badge.style.display = unreadCount > 0 ? 'block' : 'none';
+            
+            if (notifications.length === 0) {
+                list.innerHTML = '<div class="gc-notif-empty">No notifications yet</div>';
+                return;
+            }
+            
+            list.innerHTML = notifications.map(n => {
+                let icon = 'info-circle';
+                if (n.type === 'success') icon = 'check-circle';
+                if (n.type === 'warning') icon = 'exclamation-triangle';
+                if (n.type === 'danger') icon = 'times-circle';
+                
+                const timeStr = new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                return `
+                    <div class="gc-notification-item ${n.is_read ? '' : 'unread'}" onclick="markNotificationAsRead(${n.id})">
+                        <div class="gc-notif-icon ${n.type}">
+                            <i class="fas fa-${icon}"></i>
+                        </div>
+                        <div class="gc-notif-content">
+                            <div class="gc-notif-title">${n.title}</div>
+                            <div class="gc-notif-msg">${n.message}</div>
+                            <div class="gc-notif-time">${timeStr}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleNotifications(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById('notifDropdown');
+            const isOpen = dropdown.style.display === 'block';
+            dropdown.style.display = isOpen ? 'none' : 'block';
+            if (!isOpen) fetchNotifications();
+        }
+
+        async function markNotificationAsRead(id) {
+            try {
+                await NexaAPI.patch(`/api/notifications/${id}/read`);
+                notifications = notifications.map(n => n.id === id ? { ...n, is_read: true } : n);
+                renderNotifications();
+            } catch (err) {
+                console.error("Failed to mark notification as read", err);
+            }
+        }
+
+        async function markAllNotificationsAsRead() {
+            try {
+                await NexaAPI.post('/api/notifications/read-all');
+                notifications = notifications.map(n => ({ ...n, is_read: true }));
+                renderNotifications();
+            } catch (err) {
+                console.error("Failed to mark all as read", err);
+            }
+        }
+
+        // Close notifications when clicking outside
+        window.addEventListener('click', () => {
+            const dropdown = document.getElementById('notifDropdown');
+            if (dropdown) dropdown.style.display = 'none';
+        });
+
+        function addLocalNotification(title, message, type = 'info') {
+            // In a real app, this would be a server-side trigger, but for demo we add it here
+            notifications.unshift({
+                id: Date.now(),
+                title: title,
+                message: message,
+                type: type,
+                is_read: false,
+                created_at: new Date().toISOString()
+            });
+            renderNotifications();
         }
 
         // ── Balance visibility toggle ──

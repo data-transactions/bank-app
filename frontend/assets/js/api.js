@@ -51,6 +51,7 @@ const api = {
     get: (path) => apiRequest('GET', path),
     post: (path, body) => apiRequest('POST', path, body),
     put: (path, body) => apiRequest('PUT', path, body),
+    patch: (path, body) => apiRequest('PATCH', path, body),
     upload: (path, formData) => apiRequest('POST', path, formData, true),
 
     // Auth

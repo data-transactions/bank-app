@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,39 +9,98 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=DM+Serid+Display&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="./assets/css/output.css" />
+  <style>
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 15px 20px !important;
+      }
+      .navbar-links, .navbar-cta {
+        display: none !important;
+      }
+      .hamburger {
+        display: block !important;
+      }
+      h1 {
+        font-size: 3rem !important;
+      }
+      .section-title {
+        font-size: 32px !important;
+      }
+      /* Ensure tables are scrollable on small screens */
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      table {
+        min-width: 600px;
+      }
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .navbar.scrolled {
+      background: #ffffff !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+      padding-top: 12px !important;
+      padding-bottom: 12px !important;
+    }
+  </style>
 </head>
 
 <body>
 
   <!-- ══════════════ NAVBAR ══════════════ -->
-  <nav class="navbar" id="navbar">
-    <a href="/" class="navbar-logo">
+  <nav class="navbar" id="navbar" style="padding: 15px 50px; background: #fff; display: flex; align-items: center; justify-content: space-between;">
+    <a href="/" class="navbar-logo" style="text-decoration: none;">
       <div class="logo-mark">N</div>
-      NexaBank
+      <span style="font-family: 'DM Serif Display', serif; font-size: 24px; color: #1e3a8a; margin: 0; letter-spacing: 1px; font-weight: 800;">NEXA</span>
     </a>
-    <ul class="navbar-links">
-      <li><a href="#features">Features</a></li>
-      <li><a href="#trusted">Partners</a></li>
-      <li><a href="#how">How it works</a></li>
-    </ul>
-    <div class="navbar-cta">
-      <a href="/login/" class="btn btn-outline btn-sm">Log In</a>
-      <a href="/signup/" class="btn btn-primary btn-sm">Get Started</a>
+
+    <div class="navbar-center" style="display: flex; align-items: center; gap: 20px;">
+      <ul class="navbar-links" style="display: flex; gap: 25px; list-style: none; margin: 0; padding: 0;">
+        <li><a href="/" style="font-size: 14px; font-weight: 500; color: #2563eb; text-decoration: none;">Home</a></li>
+        <li><a href="/business.html" style="font-size: 14px; font-weight: 500; color: #374151; text-decoration: none;">Business</a></li>
+        <li><a href="/personal.html" style="font-size: 14px; font-weight: 500; color: #374151; text-decoration: none;">Personal</a></li>
+        <li><a href="/security.html" style="font-size: 14px; font-weight: 500; color: #374151; text-decoration: none;">Security</a></li>
+        <li><a href="/support.html" style="font-size: 14px; font-weight: 500; color: #374151; text-decoration: none;">Support</a></li>
+      </ul>
     </div>
+
+    <div class="navbar-cta" style="display: flex; align-items: center; gap: 20px;">
+      <a href="/login/" style="color: #374151; font-size: 18px; text-decoration: none;"><i class="far fa-user"></i></a>
+      <a href="/login/" class="btn btn-primary" style="background: #2563eb; color: #fff; padding: 12px 24px; border-radius: 6px; font-size: 13px; font-weight: 700; text-transform: uppercase; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">ONLINE BANKING <i class="fas fa-chevron-right" style="font-size: 10px;"></i></a>
+    </div>
+
     <button class="hamburger" id="hamburgerBtn" aria-label="Open menu">
       <span></span><span></span><span></span>
     </button>
   </nav>
+  <script>
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+  </script>
 
   <!-- Mobile Menu Overlay -->
   <div class="mobile-menu" id="mobileMenu">
     <nav class="mobile-menu-links">
-      <a href="#features" onclick="closeMobileMenu()">Features</a>
-      <a href="#trusted" onclick="closeMobileMenu()">Partners</a>
-      <a href="#how" onclick="closeMobileMenu()">How it works</a>
+      <a href="/personal.html" onclick="closeMobileMenu()">Personal</a>
+      <a href="/business.html" onclick="closeMobileMenu()">Business</a>
+      <a href="/security.html" onclick="closeMobileMenu()">Security</a>
+      <a href="/support.html" onclick="closeMobileMenu()">Support</a>
     </nav>
     <div class="mobile-menu-cta">
       <a href="/login/" class="btn btn-ghost btn-lg">Log In</a>
@@ -213,6 +271,180 @@
     </div>
   </section>
 
+  <!-- ══════════════ CURRENCY TOOLS ══════════════ -->
+  <section class="py-20 bg-white" id="currency-tools">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <p style="text-transform: uppercase; letter-spacing: 2px; color: #2563eb; font-weight: 700; font-size: 14px; margin-bottom: 20px;">Popular Currency Tools</p>
+      <h2 style="font-size: 40px; font-weight: 800; color: #111827; margin-bottom: 50px;">Set Up & Exchange Money From<br>Your Cards In A Minute</h2>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+        <!-- Card 1 -->
+        <div style="background: #f8fafc; padding: 40px; border-radius: 16px; text-align: left; transition: .3s;" onmouseover="this.style.background='#fff'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.05)';" onmouseout="this.style.background='#f8fafc'; this.style.boxShadow='none';">
+          <div style="width: 50px; height: 50px; background: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <i class="fas fa-hand-holding-usd" style="color: #2563eb; font-size: 24px;"></i>
+          </div>
+          <h3 style="font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 16px;">Money Transfer</h3>
+          <p style="color: #64748b; font-size: 15px; line-height: 1.6; margin-bottom: 24px;">With our digital platform, you may send money to relatives and friends all around the world.</p>
+          <a href="/login/" style="color: #2563eb; font-weight: 700; text-decoration: none; font-size: 14px; text-transform: uppercase;">Send Money <i class="fas fa-chevron-right" style="font-size: 10px; margin-left: 5px;"></i></a>
+        </div>
+
+        <!-- Card 2 -->
+        <div style="background: #f8fafc; padding: 40px; border-radius: 16px; text-align: left; transition: .3s;" onmouseover="this.style.background='#fff'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.05)';" onmouseout="this.style.background='#f8fafc'; this.style.boxShadow='none';">
+          <div style="width: 50px; height: 50px; background: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <i class="fas fa-chart-pie" style="color: #2563eb; font-size: 24px;"></i>
+          </div>
+          <h3 style="font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 16px;">Currency Charts</h3>
+          <p style="color: #64748b; font-size: 15px; line-height: 1.6; margin-bottom: 24px;">You can always watch the market's movement and make trading decisions with our currency charts.</p>
+          <a href="/login/" style="color: #2563eb; font-weight: 700; text-decoration: none; font-size: 14px; text-transform: uppercase;">View Chart <i class="fas fa-chevron-right" style="font-size: 10px; margin-left: 5px;"></i></a>
+        </div>
+
+        <!-- Card 3 -->
+        <div style="background: #f8fafc; padding: 40px; border-radius: 16px; text-align: left; transition: .3s;" onmouseover="this.style.background='#fff'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.05)';" onmouseout="this.style.background='#f8fafc'; this.style.boxShadow='none';">
+          <div style="width: 50px; height: 50px; background: #fff; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+            <i class="fas fa-bell" style="color: #2563eb; font-size: 24px;"></i>
+          </div>
+          <h3 style="font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 16px;">Rate Alerts</h3>
+          <p style="color: #64748b; font-size: 15px; line-height: 1.6; margin-bottom: 24px;">To enable our clients to convert, we at NEXA provide the finest currency rates in the market.</p>
+          <a href="/login/" style="color: #2563eb; font-weight: 700; text-decoration: none; font-size: 14px; text-transform: uppercase;">Create Alert <i class="fas fa-chevron-right" style="font-size: 10px; margin-left: 5px;"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ LIVE EXCHANGE RATES ══════════════ -->
+  <section class="py-20 bg-slate-50" id="rates">
+    <div class="max-w-7xl mx-auto px-6">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; text-align: left;">
+        <div>
+          <p style="text-transform: uppercase; letter-spacing: 2px; color: #2563eb; font-weight: 700; font-size: 14px; margin-bottom: 12px;">Live Exchange Rates</p>
+          <h2 style="font-size: 36px; font-weight: 800; color: #111827; line-height: 1.2;">International Currency<br>Exchange Rates</h2>
+        </div>
+        <a href="/login/" class="btn btn-primary" style="background: #2563eb; padding: 12px 24px;">View All Rates</a>
+      </div>
+
+      <div class="table-container" style="background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead>
+            <tr style="background: #f8fafc; border-bottom: 1px solid #f1f5f9;">
+              <th style="padding: 20px 24px; color: #64748b; font-size: 13px; font-weight: 700; text-transform: uppercase;">Currency Pair</th>
+              <th style="padding: 20px 24px; color: #64748b; font-size: 13px; font-weight: 700; text-transform: uppercase;">Market Rate</th>
+              <th style="padding: 20px 24px; color: #64748b; font-size: 13px; font-weight: 700; text-transform: uppercase;">24h Change</th>
+              <th style="padding: 20px 24px; color: #64748b; font-size: 13px; font-weight: 700; text-transform: uppercase;">Trend</th>
+              <th style="padding: 20px 24px; color: #64748b; font-size: 13px; font-weight: 700; text-transform: uppercase;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- EUR/USD -->
+            <tr style="border-bottom: 1px solid #f1f5f9; transition: .2s;" onmouseover="this.style.background='#fbfcfe';" onmouseout="this.style.background='transparent';">
+              <td style="padding: 20px 24px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 36px; height: 36px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #1e3a8a;">€</div>
+                  <div>
+                    <div style="font-weight: 700; color: #111827;">EUR/USD</div>
+                    <div style="font-size: 12px; color: #64748b;">Euro / US Dollar</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 20px 24px; font-weight: 700; color: #111827; font-family: 'JetBrains Mono', monospace;">1.0842</td>
+              <td style="padding: 20px 24px;">
+                <span style="color: #10b981; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                  <i class="fas fa-caret-up"></i> +0.12%
+                </span>
+              </td>
+              <td style="padding: 20px 24px; width: 120px;">
+                <svg width="100" height="30" viewBox="0 0 100 30" style="stroke: #10b981; stroke-width: 2; fill: none;">
+                  <path d="M0,25 L10,22 L20,24 L30,18 L40,20 L50,15 L60,12 L70,16 L80,10 L90,12 L100,5" stroke-linecap="round"></path>
+                </svg>
+              </td>
+              <td style="padding: 20px 24px;">
+                <a href="/login/" style="background: #eef2ff; color: #2563eb; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; transition: .2s;" onmouseover="this.style.background='#2563eb'; this.style.color='#fff';" onmouseout="this.style.background='#eef2ff'; this.style.color='#2563eb';">Send Now</a>
+              </td>
+            </tr>
+            <!-- GBP/USD -->
+            <tr style="border-bottom: 1px solid #f1f5f9; transition: .2s;" onmouseover="this.style.background='#fbfcfe';" onmouseout="this.style.background='transparent';">
+              <td style="padding: 20px 24px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 36px; height: 36px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #1e3a8a;">£</div>
+                  <div>
+                    <div style="font-weight: 700; color: #111827;">GBP/USD</div>
+                    <div style="font-size: 12px; color: #64748b;">British Pound / US Dollar</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 20px 24px; font-weight: 700; color: #111827; font-family: 'JetBrains Mono', monospace;">1.2654</td>
+              <td style="padding: 20px 24px;">
+                <span style="color: #ef4444; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                  <i class="fas fa-caret-down"></i> -0.05%
+                </span>
+              </td>
+              <td style="padding: 20px 24px; width: 120px;">
+                <svg width="100" height="30" viewBox="0 0 100 30" style="stroke: #ef4444; stroke-width: 2; fill: none;">
+                  <path d="M0,5 L10,8 L20,6 L30,12 L40,10 L50,18 L60,22 L70,20 L80,25 L90,23 L100,28" stroke-linecap="round"></path>
+                </svg>
+              </td>
+              <td style="padding: 20px 24px;">
+                <a href="/login/" style="background: #eef2ff; color: #2563eb; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; transition: .2s;" onmouseover="this.style.background='#2563eb'; this.style.color='#fff';" onmouseout="this.style.background='#eef2ff'; this.style.color='#2563eb';">Send Now</a>
+              </td>
+            </tr>
+            <!-- USD/JPY -->
+            <tr style="border-bottom: 1px solid #f1f5f9; transition: .2s;" onmouseover="this.style.background='#fbfcfe';" onmouseout="this.style.background='transparent';">
+              <td style="padding: 20px 24px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 36px; height: 36px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #1e3a8a;">¥</div>
+                  <div>
+                    <div style="font-weight: 700; color: #111827;">USD/JPY</div>
+                    <div style="font-size: 12px; color: #64748b;">US Dollar / Japanese Yen</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 20px 24px; font-weight: 700; color: #111827; font-family: 'JetBrains Mono', monospace;">149.85</td>
+              <td style="padding: 20px 24px;">
+                <span style="color: #10b981; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                  <i class="fas fa-caret-up"></i> +0.34%
+                </span>
+              </td>
+              <td style="padding: 20px 24px; width: 120px;">
+                <svg width="100" height="30" viewBox="0 0 100 30" style="stroke: #10b981; stroke-width: 2; fill: none;">
+                  <path d="M0,28 L10,25 L20,26 L30,20 L40,18 L50,15 L60,16 L70,12 L80,8 L90,10 L100,5" stroke-linecap="round"></path>
+                </svg>
+              </td>
+              <td style="padding: 20px 24px;">
+                <a href="/login/" style="background: #eef2ff; color: #2563eb; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; transition: .2s;" onmouseover="this.style.background='#2563eb'; this.style.color='#fff';" onmouseout="this.style.background='#eef2ff'; this.style.color='#2563eb';">Send Now</a>
+              </td>
+            </tr>
+            <!-- AUD/USD -->
+            <tr style="transition: .2s;" onmouseover="this.style.background='#fbfcfe';" onmouseout="this.style.background='transparent';">
+              <td style="padding: 20px 24px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 36px; height: 36px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #1e3a8a;">$</div>
+                  <div>
+                    <div style="font-weight: 700; color: #111827;">AUD/USD</div>
+                    <div style="font-size: 12px; color: #64748b;">Australian Dollar / US Dollar</div>
+                  </div>
+                </div>
+              </td>
+              <td style="padding: 20px 24px; font-weight: 700; color: #111827; font-family: 'JetBrains Mono', monospace;">0.6542</td>
+              <td style="padding: 20px 24px;">
+                <span style="color: #64748b; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                   0.00%
+                </span>
+              </td>
+              <td style="padding: 20px 24px; width: 120px;">
+                <svg width="100" height="30" viewBox="0 0 100 30" style="stroke: #64748b; stroke-width: 2; fill: none;">
+                  <path d="M0,15 L10,14 L20,16 L30,15 L40,15 L50,14 L60,16 L70,15 L80,15 L90,14 L100,15" stroke-linecap="round"></path>
+                </svg>
+              </td>
+              <td style="padding: 20px 24px;">
+                <a href="/login/" style="background: #eef2ff; color: #2563eb; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; transition: .2s;" onmouseover="this.style.background='#2563eb'; this.style.color='#fff';" onmouseout="this.style.background='#eef2ff'; this.style.color='#2563eb';">Send Now</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="text-align: center; margin-top: 30px; font-size: 14px; color: #94a3b8;">* Rates are updated every 60 seconds. Market data provided for informational purposes only.</p>
+    </div>
+  </section>
+
   <!-- ══════════════ TRUSTED BY ══════════════ -->
   <section class="py-16 bg-white border-y border-slate-100" id="trusted">
     <div class="max-w-7xl mx-auto px-6 mb-10 text-center">
@@ -322,104 +554,143 @@
     </div>
   </section>
 
-  <!-- ══════════════ FEATURES ══════════════ -->
-  <section class="py-24 bg-slate-50" id="features">
-    <div class="max-w-7xl mx-auto px-6 lg:px-16">
-      <div class="text-center mb-20 fade-in-up">
-        <p class="section-eyebrow mb-4">Why NexaBank?</p>
-        <h2 class="section-title font-display tracking-tight text-slate-950">Banking that works<br /><span
-            class="text-brand-600">the way you think</span></h2>
-        <p class="section-subtitle mx-auto text-slate-500 max-w-xl">Powerful tools, elegant design, and bank-grade
-          security — all wrapped in an
-          interface you'll actually enjoy using.</p>
+  <!-- ══════════════ YOUR BENEFITS ══════════════ -->
+  <section class="py-24 bg-white" id="benefits">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <p style="text-transform: uppercase; letter-spacing: 2px; color: #2563eb; font-weight: 700; font-size: 14px; margin-bottom: 12px;">Your Benefits</p>
+        <h2 style="font-size: 40px; font-weight: 800; color: #111827; margin-bottom: 20px;">The Next Generation <br>Of Online Banking</h2>
+        <p style="color: #64748b; font-size: 18px; max-width: 600px; margin: 0 auto;">Experience a new level of financial freedom with our cutting-edge features designed for your lifestyle.</p>
       </div>
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-        <!-- Feature 1 -->
-        <div class="card card-hover fade-in-up stagger-1 border-slate-100/50">
-          <div class="w-12 h-12 rounded-xl mb-6 flex items-center justify-center shadow-premium-sm"
-            style="background: #eff6ff;">
-            <svg width="22" height="22" fill="none" stroke="#1a56db" stroke-width="2" viewBox="0 0 24 24">
-              <path d="m22 2-7 20-4-9-9-4 20-7z" />
-            </svg>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;">
+        <!-- Benefit 1 -->
+        <div style="padding: 32px; border-radius: 20px; border: 1px solid #f1f5f9; transition: .3s;" onmouseover="this.style.borderColor='#2563eb'; this.style.boxShadow='0 10px 30px rgba(37, 99, 235, 0.05)';" onmouseout="this.style.borderColor='#f1f5f9'; this.style.boxShadow='none';">
+          <div style="width: 48px; height: 48px; background: #eff6ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+            <i class="fas fa-globe" style="color: #2563eb; font-size: 20px;"></i>
           </div>
-          <h3 class="text-lg font-bold text-slate-900 mb-3 font-display">Instant Transfers</h3>
-          <p class="text-slate-500 text-sm leading-relaxed">Send money to any NexaBank account in seconds with zero
-            fees. Real-time balance updates keep you always in control.</p>
+          <h3 style="font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 12px;">Global Coverage</h3>
+          <p style="color: #64748b; line-height: 1.6;">Send and receive money in over 150+ countries with minimal fees and real-time conversion.</p>
         </div>
 
-        <!-- Feature 2 -->
-        <div class="card card-hover fade-in-up stagger-2 border-slate-100/50">
-          <div class="w-12 h-12 rounded-xl mb-6 flex items-center justify-center shadow-premium-sm"
-            style="background: #f0fdf4;">
-            <svg width="22" height="22" fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
-              <rect x="2" y="3" width="20" height="14" rx="2" />
-              <line x1="8" y1="21" x2="16" y2="21" />
-              <line x1="12" y1="17" x2="12" y2="21" />
-            </svg>
+        <!-- Benefit 2 -->
+        <div style="padding: 32px; border-radius: 20px; border: 1px solid #f1f5f9; transition: .3s;" onmouseover="this.style.borderColor='#2563eb'; this.style.boxShadow='0 10px 30px rgba(37, 99, 235, 0.05)';" onmouseout="this.style.borderColor='#f1f5f9'; this.style.boxShadow='none';">
+          <div style="width: 48px; height: 48px; background: #fff7ed; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+            <i class="fas fa-percentage" style="color: #f97316; font-size: 20px;"></i>
           </div>
-          <h3 class="text-lg font-bold text-slate-900 mb-3 font-display">Smart Dashboard</h3>
-          <p class="text-slate-500 text-sm leading-relaxed">Your financial picture at a glance — balance, trends,
-            transaction history, and statistics all in one modern dashboard.</p>
+          <h3 style="font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 12px;">No Hidden Fees</h3>
+          <p style="color: #64748b; line-height: 1.6;">Transparent pricing with no unexpected charges. What you see is exactly what you get.</p>
         </div>
 
-        <!-- Feature 3 -->
-        <div class="card card-hover fade-in-up stagger-3 border-slate-100/50">
-          <div class="w-12 h-12 rounded-xl mb-6 flex items-center justify-center shadow-premium-sm"
-            style="background: #fef3c7;">
-            <svg width="22" height="22" fill="none" stroke="#d97706" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
+        <!-- Benefit 3 -->
+        <div style="padding: 32px; border-radius: 20px; border: 1px solid #f1f5f9; transition: .3s;" onmouseover="this.style.borderColor='#2563eb'; this.style.boxShadow='0 10px 30px rgba(37, 99, 235, 0.05)';" onmouseout="this.style.borderColor='#f1f5f9'; this.style.boxShadow='none';">
+          <div style="width: 48px; height: 48px; background: #f0fdf4; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+            <i class="fas fa-bolt" style="color: #22c55e; font-size: 20px;"></i>
           </div>
-          <h3 class="text-lg font-bold text-slate-900 mb-3 font-display">Bank-Grade Security</h3>
-          <p class="text-slate-500 text-sm leading-relaxed">bcrypt password hashing, JWT authentication, and strict
-            transfer limits protect every transaction you make.</p>
+          <h3 style="font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 12px;">Instant Transfers</h3>
+          <p style="color: #64748b; line-height: 1.6;">Funds reach the recipient's account in seconds, regardless of the time or day of the week.</p>
         </div>
 
-        <!-- Feature 4 -->
-        <div class="card card-hover fade-in-up stagger-1 border-slate-100/50">
-          <div class="w-12 h-12 rounded-xl mb-6 flex items-center justify-center shadow-premium-sm"
-            style="background: #fdf4ff;">
-            <svg width="22" height="22" fill="none" stroke="#9333ea" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-              <line x1="16" y1="13" x2="8" y2="13" />
-              <line x1="16" y1="17" x2="8" y2="17" />
-            </svg>
+        <!-- Benefit 4 -->
+        <div style="padding: 32px; border-radius: 20px; border: 1px solid #f1f5f9; transition: .3s;" onmouseover="this.style.borderColor='#2563eb'; this.style.boxShadow='0 10px 30px rgba(37, 99, 235, 0.05)';" onmouseout="this.style.borderColor='#f1f5f9'; this.style.boxShadow='none';">
+          <div style="width: 48px; height: 48px; background: #faf5ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+            <i class="fas fa-shield-alt" style="color: #a855f7; font-size: 20px;"></i>
           </div>
-          <h3 class="text-lg font-bold text-slate-900 mb-3 font-display">PDF Receipts</h3>
-          <p class="text-slate-500 text-sm leading-relaxed">Download professional PDF receipts for every transaction and
-            full account statements at any time.</p>
+          <h3 style="font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 12px;">Secure & Reliable</h3>
+          <p style="color: #64748b; line-height: 1.6;">Bank-grade encryption and multi-factor authentication to keep your money and data safe.</p>
         </div>
 
-        <!-- Feature 5 -->
-        <div class="card card-hover fade-in-up stagger-2 border-slate-100/50">
-          <div class="w-12 h-12 rounded-xl mb-6 flex items-center justify-center shadow-premium-sm"
-            style="background: #fff7ed;">
-            <svg width="22" height="22" fill="none" stroke="#ea580c" stroke-width="2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
+        <!-- Benefit 5 -->
+        <div style="padding: 32px; border-radius: 20px; border: 1px solid #f1f5f9; transition: .3s;" onmouseover="this.style.borderColor='#2563eb'; this.style.boxShadow='0 10px 30px rgba(37, 99, 235, 0.05)';" onmouseout="this.style.borderColor='#f1f5f9'; this.style.boxShadow='none';">
+          <div style="width: 48px; height: 48px; background: #fdf2f8; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+            <i class="fas fa-mobile-alt" style="color: #db2777; font-size: 20px;"></i>
           </div>
-          <h3 class="text-lg font-bold text-slate-900 mb-3 font-display">Transaction Limits</h3>
-          <p class="text-slate-500 text-sm leading-relaxed">A built-in $500,000 transaction limit and volume tracking
-            gives you visibility and control over your financial activity.</p>
+          <h3 style="font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 12px;">Mobile App</h3>
+          <p style="color: #64748b; line-height: 1.6;">Manage your finances on the go with our award-winning mobile application for iOS and Android.</p>
         </div>
 
-        <!-- Feature 6 -->
-        <div class="card card-hover fade-in-up stagger-3 border-slate-100/50">
-          <div class="w-12 h-12 rounded-xl mb-6 flex items-center justify-center shadow-premium-sm"
-            style="background: #ecfeff;">
-            <svg width="22" height="22" fill="none" stroke="#0891b2" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
+        <!-- Benefit 6 -->
+        <div style="padding: 32px; border-radius: 20px; border: 1px solid #f1f5f9; transition: .3s;" onmouseover="this.style.borderColor='#2563eb'; this.style.boxShadow='0 10px 30px rgba(37, 99, 235, 0.05)';" onmouseout="this.style.borderColor='#f1f5f9'; this.style.boxShadow='none';">
+          <div style="width: 48px; height: 48px; background: #ecfeff; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+            <i class="fas fa-headset" style="color: #0891b2; font-size: 20px;"></i>
           </div>
-          <h3 class="text-lg font-bold text-slate-900 mb-3 font-display">Smart Profile</h3>
-          <p class="text-slate-500 text-sm leading-relaxed">Upload a profile photo via Cloudinary, update your name, and
-            personalize your banking experience.</p>
+          <h3 style="font-size: 20px; font-weight: 700; color: #111827; margin-bottom: 12px;">24/7 Support</h3>
+          <p style="color: #64748b; line-height: 1.6;">Our dedicated support team is available around the clock to assist you with any questions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════ OUR REVIEWS ══════════════ -->
+  <section class="py-24 bg-slate-50" id="reviews">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <p style="text-transform: uppercase; letter-spacing: 2px; color: #2563eb; font-weight: 700; font-size: 14px; margin-bottom: 12px;">Our Reviews</p>
+        <h2 style="font-size: 40px; font-weight: 800; color: #111827; margin-bottom: 20px;">What Our Customers Say</h2>
+        <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 12px;">
+          <div style="display: flex; color: #fbbf24;">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <span style="font-weight: 700; color: #111827;">4.9/5</span>
+          <span style="color: #64748b;">(12,000+ Reviews)</span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
+        <!-- Card 1 -->
+        <div style="background: #fff; padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; position: relative;">
+          <div style="position: absolute; top: 40px; right: 40px; opacity: 0.1;">
+            <i class="fas fa-quote-right style='font-size: 48px; color: #2563eb;'"></i>
+          </div>
+          <div style="display: flex; color: #fbbf24; gap: 4px; margin-bottom: 20px;">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p style="color: #475569; font-size: 17px; line-height: 1.7; margin-bottom: 30px; font-style: italic;">"Switching to NexaBank was the best financial decision I've made this year. The instant transfers actually work as advertised, and the dashboard is incredibly intuitive."</p>
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <img src="/home/elcareem/.gemini/antigravity/brain/66f78dbf-4f5e-43ef-aec8-fdc700e0c0fe/reviewer_avatar_1_1773453511961.png" alt="Sarah Johnson" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover;">
+            <div>
+              <h4 style="font-weight: 700; color: #111827; font-size: 16px;">Sarah Johnson</h4>
+              <p style="color: #64748b; font-size: 14px;">CMO at TechFlow</p>
+            </div>
+          </div>
         </div>
 
+        <!-- Card 2 -->
+        <div style="background: #fff; padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; position: relative;">
+          <div style="position: absolute; top: 40px; right: 40px; opacity: 0.1;">
+            <i class="fas fa-quote-right style='font-size: 48px; color: #2563eb;'"></i>
+          </div>
+          <div style="display: flex; color: #fbbf24; gap: 4px; margin-bottom: 20px;">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p style="color: #475569; font-size: 17px; line-height: 1.7; margin-bottom: 30px; font-style: italic;">"The real-time notifications and spend tracking have helped me save over $500 monthly by identifying unnecessary subscriptions. Truly a life changer."</p>
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <img src="/home/elcareem/.gemini/antigravity/brain/66f78dbf-4f5e-43ef-aec8-fdc700e0c0fe/reviewer_avatar_2_1773453528218.png" alt="David Chen" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover;">
+            <div>
+              <h4 style="font-weight: 700; color: #111827; font-size: 16px;">David Chen</h4>
+              <p style="color: #64748b; font-size: 14px;">Product Designer</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div style="background: #fff; padding: 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.02); border: 1px solid #f1f5f9; position: relative;">
+          <div style="position: absolute; top: 40px; right: 40px; opacity: 0.1;">
+            <i class="fas fa-quote-right style='font-size: 48px; color: #2563eb;'"></i>
+          </div>
+          <div style="display: flex; color: #fbbf24; gap: 4px; margin-bottom: 20px;">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+          </div>
+          <p style="color: #475569; font-size: 17px; line-height: 1.7; margin-bottom: 30px; font-style: italic;">"Finally a banking app that feels like it was built in this decade. Secure, fast, and the customer support is actually helpful. Highly recommended for entrepreneurs."</p>
+          <div style="display: flex; align-items: center; gap: 16px;">
+            <img src="/home/elcareem/.gemini/antigravity/brain/66f78dbf-4f5e-43ef-aec8-fdc700e0c0fe/reviewer_avatar_3_1773453550413.png" alt="Robert Wilson" style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover;">
+            <div>
+              <h4 style="font-weight: 700; color: #111827; font-size: 16px;">Robert Wilson</h4>
+              <p style="color: #64748b; font-size: 14px;">Financial Advisor</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -444,16 +715,16 @@
         </div>
         <div class="text-center fade-in-up stagger-2">
           <div
-            class="w-16 h-16 rounded-2xl mx-auto mb-6 flex items-center justify-center font-extrabold text-xl text-white"
-            style="background: var(--gradient-primary);">2</div>
+            class="w-16 h-16 rounded-2xl mx-auto mb-8 flex items-center justify-center font-extrabold text-xl text-white shadow-premium-md relative z-10"
+            style="background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);">2</div>
           <h3 class="text-lg font-bold mb-2 text-slate-900">Deposit Funds</h3>
           <p class="text-slate-500 text-sm">Add money to your account instantly. Watch your balance update in real time.
           </p>
         </div>
         <div class="text-center fade-in-up stagger-3">
           <div
-            class="w-16 h-16 rounded-2xl mx-auto mb-6 flex items-center justify-center font-extrabold text-xl text-white"
-            style="background: var(--gradient-primary);">3</div>
+             class="w-16 h-16 rounded-2xl mx-auto mb-8 flex items-center justify-center font-extrabold text-xl text-white shadow-premium-md relative z-10"
+            style="background: linear-gradient(135deg, #2563eb 0%, #1e3a8a 100%);">3</div>
           <h3 class="text-lg font-bold mb-2 text-slate-900">Send & Track</h3>
           <p class="text-slate-500 text-sm">Transfer money to others, view history, and download PDF statements anytime.
           </p>
@@ -487,9 +758,9 @@
         <p class="text-xs text-center max-w-md leading-relaxed">© 2026 NexaBank. A simulated fintech MVP. Not a real
           financial institution. All rights reserved.</p>
         <div class="flex gap-8 text-xs font-semibold uppercase tracking-widest">
-          <a href="#" class="hover:text-brand-400 transition-colors">Privacy</a>
-          <a href="#" class="hover:text-brand-400 transition-colors">Terms</a>
-          <a href="#" class="hover:text-brand-400 transition-colors">Support</a>
+          <a href="/security.html" class="hover:text-brand-400 transition-colors">Security</a>
+          <a href="/support.html" class="hover:text-brand-400 transition-colors">Support</a>
+          <a href="/" class="hover:text-brand-400 transition-colors">Terms</a>
         </div>
       </div>
     </div>
