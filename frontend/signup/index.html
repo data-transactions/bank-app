@@ -10,6 +10,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/output.css" />
+    <style>
+        #signupAlert.error {
+            background-color: #fef2f2 !important;
+            border-color: #fee2e2 !important;
+            color: #b91c1c !important;
+        }
+        #signupAlert.success {
+            background-color: #ecfdf5 !important;
+            border-color: #d1fae5 !important;
+            color: #047857 !important;
+        }
+    </style>
 </head>
 
 <body class="min-h-screen flex" style="background: linear-gradient(135deg, #050811 0%, #1e293b 100%);">
@@ -57,7 +69,7 @@
                     <svg width="18" height="18" fill="none" stroke="#10b981" stroke-width="2.5" viewBox="0 0 24 24">
                         <polyline points="20 6 9 17 4 12" />
                     </svg>
-                    BCrypt secured passwords
+                    Protected by bank-grade security
                 </div>
             </div>
         </div>
@@ -79,6 +91,11 @@
                 <h1 class="text-4xl font-extrabold mb-3 font-display tracking-tight" style="color:var(--brand-dark);">
                     Create account</h1>
                 <p class="text-slate-500 leading-relaxed">Join NexaBank and start banking smarter today.</p>
+            </div>
+
+            <div id="signupAlert" class="hidden mb-8 p-4 rounded-2xl border flex items-start gap-3 text-sm transition-all duration-300">
+                <div class="alert-icon shrink-0 mt-0.5"></div>
+                <div class="alert-message font-medium"></div>
             </div>
 
             <form id="signupForm" novalidate>
@@ -201,6 +218,26 @@
     <script>
         if (NexaAPI.getToken()) redirectToDashboard();
 
+        const signupAlert = document.getElementById('signupAlert');
+        const showSignupAlert = (msg, type = 'error') => {
+            const iconEl = signupAlert.querySelector('.alert-icon');
+            const msgEl = signupAlert.querySelector('.alert-message');
+            
+            msgEl.textContent = msg;
+            signupAlert.style.display = 'flex';
+            
+            if (type === 'error') {
+                signupAlert.className = 'mb-8 p-4 rounded-2xl border flex items-start gap-3 text-sm shadow-sm animate-in fade-in slide-in-from-top-2 error';
+                iconEl.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+            } else {
+                signupAlert.className = 'mb-8 p-4 rounded-2xl border flex items-start gap-3 text-sm shadow-sm animate-in fade-in slide-in-from-top-2 success';
+                iconEl.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+            }
+        };
+        const hideSignupAlert = () => {
+            signupAlert.style.display = 'none';
+        };
+
         // Password toggle
         const pwToggle = document.getElementById('pwToggle');
         const pwInput = document.getElementById('password');
@@ -243,19 +280,31 @@
             const spinner = document.getElementById('signupBtnSpinner');
 
             // Reset
+            hideSignupAlert();
             ['firstNameError', 'lastNameError', 'emailError', 'passwordError', 'confirmError'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.remove('visible');
             });
 
             let valid = true;
-            if (!firstName) {
-                document.getElementById('firstNameError').textContent = 'First name is required';
+            const nameRegex = /^[A-Za-z\s-']+$/; // Basic name regex, avoiding digits
+
+            if (!firstName || firstName.length < 3) {
+                document.getElementById('firstNameError').textContent = firstName ? 'First name must be at least 3 characters' : 'First name is required';
+                document.getElementById('firstNameError').classList.add('visible');
+                valid = false;
+            } else if (!nameRegex.test(firstName)) {
+                document.getElementById('firstNameError').textContent = 'First name cannot contain numbers';
                 document.getElementById('firstNameError').classList.add('visible');
                 valid = false;
             }
-            if (!lastName) {
-                document.getElementById('lastNameError').textContent = 'Last name is required';
+
+            if (!lastName || lastName.length < 3) {
+                document.getElementById('lastNameError').textContent = lastName ? 'Last name must be at least 3 characters' : 'Last name is required';
+                document.getElementById('lastNameError').classList.add('visible');
+                valid = false;
+            } else if (!nameRegex.test(lastName)) {
+                document.getElementById('lastNameError').textContent = 'Last name cannot contain numbers';
                 document.getElementById('lastNameError').classList.add('visible');
                 valid = false;
             }
@@ -283,10 +332,10 @@
 
             try {
                 await NexaAPI.signup(firstName, lastName, email, password);
-                Toast.success('Account created! Redirecting to login…');
-                setTimeout(() => { window.location.href = '/login/'; }, 1200);
+                showSignupAlert('Account created! Please check your email to confirm your account before logging in.', 'success');
+                setTimeout(() => { window.location.href = '/login/'; }, 4000);
             } catch (err) {
-                Toast.error(err.message);
+                showSignupAlert(err.message || 'Unable to create account. Please try again.');
                 btn.disabled = false;
                 btnText.classList.remove('hidden');
                 spinner.classList.add('hidden');

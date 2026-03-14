@@ -21,6 +21,15 @@ class RegisterRequest(BaseModel):
     email: EmailStr
     password: str
 
+    @field_validator("first_name", "last_name")
+    @classmethod
+    def validate_names(cls, v: str, info):
+        if len(v) < 3:
+            raise ValueError(f"{info.field_name.replace('_', ' ').capitalize()} must be at least 3 characters long")
+        if any(char.isdigit() for char in v):
+            raise ValueError(f"{info.field_name.replace('_', ' ').capitalize()} cannot contain numbers")
+        return v
+
     @field_validator("password")
     @classmethod
     def password_policy(cls, v):
@@ -43,6 +52,7 @@ class UserResponse(BaseModel):
     full_name: str
     email: EmailStr
     is_admin: bool
+    is_verified: bool
     created_at: datetime.datetime
 
     class Config:

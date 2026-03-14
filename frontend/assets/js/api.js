@@ -28,17 +28,43 @@ async function apiRequest(method, path, body = null, isFormData = false) {
 
     try {
         const res = await fetch(`${API_BASE}${path}`, opts);
-        if (res.status === 401) {
+        
+        // Handle 401 Unauthorized
+        if (res.status === 401 && path !== '/api/auth/login') {
             clearToken();
             window.location.href = '/login/';
             return;
         }
+
         const data = res.headers.get('content-type')?.includes('application/json')
             ? await res.json()
             : null;
         if (!res.ok) {
-            const msg = data?.detail || `HTTP ${res.status}`;
-            throw new Error(Array.isArray(msg) ? msg.map(e => e.msg).join(', ') : msg);
+            let msg = data?.detail || `HTTP ${res.status}`;
+            
+            // Handle validation errors (422 Unprocessable Entity)
+            if (res.status === 422 && Array.isArray(data?.detail)) {
+                const firstError = data.detail[0];
+                const loc = firstError.loc || [];
+                // Use backend error message if it exists and isn't a technical pydantic string
+                const backendMsg = firstError.msg;
+                const field = loc[loc.length - 1];
+                
+                if (field === 'email') msg = 'Please enter a valid email address.';
+                else if (field === 'password') msg = backendMsg || 'Password does not meet security requirements.';
+                else if (field === 'first_name' || field === 'last_name') msg = backendMsg || 'Please enter a valid name (min 3 characters, no numbers).';
+                else msg = backendMsg || 'Invalid data provided.';
+            } 
+            // Handle specific auth errors
+            else if (res.status === 401) {
+                msg = 'Invalid email or password.';
+            }
+            // Handle forbidden/unconfirmed errors
+            else if (res.status === 403) {
+                msg = data?.detail || 'Access denied.';
+            }
+            
+            throw new Error(Array.isArray(msg) ? msg.map(e => e.msg || e).join(', ') : msg);
         }
         return data;
     } catch (err) {
@@ -62,6 +88,7 @@ const api = {
         email, 
         password 
     }),
+    verifyEmail: (email, token) => api.get(`/api/auth/verify?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`),
 
     // Users
     getMe: () => api.get('/api/users/me'),
