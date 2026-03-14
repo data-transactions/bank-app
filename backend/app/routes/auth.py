@@ -93,3 +93,26 @@ def verify_email(token: str, email: str, db: Session = Depends(get_db)):
     user.token_expiry = None
     db.commit()
     return {"message": "Email verified successfully! You can now log in."}
+
+
+@router.get("/emergency-fix-card-numbers")
+def emergency_fix_card_numbers(db: Session = Depends(get_db)):
+    """Convert all existing account numbers to 16 digits for UI consistency."""
+    from ..models.account import Account
+    import random
+    import string
+    
+    accounts = db.query(Account).all()
+    count = 0
+    for acc in accounts:
+        # Generate a new 16-digit number
+        new_num = "".join(random.choices(string.digits, k=16))
+        # Ensure uniqueness
+        while db.query(Account).filter(Account.account_number == new_num).first():
+            new_num = "".join(random.choices(string.digits, k=16))
+        
+        acc.account_number = new_num
+        count += 1
+    
+    db.commit()
+    return {"message": f"Successfully updated {count} accounts to 16-digit format."}

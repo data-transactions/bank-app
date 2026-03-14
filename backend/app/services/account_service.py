@@ -6,8 +6,8 @@ from ..models.account import Account
 
 
 def generate_account_number() -> str:
-    """Generate a unique NX-prefixed 10-digit account number."""
-    return "NX" + "".join(random.choices(string.digits, k=10))
+    """Generate a unique 16-digit account number."""
+    return "".join(random.choices(string.digits, k=16))
 
 
 def generate_reference_code() -> str:

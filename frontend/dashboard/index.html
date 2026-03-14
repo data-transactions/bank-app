@@ -2677,7 +2677,7 @@
                                 <div style="margin-top:8px;"><i class="fas fa-sim-card"
                                         style="font-size:24px;color:#d4a843;"></i></div>
                                 <div class="card-number" id="cdCardHiddenNum">•••• •••• •••• <span
-                                        id="cdCardLast4">6530</span></div>
+                                        id="cdCardLast4">0000</span></div>
                                 <div class="card-number" id="cdCardFullNum" style="display:none;"></div>
                                 <div class="card-bottom">
                                     <div>CARD HOLDER<strong id="cdCardHolder">—</strong></div>
@@ -2706,7 +2706,7 @@
                 <div class="gc-card-detail-cell">
                     <div class="cell-label">Card Number</div>
                     <div class="cell-value">
-                        <span id="cdFullNumberText">•••• •••• •••• 6530</span>
+                        <span id="cdFullNumberText">•••• •••• •••• 0000</span>
                         <i id="cdFullNumberEye" class="fas fa-eye" onclick="toggleCardDetails()"
                             style="margin-left:6px; cursor:pointer; color:var(--gc-blue);"></i>
                         <i class="far fa-copy"
@@ -3484,7 +3484,7 @@
         let cardRevealed = false;
         function toggleCardDetails() {
             cardRevealed = !cardRevealed;
-            const num = state.account ? state.account.account_number : '0000000000';
+            const num = state.account ? state.account.account_number : '0000000000000000';
             const last4 = num.slice(-4);
             if (cardRevealed) {
                 document.getElementById('cdFullNumberText').textContent = num.replace(/(.{4})/g, '$1 ').trim();
