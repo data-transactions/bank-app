@@ -2225,7 +2225,7 @@
                                     </div>
                                     <div class="card-brand">AMERICAN<br>EXPRESS</div>
                                 </div>
-                                <div class="card-number">•••• •••• •••• <span id="cardLast4">6530</span></div>
+                                <div class="card-number">•••• •••• •••• <span id="cardLast4">0000</span></div>
                                 <div class="card-bottom">
                                     <div>CARD HOLDER<strong id="cardHolder">—</strong></div>
                                     <div>VALID THRU<strong>02/29</strong></div>
@@ -2471,7 +2471,7 @@
                             </div>
                             <div class="card-brand">AMERICAN<br>EXPRESS</div>
                         </div>
-                        <div class="card-number">•••• •••• •••• <span id="cardsTabLast4">6530</span></div>
+                        <div class="card-number">•••• •••• •••• <span id="cardsTabLast4">0000</span></div>
                     </div>
 
                     <div style="flex:1; margin-left:-20px;">
@@ -3532,7 +3532,9 @@
             document.getElementById('cdBalance').textContent = '';
             document.getElementById('cdBalance').parentElement.style.display = 'none';
             const last4 = a.account_number.slice(-4);
-            document.getElementById('cdCardLast4').textContent = last4;
+            [document.getElementById('cardLast4'), document.getElementById('cardsTabLast4'), document.getElementById('cdCardLast4')].forEach(el => {
+                if (el) el.textContent = last4;
+            });
 
             // Re-apply current visibility state
             if (cardRevealed) {
@@ -3557,7 +3559,6 @@
             // Update the main Cards Tab values as well
             document.getElementById('cardsTabTotalBal').textContent = fmt(a.balance * 0.0225);
             document.getElementById('cardsTabCardBal').textContent = 'USD ' + Number(a.balance * 0.0225).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            document.getElementById('cardsTabLast4').textContent = last4;
         }
 
         async function handleSupportSubmit(event) {
