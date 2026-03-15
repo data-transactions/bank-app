@@ -1907,16 +1907,22 @@
 
         .gc-notification-dropdown {
             position: absolute;
-            top: 50px;
+            top: 55px;
             right: 0;
-            width: 320px;
+            width: 400px;
             background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
             border: 1px solid var(--gc-border);
             z-index: 1000;
             display: none;
             overflow: hidden;
+            animation: slideDown .2s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         @media (max-width: 992px) {
@@ -1965,11 +1971,12 @@
             }
         }
         .gc-notification-header {
-            padding: 14px 18px;
+            padding: 16px 20px;
             border-bottom: 1px solid var(--gc-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: #fafafa;
         }
 
         .gc-notification-header h4 {
@@ -1991,10 +1998,10 @@
         }
 
         .gc-notification-item {
-            padding: 14px 18px;
+            padding: 16px 20px;
             border-bottom: 1px solid var(--gc-border);
             display: flex;
-            gap: 12px;
+            gap: 15px;
             cursor: pointer;
             transition: .15s;
         }
@@ -2051,7 +2058,17 @@
         }
 
         .gc-notif-empty {
-            font-size: 13px;
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--gc-text-light);
+            font-size: 14px;
+        }
+
+        .gc-notif-empty i {
+            display: block;
+            font-size: 32px;
+            margin-bottom: 12px;
+            opacity: 0.2;
         }
 
         /* NEW LOAN & IRS STYLES */
@@ -2187,16 +2204,69 @@
             text-align: center;
             color: #fff;
         }
-        .gc-settings-avatar-large {
+        .gc-settings-avatar-wrapper {
+            position: relative;
             width: 100px;
             height: 100px;
+            margin: 0 auto 16px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .gc-settings-avatar-wrapper:hover { transform: scale(1.05); }
+        .gc-settings-avatar-large {
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             border: 4px solid #fff;
-            margin: 0 auto 16px;
             background-color: #ddd;
             background-size: cover;
             background-position: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
+        .gc-settings-avatar-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            opacity: 0;
+            transition: 0.3s;
+            backdrop-filter: blur(2px);
+        }
+        .gc-settings-avatar-wrapper:hover .gc-settings-avatar-overlay { opacity: 1; }
+        .gc-settings-avatar-overlay i { font-size: 18px; margin-bottom: 4px; }
+        
+        .gc-btn-primary {
+            background: var(--gc-blue);
+            color: #fff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2);
+        }
+        .gc-btn-primary:hover {
+            background: var(--gc-blue-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(14, 165, 233, 0.3);
+        }
+        .gc-btn-primary:active { transform: translateY(0); }
+        .gc-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
         .gc-settings-profile-header h2 { margin: 0; font-size: 22px; font-weight: 800; }
         .gc-settings-profile-header p { margin: 4px 0 0; font-size: 14px; opacity: 0.9; }
 
@@ -2326,9 +2396,12 @@
                             <a onclick="markAllNotificationsAsRead()">Mark all as read</a>
                         </div>
                         <div class="gc-notification-list" id="notifList">
-                            <div class="gc-notif-empty">
-                                <i class="fas fa-bell-slash" style="display:block; font-size:24px; margin-bottom:10px; opacity:0.3;"></i>
-                                No notifications yet
+                            <div class="gc-notif-empty" style="padding: 60px 24px; text-align: center;">
+                                <div style="width: 64px; height: 64px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                                    <i class="fas fa-bell-slash" style="font-size: 24px; color: #94a3b8;"></i>
+                                </div>
+                                <h5 style="margin: 0 0 8px; font-size: 16px; font-weight: 700; color: #1e293b;">All caught up!</h5>
+                                <p style="margin: 0; font-size: 14px; color: #64748b;">No new notifications at the moment.</p>
                             </div>
                         </div>
                     </div>
@@ -3051,7 +3124,14 @@
         <!-- ACCOUNT SETTINGS (formerly Profile) -->
         <section id="section-profile" class="gc-content" style="display:none;">
             <div class="gc-settings-profile-header">
-                <div id="settingsAvatarDisplay" class="gc-settings-avatar-large"></div>
+                <div class="gc-settings-avatar-wrapper" onclick="document.getElementById('avatarFileInput').click()">
+                    <div id="profileAvatarDisplay" class="gc-settings-avatar-large"></div>
+                    <div class="gc-settings-avatar-overlay">
+                        <i class="fas fa-camera"></i>
+                        <span>Change Photo</span>
+                    </div>
+                </div>
+                <input type="file" id="avatarFileInput" hidden accept="image/*">
                 <h2 id="settingsNameDisplay">Loading...</h2>
                 <p id="settingsEmailDisplay">Loading@example.com</p>
             </div>
@@ -3125,7 +3205,7 @@
                             <label>Confirm New Password</label>
                             <input type="password" id="confirmNewPassword" class="form-input" placeholder="••••••••">
                         </div>
-                        <button class="gc-btn-primary" style="padding:12px 30px;" onclick="Toast.info('Password update simulation')">Update Password</button>
+                        <button class="gc-btn-primary" style="padding:12px 30px;" onclick="Toast.info('Password update simulation')">Save Changes</button>
                     </div>
 
                     <!-- PIN TAB -->
@@ -3145,7 +3225,7 @@
                             <label>Confirm New PIN</label>
                             <input type="password" maxlength="6" id="confirmPin" class="form-input" placeholder="••••">
                         </div>
-                        <button class="gc-btn-primary" style="padding:12px 30px;" onclick="Toast.info('PIN update simulation')">Update PIN</button>
+                        <button class="gc-btn-primary" style="padding:12px 30px;" onclick="Toast.info('PIN update simulation')">Save Changes</button>
                     </div>
                 </div>
             </div>
@@ -3633,7 +3713,10 @@
             // Click outside modal to close
             document.addEventListener('mousedown', (e) => {
                 if (e.target.classList.contains('gc-modal-overlay')) {
-                    closeModal(e.target.id);
+                    const modalId = e.target.id;
+                    // Prevent closing PIN modal if PIN is not set
+                    if (modalId === 'setPinModal' && !state.user.is_pin_set) return;
+                    closeModal(modalId);
                 }
             });
 
@@ -3725,24 +3808,25 @@
 
             // Avatars
             [document.getElementById('sidebarAvatar'), document.getElementById('topbarAvatar'), document.getElementById('profileAvatarDisplay')].forEach(el => {
-                if (u.profile_image_url) { el.innerHTML = ''; el.style.backgroundImage = 'url(' + u.profile_image_url + ')'; el.style.backgroundSize = 'cover'; }
+                if (!el) return;
+                if (u.profile_image_url) { el.innerHTML = ''; el.style.backgroundImage = 'url(' + u.profile_image_url + ')'; el.style.backgroundSize = 'cover'; el.style.backgroundPosition = 'center'; }
                 else { el.innerHTML = initials; el.style.backgroundImage = ''; }
             });
 
             // Names
-            document.getElementById('sidebarName').textContent = fullName;
-            document.getElementById('sidebarAcctId').textContent = 'ID: ' + (a ? a.account_number : '—');
-            document.getElementById('greetingName').textContent = firstName.trim() || 'User';
+            if (document.getElementById('sidebarName')) document.getElementById('sidebarName').textContent = fullName;
+            if (document.getElementById('sidebarAcctId')) document.getElementById('sidebarAcctId').textContent = 'ID: ' + (a ? a.account_number : '—');
+            if (document.getElementById('greetingName')) document.getElementById('greetingName').textContent = firstName.trim() || 'User';
 
             if (!u.is_pin_set && !state.pinModalShown) {
                 openModal('setPinModal');
                 state.pinModalShown = true;
             }
-            document.getElementById('profileNameDisplay').textContent = fullName;
-            document.getElementById('profileEmailDisplay').textContent = u.email;
-            document.getElementById('profileAcctDisplay').textContent = a ? a.account_number : '—';
-            document.getElementById('cardHolder').textContent = fullName.toUpperCase();
-            document.getElementById('cdCardHolder').textContent = fullName.toUpperCase();
+            if (document.getElementById('profileNameDisplay')) document.getElementById('profileNameDisplay').textContent = fullName;
+            if (document.getElementById('profileEmailDisplay')) document.getElementById('profileEmailDisplay').textContent = u.email;
+            if (document.getElementById('profileAcctDisplay')) document.getElementById('profileAcctDisplay').textContent = a ? a.account_number : '—';
+            if (document.getElementById('cardHolder')) document.getElementById('cardHolder').textContent = fullName.toUpperCase();
+            if (document.getElementById('cdCardHolder')) document.getElementById('cdCardHolder').textContent = fullName.toUpperCase();
 
             // Balances — use helper so eye-toggle state is preserved
             const _fmtBal = fmt(a.balance) + ' USD';
@@ -3757,15 +3841,15 @@
                 _topBalEl.dataset.actualValue = fmt(a.balance);
                 _topBalEl.textContent = _balanceHidden ? '••••' : fmt(a.balance);
             }
-            document.getElementById('mainAcctNum').textContent = a.account_number;
-            document.getElementById('sendModalBalance').textContent = fmt(a.balance);
-            document.getElementById('cardBalance').textContent = '';
+            if (document.getElementById('mainAcctNum')) document.getElementById('mainAcctNum').textContent = a.account_number;
+            if (document.getElementById('sendModalBalance')) document.getElementById('sendModalBalance').textContent = fmt(a.balance);
+            if (document.getElementById('cardBalance')) document.getElementById('cardBalance').textContent = '';
 
             // Stats
-            document.getElementById('statLimit').textContent = fmt(s.transaction_limit);
-            document.getElementById('rpLimit').textContent = fmt(s.transaction_limit);
-            document.getElementById('rpPending').textContent = '$0.00';
-            document.getElementById('rpVolume').textContent = fmt(s.total_volume);
+            if (document.getElementById('statLimit')) document.getElementById('statLimit').textContent = fmt(s.transaction_limit);
+            if (document.getElementById('rpLimit')) document.getElementById('rpLimit').textContent = fmt(s.transaction_limit);
+            if (document.getElementById('rpPending')) document.getElementById('rpPending').textContent = '$0.00';
+            if (document.getElementById('rpVolume')) document.getElementById('rpVolume').textContent = fmt(s.total_volume);
 
             // Settings Header & Detailed Profile
             // firstName and lastName already declared above
@@ -4311,7 +4395,14 @@
             badge.style.display = unreadCount > 0 ? 'block' : 'none';
             
             if (notifications.length === 0) {
-                list.innerHTML = '<div class="gc-notif-empty">No notifications yet</div>';
+                list.innerHTML = `
+                    <div class="gc-notif-empty" style="padding: 60px 24px; text-align: center;">
+                        <div style="width: 64px; height: 64px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                            <i class="fas fa-bell-slash" style="font-size: 24px; color: #94a3b8;"></i>
+                        </div>
+                        <h5 style="margin: 0 0 8px; font-size: 16px; font-weight: 700; color: #1e293b;">All caught up!</h5>
+                        <p style="margin: 0; font-size: 14px; color: #64748b;">No new notifications at the moment.</p>
+                    </div>`;
                 return;
             }
             
