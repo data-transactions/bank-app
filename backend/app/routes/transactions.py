@@ -1,5 +1,5 @@
 from decimal import Decimal
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, BackgroundTasks
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models.user import User
@@ -9,6 +9,7 @@ from ..schemas.transaction import DepositRequest, WithdrawRequest, TransferReque
 from ..core.dependencies import get_current_user
 from ..models.notification import Notification
 from ..services.account_service import generate_reference_code
+from ..services.email_service import email_service
 
 router = APIRouter(prefix="/api/transactions", tags=["transactions"])
 
@@ -91,12 +92,18 @@ def get_transactions(
 @router.post("/deposit")
 def deposit(
     payload: DepositRequest,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     account = db.query(Account).filter(Account.user_id == current_user.id).with_for_update().first()
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
+
+    # Verify PIN
+    from ..core.security import verify_password
+    if not current_user.transaction_pin or not verify_password(payload.pin, current_user.transaction_pin):
+        raise HTTPException(status_code=403, detail="Invalid transaction PIN")
 
     tx = Transaction(
         sender_account_id=None,
@@ -124,18 +131,37 @@ def deposit(
     db.add(notif)
     db.commit()
 
+    # Send email notification
+    background_tasks.add_task(
+        email_service.send_transaction_email,
+        email=current_user.email,
+        user_name=current_user.first_name,
+        tx_type="deposit",
+        amount=float(payload.amount),
+        balance=float(account.balance),
+        reference=tx.reference_code,
+        date_time=tx.created_at.strftime("%Y-%m-%d %H:%M:%S")
+    )
+
     return {**_fmt(tx, db), "balance_after": float(account.balance)}
 
 
 @router.post("/withdraw")
 def withdraw(
     payload: WithdrawRequest,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     account = db.query(Account).filter(Account.user_id == current_user.id).with_for_update().first()
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
+
+    # Verify PIN
+    from ..core.security import verify_password
+    if not current_user.transaction_pin or not verify_password(payload.pin, current_user.transaction_pin):
+        raise HTTPException(status_code=403, detail="Invalid transaction PIN")
+
     if account.balance < Decimal(str(payload.amount)):
         raise HTTPException(status_code=400, detail="Insufficient funds")
 
@@ -165,18 +191,35 @@ def withdraw(
     db.add(notif)
     db.commit()
 
-    return {**_fmt(tx, db), "balance_after": float(account.balance)}
+    # Send email notification
+    background_tasks.add_task(
+        email_service.send_transaction_email,
+        email=current_user.email,
+        user_name=current_user.first_name,
+        tx_type="withdrawal",
+        amount=float(payload.amount),
+        balance=float(account.balance),
+        reference=tx.reference_code,
+        date_time=tx.created_at.strftime("%Y-%m-%d %H:%M:%S")
+    )
 
+    return {**_fmt(tx, db), "balance_after": float(account.balance)}
 
 @router.post("/transfer")
 def transfer(
     payload: TransferRequest,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     sender_acc = db.query(Account).filter(Account.user_id == current_user.id).with_for_update().first()
     if not sender_acc:
         raise HTTPException(status_code=404, detail="Sender account not found")
+
+    # Verify PIN
+    from ..core.security import verify_password
+    if not current_user.transaction_pin or not verify_password(payload.pin, current_user.transaction_pin):
+        raise HTTPException(status_code=403, detail="Invalid transaction PIN")
 
     receiver_acc = db.query(Account).filter(
         Account.account_number == payload.receiver_account_number
@@ -230,5 +273,32 @@ def transfer(
         db.add(receiver_notif)
 
     db.commit()
+
+    # Send email notification for sender
+    background_tasks.add_task(
+        email_service.send_transaction_email,
+        email=current_user.email,
+        user_name=current_user.first_name,
+        tx_type="transfer_sent",
+        amount=float(payload.amount),
+        balance=float(sender_acc.balance),
+        reference=tx.reference_code,
+        date_time=tx.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+        recipient_name=receiver_user.full_name if receiver_user else "NexaBank User"
+    )
+
+    # Send email notification for receiver
+    if receiver_user:
+        background_tasks.add_task(
+            email_service.send_transaction_email,
+            email=receiver_user.email,
+            user_name=receiver_user.first_name,
+            tx_type="transfer_received",
+            amount=float(payload.amount),
+            balance=float(receiver_acc.balance),
+            reference=tx.reference_code,
+            date_time=tx.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            sender_name=current_user.full_name
+        )
 
     return {**_fmt(tx, db), "balance_after": float(sender_acc.balance)}

@@ -28,17 +28,48 @@ async function apiRequest(method, path, body = null, isFormData = false) {
 
     try {
         const res = await fetch(`${API_BASE}${path}`, opts);
-        if (res.status === 401) {
+        
+        // Handle 401 Unauthorized
+        if (res.status === 401 && path !== '/api/auth/login') {
             clearToken();
             window.location.href = '/login/';
             return;
         }
-        const data = res.headers.get('content-type')?.includes('application/json')
-            ? await res.json()
-            : null;
+
+        let data = null;
+        if (res.status !== 204) {
+            const contentType = res.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const text = await res.text();
+                data = text ? JSON.parse(text) : null;
+            }
+        }
         if (!res.ok) {
-            const msg = data?.detail || `HTTP ${res.status}`;
-            throw new Error(Array.isArray(msg) ? msg.map(e => e.msg).join(', ') : msg);
+            let msg = data?.detail || `HTTP ${res.status}`;
+            
+            // Handle validation errors (422 Unprocessable Entity)
+            if (res.status === 422 && Array.isArray(data?.detail)) {
+                const firstError = data.detail[0];
+                const loc = firstError.loc || [];
+                // Use backend error message if it exists and isn't a technical pydantic string
+                const backendMsg = firstError.msg;
+                const field = loc[loc.length - 1];
+                
+                if (field === 'email') msg = 'Please enter a valid email address.';
+                else if (field === 'password') msg = backendMsg || 'Password does not meet security requirements.';
+                else if (field === 'first_name' || field === 'last_name') msg = backendMsg || 'Please enter a valid name (min 3 characters, no numbers).';
+                else msg = backendMsg || 'Invalid data provided.';
+            } 
+            // Handle specific auth errors
+            else if (res.status === 401) {
+                msg = 'Invalid email or password.';
+            }
+            // Handle forbidden/unconfirmed errors
+            else if (res.status === 403) {
+                msg = data?.detail || 'Access denied.';
+            }
+            
+            throw new Error(Array.isArray(msg) ? msg.map(e => e.msg || e).join(', ') : msg);
         }
         return data;
     } catch (err) {
@@ -52,6 +83,7 @@ const api = {
     post: (path, body) => apiRequest('POST', path, body),
     put: (path, body) => apiRequest('PUT', path, body),
     patch: (path, body) => apiRequest('PATCH', path, body),
+    del: (path) => apiRequest('DELETE', path),
     upload: (path, formData) => apiRequest('POST', path, formData, true),
 
     // Auth
@@ -62,9 +94,11 @@ const api = {
         email, 
         password 
     }),
+    verifyEmail: (email, token) => api.get(`/api/auth/verify?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`),
+    setPin: (pin) => api.post('/api/auth/set-pin', { pin }),
 
     // Users
-    getMe: () => api.get('/api/users/me'),
+    getMe: () => api.get('/api/auth/me'),
     updateMe: (data) => api.put('/api/users/me', data),
     uploadAvatar: (file) => {
         const fd = new FormData();
@@ -79,9 +113,9 @@ const api = {
     // Transactions
     getTransactions: (limit = 50) => api.get(`/api/transactions/?limit=${limit}`),
     getTransaction: (id) => api.get(`/api/transactions/${id}`),
-    deposit: (amount) => api.post('/api/transactions/deposit', { amount }),
-    transfer: (receiver_account_number, amount, description) =>
-        api.post('/api/transactions/transfer', { receiver_account_number, amount, description }),
+    deposit: (amount, pin) => api.post('/api/transactions/deposit', { amount, pin }),
+    transfer: (receiver_account_number, amount, pin, description) =>
+        api.post('/api/transactions/transfer', { receiver_account_number, amount, pin, description }),
 
     // PDF
     receiptUrl: (txId) => `${API_BASE}/api/pdf/receipt/${txId}?token=${getToken()}`,

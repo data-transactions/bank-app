@@ -1,0 +1,120 @@
+
+        -----------------------------------------
+        TO: final_check@example.com
+        SUBJECT: Confirm your NexaBank Account
+        
+        Welcome to NexaBank!
+        Please click the link below to confirm your account:
+        http://localhost:5501/confirm/?email=final_check@example.com
+        
+        If you did not create an account, please ignore this email.
+        -----------------------------------------
+        
+
+        -----------------------------------------
+        TO: andrewr@gmail.com
+        SUBJECT: Confirm your NexaBank Account
+        
+        Welcome to NexaBank!
+        Please click the link below to confirm your account:
+        http://localhost:5501/confirm/?email=andrewr@gmail.com
+        
+        If you did not create an account, please ignore this email.
+        -----------------------------------------
+        
+
+        -----------------------------------------
+        TO: andrewr@gmail.com
+        SUBJECT: Confirm your NexaBank Account
+        
+        Welcome to NexaBank!
+        Please click the link below to confirm your account:
+        http://localhost:5501/confirm/?email=andrewr@gmail.com
+        
+        If you did not create an account, please ignore this email.
+        -----------------------------------------
+        
+
+        -----------------------------------------
+        TO: andrewmiracle100@gmail.com
+        SUBJECT: Confirm your NexaBank Account
+        
+        Welcome to NexaBank!
+        Please click the link below to confirm your account:
+        http://localhost:5501/confirm/?email=andrewmiracle100@gmail.com
+        
+        If you did not create an account, please ignore this email.
+        -----------------------------------------
+        
+
+        -----------------------------------------
+        TO: andrewmiracle200@gmail.com
+        SUBJECT: Confirm your NexaBank Account
+        
+        Welcome to NexaBank!
+        Please click the link below to confirm your account:
+        http://localhost:5501/confirm/?email=andrewmiracle200@gmail.com
+        
+        If you did not create an account, please ignore this email.
+        -----------------------------------------
+        
+
+        -----------------------------------------
+        TO: games@blockfuse.lab
+        SUBJECT: Confirm your NexaBank Account
+        
+        Welcome to NexaBank!
+        Please click the link below to confirm your account:
+        http://localhost:5501/confirm/?email=games@blockfuse.lab
+        
+        If you did not create an account, please ignore this email.
+        -----------------------------------------
+        
+
+        -----------------------------------------
+        TO: andrewmiracle600@gmail.com
+        SUBJECT: Confirm your NexaBank Account
+        
+        Welcome to NexaBank!
+        Please click the link below to confirm your account:
+        http://localhost:5501/confirm/?email=andrewmiracle600@gmail.com
+        
+        If you did not create an account, please ignore this email.
+        -----------------------------------------
+        
+
+        -----------------------------------------
+        TO: andrewmiracle700@gmail.com
+        SUBJECT: Confirm your NexaBank Account
+        
+        Welcome to NexaBank!
+        Please click the link below to confirm your account:
+        http://localhost:5501/confirm/?email=andrewmiracle700@gmail.com
+        
+        If you did not create an account, please ignore this email.
+        -----------------------------------------
+        
+
+        -----------------------------------------
+        TO: andrewmiracle800@gmail.com
+        SUBJECT: Confirm your NexaBank Account
+        
+        Welcome to NexaBank!
+        Please click the link below to confirm your account:
+        http://localhost:5501/confirm/?email=andrewmiracle800@gmail.com
+        
+        If you did not create an account, please ignore this email.
+        -----------------------------------------
+        
+
+        -----------------------------------------
+        TO: andrewmiracle300@gmail.com
+        SUBJECT: Confirm your NexaBank Account
+        
+        Welcome to NexaBank!
+        Please click the link below to confirm your account:
+        http://localhost:5501/confirm/?email=andrewmiracle300@gmail.com
+        
+        If you did not create an account, please ignore this email.
+        -----------------------------------------
+        

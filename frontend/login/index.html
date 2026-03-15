@@ -10,6 +10,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/output.css" />
+    <style>
+        #loginAlert.error {
+            background-color: #fef2f2 !important;
+            border-color: #fee2e2 !important;
+            color: #b91c1c !important;
+        }
+        #loginAlert.success {
+            background-color: #ecfdf5 !important;
+            border-color: #d1fae5 !important;
+            color: #047857 !important;
+        }
+    </style>
 </head>
 
 <body class="min-h-screen flex" style="background: linear-gradient(135deg, #050811 0%, #0f172a 100%);">
@@ -61,8 +73,13 @@
 
             <div class="mb-10">
                 <h1 class="text-4xl font-extrabold mb-3 font-display tracking-tight" style="color:var(--brand-dark);">
-                    Welcome back</h1>
+                    Welcome</h1>
                 <p class="text-slate-500 leading-relaxed">Log in to your secure NexaBank dashboard.</p>
+            </div>
+
+            <div id="loginAlert" class="hidden mb-8 p-4 rounded-2xl border flex items-start gap-3 text-sm transition-all duration-300">
+                <div class="alert-icon shrink-0 mt-0.5"></div>
+                <div class="alert-message font-medium"></div>
             </div>
 
             <form id="loginForm" novalidate>
@@ -131,6 +148,26 @@
         // Redirect if already logged in
         if (NexaAPI.getToken()) redirectToDashboard();
 
+        const loginAlert = document.getElementById('loginAlert');
+        const showLoginAlert = (msg, type = 'error') => {
+            const iconEl = loginAlert.querySelector('.alert-icon');
+            const msgEl = loginAlert.querySelector('.alert-message');
+            
+            msgEl.textContent = msg;
+            loginAlert.style.display = 'flex';
+            
+            if (type === 'error') {
+                loginAlert.className = 'mb-8 p-4 rounded-2xl border flex items-start gap-3 text-sm shadow-sm animate-in fade-in slide-in-from-top-2 error';
+                iconEl.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+            } else {
+                loginAlert.className = 'mb-8 p-4 rounded-2xl border flex items-start gap-3 text-sm shadow-sm animate-in fade-in slide-in-from-top-2 success';
+                iconEl.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+            }
+        };
+        const hideLoginAlert = () => {
+            loginAlert.style.display = 'none';
+        };
+
         // Password toggle
         const pwToggle = document.getElementById('pwToggle');
         const pwInput = document.getElementById('password');
@@ -153,6 +190,7 @@
             const spinner = document.getElementById('loginBtnSpinner');
 
             // Reset errors
+            hideLoginAlert();
             document.getElementById('emailError').classList.remove('visible');
             document.getElementById('passwordError').classList.remove('visible');
 
@@ -173,11 +211,15 @@
 
             try {
                 const data = await NexaAPI.login(email, password);
-                NexaAPI.setToken(data.access_token);
-                Toast.success('Welcome back! Redirecting…');
-                setTimeout(() => { redirectToDashboard(); }, 800);
+                if (data && data.access_token) {
+                    NexaAPI.setToken(data.access_token);
+                    showLoginAlert('Welcome! Redirecting...', 'success');
+                    setTimeout(() => { redirectToDashboard(); }, 800);
+                } else {
+                    throw new Error('Invalid server response');
+                }
             } catch (err) {
-                Toast.error(err.message);
+                showLoginAlert(err.message || 'Unable to log in. Please try again.');
                 btn.disabled = false;
                 btnText.classList.remove('hidden');
                 spinner.classList.add('hidden');

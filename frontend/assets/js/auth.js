@@ -14,14 +14,14 @@ function parseJwt(token) {
 window.parseJwt = parseJwt;
 
 /**
- * Redirect to the correct dashboard based on the is_admin claim in the JWT.
+ * Redirect to the correct dashboard based on the role claim in the JWT.
  * Admins  → /admin/
  * Regular → /dashboard/
  */
 function redirectToDashboard() {
     const token = NexaAPI.getToken();
     const payload = token ? parseJwt(token) : null;
-    window.location.href = payload?.is_admin ? '/admin/' : '/dashboard/';
+    window.location.href = (payload?.role === 'admin' || payload?.role === 'super_admin') ? '/admin/' : '/dashboard/';
 }
 window.redirectToDashboard = redirectToDashboard;
 

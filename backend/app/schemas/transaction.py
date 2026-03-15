@@ -5,6 +5,7 @@ from pydantic import BaseModel, field_validator
 
 class DepositRequest(BaseModel):
     amount: float
+    pin: str
 
     @field_validator("amount")
     @classmethod
@@ -16,6 +17,7 @@ class DepositRequest(BaseModel):
 
 class WithdrawRequest(BaseModel):
     amount: float
+    pin: str
 
     @field_validator("amount")
     @classmethod
@@ -28,6 +30,7 @@ class WithdrawRequest(BaseModel):
 class TransferRequest(BaseModel):
     receiver_account_number: str
     amount: float
+    pin: str
     description: Optional[str] = None
     scope: str = "Local transfer"
 

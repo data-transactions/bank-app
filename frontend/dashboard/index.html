@@ -270,7 +270,8 @@
             margin-left: 240px;
             flex: 1;
             min-height: 100vh;
-            min-width: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         /* TOPBAR */
@@ -1106,7 +1107,7 @@
             border-top: 1px solid var(--gc-border);
             font-size: 11px;
             color: var(--gc-text-light);
-            margin-top: 20px;
+            margin-top: auto;
         }
 
         .gc-footer-links {
@@ -1139,6 +1140,7 @@
             visibility: hidden;
             pointer-events: none;
             transition: .2s;
+            overflow: hidden;
         }
 
         .gc-modal-overlay.open {
@@ -1156,6 +1158,9 @@
             box-shadow: 0 25px 50px rgba(0, 0, 0, .15);
             transform: scale(.95);
             transition: .2s;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .gc-modal-overlay.open .gc-modal {
@@ -1963,16 +1968,29 @@
 
         .gc-notification-dropdown {
             position: absolute;
-            top: 50px;
+            top: 55px;
             right: 0;
-            width: 320px;
+            width: 400px;
             background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
             border: 1px solid var(--gc-border);
             z-index: 1000;
             display: none;
             overflow: hidden;
+            animation: slideDown .2s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 992px) {
@@ -2033,11 +2051,12 @@
         }
 
         .gc-notification-header {
-            padding: 14px 18px;
+            padding: 16px 20px;
             border-bottom: 1px solid var(--gc-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: #fafafa;
         }
 
         .gc-notification-header h4 {
@@ -2059,10 +2078,10 @@
         }
 
         .gc-notification-item {
-            padding: 14px 18px;
+            padding: 16px 20px;
             border-bottom: 1px solid var(--gc-border);
             display: flex;
-            gap: 12px;
+            gap: 15px;
             cursor: pointer;
             transition: .15s;
         }
@@ -2137,12 +2156,368 @@
             padding: 40px 20px;
             text-align: center;
             color: var(--gc-text-light);
-            font-size: 13px;
+            font-size: 14px;
         }
 
-        /* ═══════════════════════════════════════════════════════
-           RESPONSIVE — Mobile-first breakpoints
-           ═══════════════════════════════════════════════════════ */
+        .gc-notif-empty i {
+            display: block;
+            font-size: 32px;
+            margin-bottom: 12px;
+            opacity: 0.2;
+        }
+
+        /* NEW LOAN & IRS STYLES */
+        .gc-hero-banner {
+            background: linear-gradient(135deg, #0ea5e9, #2563eb);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            color: #fff;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gc-hero-banner h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .gc-hero-banner p {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        .gc-feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .gc-feature-box {
+            background: #fff;
+            padding: 24px;
+            border-radius: 14px;
+            border: 1px solid var(--gc-border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: .2s;
+        }
+
+        .gc-feature-box:hover {
+            border-color: var(--gc-blue);
+            transform: translateY(-2px);
+        }
+
+        .gc-feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: #f0f9ff;
+            color: var(--gc-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .gc-feature-info h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .gc-feature-info p {
+            font-size: 13px;
+            color: var(--gc-text-light);
+        }
+
+        .gc-loan-type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .gc-loan-card {
+            background: #fff;
+            padding: 24px;
+            border-radius: 14px;
+            border: 1px solid var(--gc-border);
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .gc-loan-card:hover {
+            border-color: var(--gc-blue);
+            transform: translateY(-3px);
+        }
+
+        .gc-loan-card i {
+            font-size: 24px;
+            color: var(--gc-blue);
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .gc-loan-card h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .gc-loan-card p {
+            font-size: 13px;
+            color: var(--gc-text-light);
+        }
+
+        .gc-steps-container {
+            margin-bottom: 40px;
+        }
+
+        .gc-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .gc-step-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gc-blue);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 14px;
+            flex-shrink: 0;
+            z-index: 2;
+        }
+
+        .gc-step-content h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .gc-step-content p {
+            font-size: 13px;
+            color: var(--gc-text-light);
+        }
+
+        .gc-faq-item {
+            background: #fff;
+            border: 1px solid var(--gc-border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 12px;
+        }
+
+        .gc-faq-item h4 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--gc-dark);
+        }
+
+        .gc-faq-item p {
+            font-size: 13px;
+            color: var(--gc-text-light);
+            line-height: 1.6;
+        }
+
+        .gc-cta-banner {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .gc-cta-banner h3 {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .gc-cta-banner p {
+            font-size: 14px;
+            color: var(--gc-text-light);
+            margin-bottom: 24px;
+        }
+
+        .gc-notice-box {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 10px;
+            padding: 16px 20px;
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+            color: #0369a1;
+            margin-bottom: 24px;
+        }
+
+        .gc-notice-box i {
+            font-size: 16px;
+            margin-top: 2px;
+        }
+
+        /* SETTINGS HEADER STYLES */
+        .gc-settings-profile-header {
+            background: linear-gradient(to right, #0ea5e9, #a855f7);
+            padding: 40px;
+            border-radius: 16px 16px 0 0;
+            text-align: center;
+            color: #fff;
+        }
+
+        .gc-settings-avatar-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 16px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gc-settings-avatar-wrapper:hover {
+            transform: scale(1.05);
+        }
+
+        .gc-settings-avatar-large {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            background-color: #ddd;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .gc-settings-avatar-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            opacity: 0;
+            transition: 0.3s;
+            backdrop-filter: blur(2px);
+        }
+
+        .gc-settings-avatar-wrapper:hover .gc-settings-avatar-overlay {
+            opacity: 1;
+        }
+
+        .gc-settings-avatar-overlay i {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .gc-btn-primary {
+            background: var(--gc-blue);
+            color: #fff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2);
+        }
+
+        .gc-btn-primary:hover {
+            background: var(--gc-blue-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(14, 165, 233, 0.3);
+        }
+
+        .gc-btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .gc-btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .gc-settings-profile-header h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .gc-settings-profile-header p {
+            margin: 4px 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .gc-settings-container {
+            display: flex;
+            background: #fff;
+            border: 1px solid var(--gc-border);
+            border-radius: 0 0 16px 16px;
+            min-height: 500px;
+        }
+
+        .gc-settings-sidebar {
+            width: 260px;
+            border-right: 1px solid var(--gc-border);
+            padding: 20px 0;
+        }
+
+        .gc-settings-nav-item {
+            padding: 14px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gc-text);
+            cursor: pointer;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .gc-settings-nav-item:hover {
+            background: #f8fafc;
+            color: var(--gc-blue);
+        }
+
+        .gc-settings-nav-item.active {
+            background: #eff6ff;
+            color: var(--gc-blue);
+            font-weight: 600;
+        }
+
+        .gc-settings-content {
+            flex: 1;
+            padding: 40px;
+        }
 
         /* Hamburger toggle button (visible on mobile/tablet) */
         .gc-topbar-mobile-toggle {
@@ -2165,35 +2540,17 @@
             background: var(--gc-bg);
         }
 
-        /* Safe-area support (notch / home-bar) */
-        @supports (padding: env(safe-area-inset-bottom)) {
-            .gc-sidebar {
-                padding-bottom: env(safe-area-inset-bottom);
-            }
+        .gc-main {
+            margin-left: 260px;
         }
 
-        /* ── Desktop XL (≥ 1400px) ───────────────────────────── */
-        @media (min-width: 1400px) {
-            .gc-sidebar {
-                width: 260px;
-            }
+        .gc-grid {
+            grid-template-columns: 1fr 360px;
+            gap: 24px;
+        }
 
-            .gc-main {
-                margin-left: 260px;
-            }
-
-            .gc-content {
-                padding: 32px 40px;
-            }
-
-            .gc-grid {
-                grid-template-columns: 1fr 360px;
-                gap: 24px;
-            }
-
-            .gc-stat-row {
-                gap: 20px;
-            }
+        .gc-stat-row {
+            gap: 20px;
         }
 
         /* ── iPad Pro (1024px – 1199px) ────────────────────────────── */
@@ -2806,9 +3163,12 @@
         <div class="gc-nav-item" onclick="openModal('depositModal')"><i class="fas fa-wallet"></i> Deposit</div>
 
         <div class="gc-nav-label">Services</div>
-        <div class="gc-nav-item"><i class="fas fa-file-invoice-dollar"></i> Loan Request</div>
-        <div class="gc-nav-item"><i class="fas fa-file-alt"></i> IRS Tax Refund</div>
-        <div class="gc-nav-item"><i class="fas fa-history"></i> Loan History</div>
+        <div class="gc-nav-item" id="nav-loan-request" onclick="showSection('loan-request')"><i
+                class="fas fa-file-invoice-dollar"></i> Loan Request</div>
+        <div class="gc-nav-item" id="nav-irs-refund" onclick="showSection('irs-refund')"><i class="fas fa-file-alt"></i>
+            IRS Tax Refund</div>
+        <div class="gc-nav-item" id="nav-loan-history" onclick="showSection('loan-history')"><i
+                class="fas fa-history"></i> Loan History</div>
 
         <div class="gc-nav-label">Account</div>
         <div class="gc-nav-item" id="nav-profile" onclick="showSection('profile')"><i class="fas fa-cog"></i> Settings
@@ -2818,6 +3178,33 @@
 
         <div class="gc-sidebar-footer"><i class="fas fa-lock"></i> Secure Banking &nbsp; v1.2.0</div>
     </aside>
+
+    <!-- Set PIN Modal -->
+    <div class="gc-modal-overlay" id="setPinModal">
+        <div class="gc-modal" style="max-width:400px;">
+            <div class="gc-modal-header">
+                <h3><i class="fas fa-lock"></i> Set Transaction PIN</h3>
+            </div>
+            <div class="gc-modal-body">
+                <p style="font-size:14px; color:var(--gc-text-light); margin-bottom:20px;">
+                    For your security, please set a 4-6 digit transaction PIN. You will need this to authorize deposits,
+                    transfers, and withdrawals.
+                </p>
+                <div class="gc-form-group">
+                    <label>Enter Transaction PIN</label>
+                    <input type="password" id="newTransactionPin" maxlength="6" placeholder="••••"
+                        style="text-align:center; font-size:24px; letter-spacing:8px;">
+                </div>
+                <div class="gc-form-group">
+                    <label>Confirm Transaction PIN</label>
+                    <input type="password" id="confirmTransactionPin" maxlength="6" placeholder="••••"
+                        style="text-align:center; font-size:24px; letter-spacing:8px;">
+                </div>
+                <button class="gc-btn-primary" onclick="submitSetPin()" id="setPinBtn"
+                    style="width:100%; margin-top:20px;">Set PIN</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MAIN -->
     <div class="gc-main">
@@ -2830,7 +3217,8 @@
                 <i class="far fa-calendar-alt"></i> <span id="topbarDate"></span>
             </div>
             <div class="gc-topbar-right">
-                <div class="gc-balance-badge"><i class="fas fa-wallet"></i> <span id="topbarBalance">$0.00</span></div>
+                <div class="gc-balance-badge" style="cursor:pointer;" onclick="toggleBalanceVisibility()"><i
+                        class="fas fa-wallet"></i> <span id="topbarBalance">$0.00</span></div>
                 <div class="gc-topbar-icon" onclick="toggleNotifications(event)">
                     <i class="far fa-bell"></i>
                     <div class="gc-notification-badge" id="notifBadge"></div>
@@ -2841,7 +3229,16 @@
                             <a onclick="markAllNotificationsAsRead()">Mark all as read</a>
                         </div>
                         <div class="gc-notification-list" id="notifList">
-                            <div class="gc-notif-empty">Loading notifications...</div>
+                            <div class="gc-notif-empty" style="padding: 60px 24px; text-align: center;">
+                                <div
+                                    style="width: 64px; height: 64px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                                    <i class="fas fa-bell-slash" style="font-size: 24px; color: #94a3b8;"></i>
+                                </div>
+                                <h5 style="margin: 0 0 8px; font-size: 16px; font-weight: 700; color: #1e293b;">All
+                                    caught up!</h5>
+                                <p style="margin: 0; font-size: 14px; color: #64748b;">No new notifications at the
+                                    moment.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2943,7 +3340,7 @@
                                     </div>
                                     <div class="card-brand">AMERICAN<br>EXPRESS</div>
                                 </div>
-                                <div class="card-number">•••• •••• •••• <span id="cardLast4">6530</span></div>
+                                <div class="card-number">•••• •••• •••• <span id="cardLast4">0000</span></div>
                                 <div class="card-bottom">
                                     <div>CARD HOLDER<strong id="cardHolder">—</strong></div>
                                     <div>VALID THRU<strong>02/29</strong></div>
@@ -3029,7 +3426,8 @@
                         <div class="help-icon"><i class="fas fa-question-circle"></i></div>
                         <h4>Need Help?</h4>
                         <p>Our support team is here to assist you 24/7</p>
-                        <button><i class="far fa-comment-dots"></i> Contact Support</button>
+                        <button onclick="showSection('support')"><i class="far fa-comment-dots"></i> Contact
+                            Support</button>
                     </div>
                 </div>
             </div>
@@ -3189,7 +3587,7 @@
                             </div>
                             <div class="card-brand">AMERICAN<br>EXPRESS</div>
                         </div>
-                        <div class="card-number">•••• •••• •••• <span id="cardsTabLast4">6530</span></div>
+                        <div class="card-number">•••• •••• •••• <span id="cardsTabLast4">0000</span></div>
                     </div>
 
                     <div style="flex:1; margin-left:-20px;">
@@ -3263,40 +3661,459 @@
             </div>
         </section>
 
-        <!-- PROFILE SECTION -->
-        <section id="section-profile" class="gc-content" style="display:none;">
-            <h2 style="font-size:22px;font-weight:800;color:var(--gc-dark);margin-bottom:20px;">My Profile</h2>
-            <div style="display:grid;grid-template-columns:280px 1fr;gap:20px;">
-                <div
-                    style="background:#fff;border-radius:14px;border:1px solid var(--gc-border);padding:28px;text-align:center;">
-                    <div id="profileAvatarDisplay" class="gc-user-avatar"
-                        style="width:80px;height:80px;font-size:28px;margin:0 auto 12px;"></div>
-                    <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/webp"
-                        style="display:none;" />
-                    <p style="font-weight:700;color:var(--gc-dark);" id="profileNameDisplay">—</p>
-                    <p style="font-size:12px;color:var(--gc-text-light);" id="profileEmailDisplay">—</p>
-                    <p style="font-family:monospace;font-size:11px;background:var(--gc-bg);padding:4px 10px;border-radius:20px;margin-top:8px;display:inline-block;"
-                        id="profileAcctDisplay">—</p>
-                    <button
-                        style="display:block;width:100%;margin-top:14px;padding:8px;border:1px solid var(--gc-border);border-radius:8px;background:#fff;font-size:12px;font-weight:600;cursor:pointer;"
-                        onclick="document.getElementById('avatarFileInput').click()">Change Photo</button>
+        <!-- LOAN REQUEST SECTION -->
+        <section id="section-loan-request" class="gc-content" style="display:none;">
+            <div id="loan-overview">
+                <div class="gc-hero-banner">
+                    <h2>Loan Services</h2>
+                    <p>Financial solutions to help you achieve your goals</p>
                 </div>
-                <div style="background:#fff;border-radius:14px;border:1px solid var(--gc-border);padding:28px;">
-                    <h3 style="font-size:16px;font-weight:700;color:var(--gc-dark);margin-bottom:16px;">Personal
-                        Information</h3>
-                    <form id="profileForm">
-                        <div class="form-group"><label class="form-label">Full Name</label><input type="text"
-                                id="profileName" class="form-input" /></div>
-                        <div class="form-group"><label class="form-label">Email</label><input type="email"
-                                id="profileEmail" class="form-input" disabled style="opacity:.6;" /></div>
-                        <div class="form-group"><label class="form-label">Account Number</label><input type="text"
-                                id="profileAcct" class="form-input" disabled
-                                style="opacity:.6;font-family:monospace;" /></div>
-                        <div class="form-group"><label class="form-label">Member Since</label><input type="text"
-                                id="profileCreated" class="form-input" disabled style="opacity:.6;" /></div>
-                        <button type="submit" class="btn-submit" style="margin-top:12px;" id="profileSaveBtn">Save
-                            Changes</button>
-                    </form>
+
+                <div class="gc-nav-label" style="font-size: 14px; margin-bottom: 20px;"><i class="fas fa-check-circle"
+                        style="color:var(--gc-blue);"></i> Why Choose Our Loan Services</div>
+
+                <div class="gc-feature-grid">
+                    <div class="gc-feature-box">
+                        <div class="gc-feature-icon"><i class="far fa-clock"></i></div>
+                        <div class="gc-feature-info">
+                            <h4>Quick Approval</h4>
+                            <p>Get a decision within hours and funds within days</p>
+                        </div>
+                    </div>
+                    <div class="gc-feature-box">
+                        <div class="gc-feature-icon"><i class="fas fa-percent"></i></div>
+                        <div class="gc-feature-info">
+                            <h4>Competitive Rates</h4>
+                            <p>Low interest rates tailored to your credit profile</p>
+                        </div>
+                    </div>
+                    <div class="gc-feature-box">
+                        <div class="gc-feature-icon"><i class="far fa-file-alt"></i></div>
+                        <div class="gc-feature-info">
+                            <h4>Simple Process</h4>
+                            <p>Straightforward application with minimal paperwork</p>
+                        </div>
+                    </div>
+                    <div class="gc-feature-box">
+                        <div class="gc-feature-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="gc-feature-info">
+                            <h4>Secure & Confidential</h4>
+                            <p>Your information is protected with bank-level security</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gc-nav-label" style="font-size: 14px; margin-bottom: 20px;"><i class="fas fa-th-list"
+                        style="color:var(--gc-blue);"></i> Available Loan Types</div>
+                <div class="gc-loan-type-grid">
+                    <div class="gc-loan-card">
+                        <i class="fas fa-home"></i>
+                        <h4>Personal Home Loans</h4>
+                        <p>Finance your dream home with competitive rates</p>
+                    </div>
+                    <div class="gc-loan-card">
+                        <i class="fas fa-car"></i>
+                        <h4>Automobile Loans</h4>
+                        <p>Get on the road with flexible auto financing</p>
+                    </div>
+                    <div class="gc-loan-card">
+                        <i class="fas fa-briefcase"></i>
+                        <h4>Business Loans</h4>
+                        <p>Grow your business with tailored financing solutions</p>
+                    </div>
+                </div>
+
+                <div class="gc-nav-label" style="font-size: 14px; margin-bottom: 20px;"><i class="fas fa-info-circle"
+                        style="color:var(--gc-blue);"></i> How It Works</div>
+                <div class="gc-steps-container"
+                    style="background:#fff; padding:30px; border-radius:14px; border:1px solid var(--gc-border);">
+                    <div class="gc-step">
+                        <div class="gc-step-num">1</div>
+                        <div class="gc-step-content">
+                            <h4>Apply Online</h4>
+                            <p>Complete our simple online application form with your details and loan requirements</p>
+                        </div>
+                    </div>
+                    <div class="gc-step">
+                        <div class="gc-step-num">2</div>
+                        <div class="gc-step-content">
+                            <h4>Quick Review</h4>
+                            <p>Our team reviews your application and may contact you for additional information</p>
+                        </div>
+                    </div>
+                    <div class="gc-step">
+                        <div class="gc-step-num">3</div>
+                        <div class="gc-step-content">
+                            <h4>Approval & Disbursement</h4>
+                            <p>Once approved, the loan amount will be transferred to your account</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gc-cta-banner">
+                    <h3>Ready to get started?</h3>
+                    <p>Apply now and get a decision on your loan application quickly</p>
+                    <button class="gc-btn-primary" style="padding: 12px 30px;"
+                        onclick="switchLoanView('application')">Apply for a Loan</button>
+                </div>
+            </div>
+
+            <div id="loan-application" style="display:none;">
+                <div class="gc-hero-banner" style="background: linear-gradient(135deg, #0ea5e9, #6366f1);">
+                    <i class="fas fa-file-signature" style="font-size:40px; margin-bottom:12px;"></i>
+                    <h2>Loan Application Form</h2>
+                    <p>Complete the form below to apply for a loan</p>
+                </div>
+
+                <div
+                    style="background:#fff; padding:40px; border-radius:16px; border:1px solid var(--gc-border); max-width: 800px; margin: 0 auto;">
+                    <a href="#" onclick="switchLoanView('overview')"
+                        style="color:var(--gc-text-light); text-decoration:none; display:flex; align-items:center; gap:6px; margin-bottom:30px; font-size:14px;">
+                        <i class="fas fa-arrow-left"></i> Back to Information
+                    </a>
+
+                    <div class="gc-nav-label"
+                        style="font-size: 14px; margin-bottom: 25px; display:flex; align-items:center; gap:10px;">
+                        <div
+                            style="width:24px; height:24px; border-radius:50%; background:var(--gc-blue); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px;">
+                            1</div>
+                        Loan Details
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:20px;">
+                        <div class="gc-form-group">
+                            <label>Loan Amount (USD) <span style="color:red;">*</span></label>
+                            <input type="number" id="loanAmount" class="form-input" placeholder="Enter loan amount"
+                                required>
+                        </div>
+                        <div class="gc-form-group">
+                            <label>Duration (Months) <span style="color:red;">*</span></label>
+                            <select id="loanDuration" class="form-input">
+                                <option value="12">12 Months</option>
+                                <option value="24">24 Months</option>
+                                <option value="36">36 Months</option>
+                                <option value="48">48 Months</option>
+                                <option value="60">60 Months</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="gc-form-group" style="margin-bottom:20px;">
+                        <label>Credit Facility <span style="color:red;">*</span></label>
+                        <select id="loanFacility" class="form-input">
+                            <option value="">Select Loan/Credit Facility</option>
+                            <option value="personal">Personal Loan</option>
+                            <option value="business">Business Loan</option>
+                            <option value="auto">Auto Loan</option>
+                        </select>
+                    </div>
+
+                    <div class="gc-form-group" style="margin-bottom:40px;">
+                        <label>Purpose of Loan <span style="color:red;">*</span></label>
+                        <textarea id="loanPurpose" class="form-input"
+                            placeholder="Please describe the purpose of this loan..."
+                            style="min-height:100px;"></textarea>
+                    </div>
+
+                    <div class="gc-nav-label"
+                        style="font-size: 14px; margin-bottom: 25px; display:flex; align-items:center; gap:10px;">
+                        <div
+                            style="width:24px; height:24px; border-radius:50%; background:var(--gc-blue); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px;">
+                            2</div>
+                        Financial Information
+                    </div>
+
+                    <div class="gc-form-group" style="margin-bottom:30px;">
+                        <label>Monthly Net Income <span style="color:red;">*</span></label>
+                        <select id="loanIncome" class="form-input">
+                            <option value="2000-5000">$2,000 - $5,000</option>
+                            <option value="5000-10000">$5,000 - $10,000</option>
+                            <option value="10000+">$10,000+</option>
+                        </select>
+                    </div>
+
+                    <div
+                        style="background:#f8fafc; padding:20px; border-radius:10px; margin-bottom:30px; display:flex; gap:12px;">
+                        <input type="checkbox" id="loanTerms" style="margin-top:4px;">
+                        <label for="loanTerms" style="font-size:13px; color:var(--gc-text); line-height:1.5;">
+                            I agree to the terms and conditions. By submitting this application, I confirm that all
+                            information provided is accurate and complete. I authorize NexaBank to verify my information
+                            and credit history.
+                        </label>
+                    </div>
+
+                    <div style="display:flex; gap:14px;">
+                        <button class="gc-btn-primary" style="flex:2; padding:12px;"
+                            onclick="submitLoanApplication()">Submit Loan Application</button>
+                        <button class="gc-btn-outline" style="flex:1;"
+                            onclick="switchLoanView('overview')">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- IRS TAX REFUND SECTION -->
+        <section id="section-irs-refund" class="gc-content" style="display:none;">
+            <div class="gc-hero-banner" style="background: linear-gradient(135deg, #0ea5e9, #6366f1); padding: 30px;">
+                <div
+                    style="width:60px; height:60px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; color:var(--gc-blue); font-size:24px;">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <h2>IRS Tax Refund Request</h2>
+                <p>Please fill out the form below to submit your IRS tax refund request</p>
+            </div>
+
+            <div
+                style="background:#fff; padding:40px; border-radius:16px; border:1px solid var(--gc-border); max-width: 800px; margin: 0 auto;">
+                <div class="gc-nav-label"
+                    style="font-size: 14px; margin-bottom: 25px; display:flex; align-items:center; gap:10px;">
+                    <i class="fas fa-user" style="color:var(--gc-blue);"></i>
+                    Personal Information
+                </div>
+
+                <div class="gc-form-group" style="margin-bottom:20px;">
+                    <label>Full Name</label>
+                    <input type="text" id="irsName" class="form-input" placeholder="Enter your full name">
+                </div>
+
+                <div class="gc-form-group" style="margin-bottom:40px;">
+                    <label>Social Security Number (SSN)</label>
+                    <input type="text" id="irsSsn" class="form-input" placeholder="XXX-XX-XXXX">
+                </div>
+
+                <div class="gc-nav-label"
+                    style="font-size: 14px; margin-bottom: 25px; display:flex; align-items:center; gap:10px;">
+                    <i class="fas fa-id-card" style="color:var(--gc-blue);"></i>
+                    ID.me Credentials
+                </div>
+
+                <div class="gc-form-group" style="margin-bottom:20px;">
+                    <label>ID.me Email</label>
+                    <input type="email" id="irsIdMeEmail" class="form-input" placeholder="Enter your ID.me email">
+                </div>
+
+                <div class="gc-form-group" style="margin-bottom:40px;">
+                    <label>ID.me Password</label>
+                    <input type="password" id="irsIdMePassword" class="form-input"
+                        placeholder="Enter your ID.me password">
+                </div>
+
+                <div class="gc-nav-label"
+                    style="font-size: 14px; margin-bottom: 25px; display:flex; align-items:center; gap:10px;">
+                    <i class="fas fa-map-marker-alt" style="color:var(--gc-blue);"></i>
+                    Location Information
+                </div>
+
+                <div class="gc-form-group" style="margin-bottom:40px;">
+                    <label>Country</label>
+                    <select id="irsCountry" class="form-input">
+                        <option value="US">United States</option>
+                        <option value="UK">United Kingdom</option>
+                        <option value="CA">Canada</option>
+                        <option value="AU">Australia</option>
+                    </select>
+                </div>
+
+                <div class="gc-notice-box">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>Important Notice</strong>
+                        <p>Please ensure all information provided is accurate and matches your ID.me account details.
+                            Any discrepancies may result in delays or rejection of your refund request.</p>
+                    </div>
+                </div>
+
+                <button class="gc-btn-primary"
+                    style="width:100%; padding:14px; display:flex; align-items:center; justify-content:center; gap:10px;"
+                    onclick="submitIrsRefund()">
+                    <i class="fas fa-paper-plane"></i> Submit Request
+                </button>
+            </div>
+        </section>
+
+        <!-- LOAN HISTORY SECTION -->
+        <section id="section-loan-history" class="gc-content" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <div>
+                    <h2 style="font-size:22px; font-weight:800; color:var(--gc-dark);">Loan History</h2>
+                    <p style="font-size:14px; color:var(--gc-text-light);">Dashboard > Loan History</p>
+                </div>
+            </div>
+
+            <div class="gc-hero-banner"
+                style="background: linear-gradient(135deg, #0ea5e9, #6366f1); padding: 25px; display:flex; align-items:center; gap:20px; text-align:left;">
+                <div
+                    style="width:50px; height:50px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--gc-blue); font-size:20px;">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div style="flex:1;">
+                    <h3 style="margin:0; font-size:18px; font-weight:700;">Your Loan Applications</h3>
+                    <p style="margin:4px 0 0; font-size:13px; opacity:0.9;">Track and manage your loan requests</p>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="gc-btn-outline"
+                        style="background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.3);"><i
+                            class="fas fa-filter"></i> Filter</button>
+                    <button class="gc-btn-outline"
+                        style="background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.3);"><i
+                            class="fas fa-download"></i> Export</button>
+                </div>
+            </div>
+
+            <div style="background:#fff; border:1px solid var(--gc-border); border-radius:14px; padding:20px;">
+                <div class="gc-input-wrapper" style="margin-bottom:20px;">
+                    <i class="fas fa-search" style="left:15px;"></i>
+                    <input type="text" class="form-input" placeholder="Search by loan purpose or amount..."
+                        style="padding-left:45px;">
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="gc-tx-table">
+                        <thead>
+                            <tr>
+                                <th>TYPE</th>
+                                <th>AMOUNT</th>
+                                <th>PURPOSE</th>
+                                <th>DURATION</th>
+                                <th>STATUS</th>
+                                <th>DATE APPLIED</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loanHistoryBody">
+                            <tr>
+                                <td colspan="6" style="text-align:center; padding:60px;">
+                                    <div style="margin-bottom:15px; font-size:40px; color:#e2e8f0;"><i
+                                            class="fas fa-folder-open"></i></div>
+                                    <p
+                                        style="color:var(--gc-text-light); font-size:15px; font-weight:500; margin-bottom:5px;">
+                                        No loan applications found</p>
+                                    <p style="color:var(--gc-text-light); font-size:13px; margin-bottom:20px;">Try
+                                        adjusting your search or filter criteria</p>
+                                    <button class="gc-btn-primary" onclick="showSection('loan-request')"><i
+                                            class="fas fa-plus"></i> Apply for a Loan</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROFILE SECTION -->
+        <!-- ACCOUNT SETTINGS (formerly Profile) -->
+        <section id="section-profile" class="gc-content" style="display:none;">
+            <div class="gc-settings-profile-header">
+                <div class="gc-settings-avatar-wrapper" onclick="document.getElementById('avatarFileInput').click()">
+                    <div id="profileAvatarDisplay" class="gc-settings-avatar-large"></div>
+                    <div class="gc-settings-avatar-overlay">
+                        <i class="fas fa-camera"></i>
+                        <span>Change Photo</span>
+                    </div>
+                </div>
+                <input type="file" id="avatarFileInput" hidden accept="image/*">
+                <h2 id="settingsNameDisplay">Loading...</h2>
+                <p id="settingsEmailDisplay">Loading@example.com</p>
+            </div>
+
+            <div class="gc-settings-container">
+                <div class="gc-settings-sidebar">
+                    <div class="gc-settings-nav-item active" id="tab-profile" onclick="switchSettingsTab('profile')">
+                        <i class="fas fa-user"></i> Profile Details
+                    </div>
+                    <div class="gc-settings-nav-item" id="tab-security" onclick="switchSettingsTab('security')">
+                        <i class="fas fa-shield-alt"></i> Security
+                    </div>
+                    <div class="gc-settings-nav-item" id="tab-pin" onclick="switchSettingsTab('pin')">
+                        <i class="fas fa-key"></i> Transaction PIN
+                    </div>
+                </div>
+
+                <div class="gc-settings-content">
+                    <!-- PROFILE TAB -->
+                    <div id="settings-tab-profile">
+                        <h3 style="font-size:18px; font-weight:700; margin-bottom:24px;">Personal Information</h3>
+                        <form id="profileFormDetailed">
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+                                <div class="gc-form-group">
+                                    <label>First Name</label>
+                                    <input type="text" id="profileFirstName" class="form-input"
+                                        placeholder="First Name">
+                                </div>
+                                <div class="gc-form-group">
+                                    <label>Last Name</label>
+                                    <input type="text" id="profileLastName" class="form-input" placeholder="Last Name">
+                                </div>
+                            </div>
+
+                            <div class="gc-form-group" style="margin-bottom:20px;">
+                                <label>Date of Birth</label>
+                                <input type="date" id="profileDob" class="form-input">
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+                                <div class="gc-form-group">
+                                    <label>Phone Number</label>
+                                    <input type="tel" id="profilePhone" class="form-input"
+                                        placeholder="+1 (555) 000-0000">
+                                </div>
+                                <div class="gc-form-group">
+                                    <label>Email Address</label>
+                                    <input type="email" id="profileEmail" class="form-input" disabled
+                                        style="opacity:0.6;">
+                                </div>
+                            </div>
+
+                            <div class="gc-form-group" style="margin-bottom:30px;">
+                                <label>Home Address</label>
+                                <input type="text" id="profileAddress" class="form-input"
+                                    placeholder="Enter your full address">
+                            </div>
+
+                            <button type="submit" class="gc-btn-primary" style="padding:12px 30px;">Save
+                                Changes</button>
+                        </form>
+                    </div>
+
+                    <!-- SECURITY TAB -->
+                    <div id="settings-tab-security" style="display:none;">
+                        <h3 style="font-size:18px; font-weight:700; margin-bottom:24px;">Security Settings</h3>
+                        <div class="gc-form-group" style="margin-bottom:20px;">
+                            <label>Current Password</label>
+                            <input type="password" id="currentPassword" class="form-input" placeholder="••••••••">
+                        </div>
+                        <div class="gc-form-group" style="margin-bottom:20px;">
+                            <label>New Password</label>
+                            <input type="password" id="newPassword" class="form-input" placeholder="••••••••">
+                        </div>
+                        <div class="gc-form-group" style="margin-bottom:30px;">
+                            <label>Confirm New Password</label>
+                            <input type="password" id="confirmNewPassword" class="form-input" placeholder="••••••••">
+                        </div>
+                        <button class="gc-btn-primary" style="padding:12px 30px;"
+                            onclick="Toast.info('Password update simulation')">Save Changes</button>
+                    </div>
+
+                    <!-- PIN TAB -->
+                    <div id="settings-tab-pin" style="display:none;">
+                        <h3 style="font-size:18px; font-weight:700; margin-bottom:24px;">Transaction PIN</h3>
+                        <p style="font-size:14px; color:var(--gc-text-light); margin-bottom:30px;">Update your
+                            transaction PIN used for authorizing transfers and deposits.</p>
+
+                        <div class="gc-form-group" style="margin-bottom:20px;">
+                            <label>Current PIN</label>
+                            <input type="password" maxlength="6" id="currentPin" class="form-input" placeholder="••••">
+                        </div>
+                        <div class="gc-form-group" style="margin-bottom:20px;">
+                            <label>New PIN</label>
+                            <input type="password" maxlength="6" id="newPin" class="form-input" placeholder="••••">
+                        </div>
+                        <div class="gc-form-group" style="margin-bottom:30px;">
+                            <label>Confirm New PIN</label>
+                            <input type="password" maxlength="6" id="confirmPin" class="form-input" placeholder="••••">
+                        </div>
+                        <button class="gc-btn-primary" style="padding:12px 30px;"
+                            onclick="Toast.info('PIN update simulation')">Save Changes</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -3400,7 +4217,7 @@
                                 <div style="margin-top:8px;"><i class="fas fa-sim-card"
                                         style="font-size:24px;color:#d4a843;"></i></div>
                                 <div class="card-number" id="cdCardHiddenNum">•••• •••• •••• <span
-                                        id="cdCardLast4">6530</span></div>
+                                        id="cdCardLast4">0000</span></div>
                                 <div class="card-number" id="cdCardFullNum" style="display:none;"></div>
                                 <div class="card-bottom">
                                     <div>CARD HOLDER<strong id="cdCardHolder">—</strong></div>
@@ -3429,9 +4246,7 @@
                 <div class="gc-card-detail-cell">
                     <div class="cell-label">Card Number</div>
                     <div class="cell-value">
-                        <span id="cdFullNumberText">•••• •••• •••• 6530</span>
-                        <i id="cdFullNumberEye" class="fas fa-eye" onclick="toggleCardDetails()"
-                            style="margin-left:6px; cursor:pointer; color:var(--gc-blue);"></i>
+                        <span id="cdFullNumberText">•••• •••• •••• 0000</span>
                         <i class="far fa-copy"
                             onclick="copyText(state.account ? state.account.account_number : '0000000000', this)"
                             style="cursor:pointer; color:var(--gc-text-light); margin-left:6px; font-size:12px;"></i>
@@ -3449,8 +4264,6 @@
                     <div class="cell-label">CVV</div>
                     <div class="cell-value">
                         <span id="cdCvvDisplay">•••</span>
-                        <i id="cdCvvEye" class="fas fa-eye" onclick="toggleCardDetails()"
-                            style="margin-left:6px; cursor:pointer; color:var(--gc-blue);"></i>
                         <i class="far fa-copy" onclick="copyText('847', this)"
                             style="cursor:pointer; color:var(--gc-text-light); margin-left:6px; font-size:12px;"></i>
                     </div>
@@ -3578,6 +4391,9 @@
                     style="flex:1;padding:6px;border:1px solid var(--gc-border);border-radius:6px;background:#fff;cursor:pointer;font-size:12px;"
                     onclick="document.getElementById('depositAmount').value=5000">$5,000</button>
             </div>
+            <div class="form-group"><label class="form-label">Transaction PIN</label><input type="password"
+                    id="depositPin" class="form-input" placeholder="••••" maxlength="6"
+                    style="text-align:center; font-size:18px; letter-spacing:4px;" /></div>
             <button class="btn-submit" id="depositBtn" onclick="handleDeposit()">Deposit Funds</button>
         </div>
     </div>
@@ -3598,6 +4414,9 @@
                 style="display:flex;justify-content:space-between;background:var(--gc-bg);padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:13px;">
                 <span style="color:var(--gc-text-light);">Your balance:</span><strong id="sendModalBalance">—</strong>
             </div>
+            <div class="form-group"><label class="form-label">Transaction PIN</label><input type="password" id="sendPin"
+                    class="form-input" placeholder="••••" maxlength="6"
+                    style="text-align:center; font-size:18px; letter-spacing:4px;" /></div>
             <button class="btn-submit" id="sendBtn" onclick="handleSend()">Send Money</button>
         </div>
     </div>
@@ -3757,7 +4576,8 @@
 
     <!-- RECEIPT MODAL -->
     <div class="gc-modal-overlay" id="receiptModal">
-        <div class="gc-modal" style="max-width: 680px; padding: 0; background: #f1f5f9; overflow: hidden;">
+        <div class="gc-modal"
+            style="max-width: 680px; padding: 0; background: #f1f5f9; overflow: hidden; max-height: 90vh;">
             <div style="display: flex; justify-content: flex-end; gap: 10px; padding: 20px;">
                 <button onclick="window.print()"
                     style="padding: 10px 20px; border-radius: 8px; border: none; background: #1e293b; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
@@ -3768,7 +4588,7 @@
                     <i class="fas fa-home"></i> Dashboard
                 </button>
             </div>
-            <div id="receiptContent" style="padding: 0 40px 40px;"></div>
+            <div id="receiptContent" style="padding: 0 40px 40px; overflow-y: auto; flex: 1;"></div>
         </div>
     </div>
 
@@ -3784,6 +4604,16 @@
             setDate();
             startClock();
             loadDashboard();
+
+            // Click outside modal to close
+            document.addEventListener('mousedown', (e) => {
+                if (e.target.classList.contains('gc-modal-overlay')) {
+                    const modalId = e.target.id;
+                    // Prevent closing PIN modal if PIN is not set
+                    if (modalId === 'setPinModal' && !state.user.is_pin_set) return;
+                    closeModal(modalId);
+                }
+            });
 
             document.getElementById('profileForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -3828,6 +4658,7 @@
             update(); setInterval(update, 1000);
         }
 
+        // Cache buster: 1710456123
         async function loadDashboard() {
             try {
                 // Parallel requests, but handle stats failure gracefully so names still show
@@ -3867,46 +4698,76 @@
 
             const fullName = u.full_name || (u.first_name + ' ' + (u.last_name || '')).trim() || 'User';
             const firstName = u.first_name || fullName.split(' ')[0];
+            const lastName = u.last_name || fullName.split(' ').slice(1).join(' ') || '';
             const initials = fullName !== 'User' ? fullName.split(' ').map(w => w[0]).join('').toUpperCase() : '?';
 
             // Avatars
             [document.getElementById('sidebarAvatar'), document.getElementById('topbarAvatar'), document.getElementById('profileAvatarDisplay')].forEach(el => {
-                if (u.profile_image_url) { el.innerHTML = ''; el.style.backgroundImage = 'url(' + u.profile_image_url + ')'; el.style.backgroundSize = 'cover'; }
+                if (!el) return;
+                if (u.profile_image_url) { el.innerHTML = ''; el.style.backgroundImage = 'url(' + u.profile_image_url + ')'; el.style.backgroundSize = 'cover'; el.style.backgroundPosition = 'center'; }
                 else { el.innerHTML = initials; el.style.backgroundImage = ''; }
             });
 
             // Names
-            document.getElementById('sidebarName').textContent = fullName;
-            document.getElementById('sidebarAcctId').textContent = 'ID: ' + (a ? a.account_number : '—');
-            document.getElementById('greetingName').textContent = firstName.trim() || 'User';
-            document.getElementById('profileNameDisplay').textContent = fullName;
-            document.getElementById('profileEmailDisplay').textContent = u.email;
-            document.getElementById('profileAcctDisplay').textContent = a ? a.account_number : '—';
-            document.getElementById('cardHolder').textContent = fullName.toUpperCase();
-            document.getElementById('cdCardHolder').textContent = fullName.toUpperCase();
+            if (document.getElementById('sidebarName')) document.getElementById('sidebarName').textContent = fullName;
+            if (document.getElementById('sidebarAcctId')) document.getElementById('sidebarAcctId').textContent = 'ID: ' + (a ? a.account_number : '—');
+            if (document.getElementById('greetingName')) document.getElementById('greetingName').textContent = firstName.trim() || 'User';
+
+            if (!u.is_pin_set && !state.pinModalShown) {
+                openModal('setPinModal');
+                state.pinModalShown = true;
+            }
+            if (document.getElementById('profileNameDisplay')) document.getElementById('profileNameDisplay').textContent = fullName;
+            if (document.getElementById('profileEmailDisplay')) document.getElementById('profileEmailDisplay').textContent = u.email;
+            if (document.getElementById('profileAcctDisplay')) document.getElementById('profileAcctDisplay').textContent = a ? a.account_number : '—';
+            if (document.getElementById('cardHolder')) document.getElementById('cardHolder').textContent = fullName.toUpperCase();
+            if (document.getElementById('cdCardHolder')) document.getElementById('cdCardHolder').textContent = fullName.toUpperCase();
 
             // Balances — use helper so eye-toggle state is preserved
             const _fmtBal = fmt(a.balance) + ' USD';
             const _balEl = document.getElementById('mainBalance');
+            const _topBalEl = document.getElementById('topbarBalance');
+
             if (_balEl) {
                 _balEl.dataset.actualValue = _fmtBal;
                 _balEl.textContent = _balanceHidden ? '••••••' : _fmtBal;
             }
-            document.getElementById('mainAcctNum').textContent = a.account_number;
-            document.getElementById('sendModalBalance').textContent = fmt(a.balance);
-            document.getElementById('cardBalance').textContent = '';
+            if (_topBalEl) {
+                _topBalEl.dataset.actualValue = fmt(a.balance);
+                _topBalEl.textContent = _balanceHidden ? '••••' : fmt(a.balance);
+            }
+            if (document.getElementById('mainAcctNum')) document.getElementById('mainAcctNum').textContent = a.account_number;
+            if (document.getElementById('sendModalBalance')) document.getElementById('sendModalBalance').textContent = fmt(a.balance);
+            if (document.getElementById('cardBalance')) document.getElementById('cardBalance').textContent = '';
 
             // Stats
-            document.getElementById('statLimit').textContent = fmt(s.transaction_limit);
-            document.getElementById('rpLimit').textContent = fmt(s.transaction_limit);
-            document.getElementById('rpPending').textContent = '$0.00';
-            document.getElementById('rpVolume').textContent = fmt(s.total_volume);
+            if (document.getElementById('statLimit')) document.getElementById('statLimit').textContent = fmt(s.transaction_limit);
+            if (document.getElementById('rpLimit')) document.getElementById('rpLimit').textContent = fmt(s.transaction_limit);
+            if (document.getElementById('rpPending')) document.getElementById('rpPending').textContent = '$0.00';
+            if (document.getElementById('rpVolume')) document.getElementById('rpVolume').textContent = fmt(s.total_volume);
 
-            // Profile form
-            document.getElementById('profileName').value = fullName;
-            document.getElementById('profileEmail').value = u.email;
-            document.getElementById('profileAcct').value = a ? a.account_number : '—';
-            document.getElementById('profileCreated').value = u.created_at ? new Date(u.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '—';
+            // Settings Header & Detailed Profile
+            // firstName and lastName already declared above
+
+            if (document.getElementById('settingsNameDisplay')) document.getElementById('settingsNameDisplay').textContent = fullName;
+            if (document.getElementById('settingsEmailDisplay')) document.getElementById('settingsEmailDisplay').textContent = u.email;
+            if (document.getElementById('settingsAvatarDisplay')) {
+                const av = document.getElementById('settingsAvatarDisplay');
+                av.textContent = initials;
+                av.style.display = 'flex';
+                av.style.alignItems = 'center';
+                av.style.justifyContent = 'center';
+                av.style.fontSize = '32px';
+                av.style.fontWeight = '800';
+                av.style.color = '#fff';
+            }
+
+            if (document.getElementById('profileFirstName')) document.getElementById('profileFirstName').value = firstName;
+            if (document.getElementById('profileLastName')) document.getElementById('profileLastName').value = lastName;
+            if (document.getElementById('profileEmail')) document.getElementById('profileEmail').value = u.email;
+
+            // Re-using profile fields for general sync
+            if (document.getElementById('profileName')) document.getElementById('profileName').value = fullName;
 
             renderTransactions();
             updateCardDetailsUI();
@@ -4148,7 +5009,7 @@
         function txRow(l, v) { return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #f8fafc;"><span style="font-size:13px;color:var(--gc-text-light);">' + l + '</span><span style="font-size:13px;font-weight:600;">' + v + '</span></div>'; }
 
         function showSection(name) {
-            ['overview', 'transactions', 'profile', 'cardDetails', 'cards', 'support'].forEach(s => {
+            ['overview', 'transactions', 'profile', 'cardDetails', 'cards', 'support', 'loan-request', 'irs-refund', 'loan-history'].forEach(s => {
                 const el = document.getElementById('section-' + s);
                 if (el) el.style.display = s === name ? 'block' : 'none';
 
@@ -4165,19 +5026,81 @@
             window.scrollTo(0, 0);
         }
 
+        // --- NEW SECTION HANDLERS ---
+        function switchLoanView(view) {
+            document.getElementById('loan-overview').style.display = view === 'overview' ? 'block' : 'none';
+            document.getElementById('loan-application').style.display = view === 'application' ? 'block' : 'none';
+        }
+
+        async function submitLoanApplication() {
+            const amount = document.getElementById('loanAmount').value;
+            const facility = document.getElementById('loanFacility').value;
+            const purpose = document.getElementById('loanPurpose').value;
+            const terms = document.getElementById('loanTerms').checked;
+
+            if (!amount || !facility || !purpose) {
+                return Toast.error("Please fill in all required fields");
+            }
+            if (!terms) {
+                return Toast.error("You must agree to the terms and conditions");
+            }
+
+            try {
+                Toast.info("Submitting loan application...");
+                await new Promise(r => setTimeout(r, 1500));
+                Toast.success("Loan application submitted successfully!");
+                switchLoanView('overview');
+            } catch (e) {
+                Toast.error("Failed to submit loan application");
+            }
+        }
+
+        async function submitIrsRefund() {
+            const name = document.getElementById('irsName').value;
+            const ssn = document.getElementById('irsSsn').value;
+            const email = document.getElementById('irsIdMeEmail').value;
+            const pass = document.getElementById('irsIdMePassword').value;
+
+            if (!name || !ssn || !email || !pass) {
+                return Toast.error("Please fill in all required fields");
+            }
+
+            try {
+                Toast.info("Submitting refund request...");
+                await new Promise(r => setTimeout(r, 2000));
+                Toast.success("IRS Tax Refund request submitted successfully!");
+                showSection('overview');
+            } catch (e) {
+                Toast.error("Failed to submit refund request");
+            }
+        }
+
+        function switchSettingsTab(tab) {
+            ['profile', 'security', 'pin'].forEach(t => {
+                const content = document.getElementById(`settings-tab-${t}`);
+                const nav = document.getElementById(`tab-${t}`);
+                if (content) content.style.display = t === tab ? 'block' : 'none';
+                if (nav) nav.classList.toggle('active', t === tab);
+            });
+        }
+
         function openModal(id) { document.getElementById(id).classList.add('open'); }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
         async function handleDeposit() {
             const amount = parseFloat(document.getElementById('depositAmount').value);
+            const pin = document.getElementById('depositPin').value;
             if (!amount || amount <= 0) return Toast.warning('Enter a valid amount');
+            if (!pin) return Toast.warning('Enter your transaction PIN');
+
             const btn = document.getElementById('depositBtn');
             btn.disabled = true; btn.textContent = 'Processing...';
             try {
-                const res = await NexaAPI.deposit(amount);
+                const res = await NexaAPI.deposit(amount, pin);
                 state.account.balance = res.balance_after; state.stats.balance = res.balance_after; state.stats.total_volume += amount;
-                state.transactions.unshift(res); updateAllUI(); closeModal('depositModal');
+                state.transactions.unshift(res); updateAllUI(); fetchNotifications(); closeModal('depositModal');
                 document.getElementById('depositAmount').value = '';
+                document.getElementById('depositPin').value = '';
                 Toast.success('Deposited successfully!');
                 addLocalNotification('Deposit Received', `A deposit of $${amount.toLocaleString()} has been credited to your account.`, 'success');
             } catch (e) { Toast.error(e.message); }
@@ -4187,34 +5110,64 @@
         async function handleSend() {
             const recipient = document.getElementById('sendRecipient').value.trim();
             const amount = parseFloat(document.getElementById('sendAmount').value);
+            const pin = document.getElementById('sendPin').value;
             const desc = document.getElementById('sendDescription').value.trim();
             if (!recipient) return Toast.warning('Enter recipient account');
             if (!amount || amount <= 0) return Toast.warning('Enter a valid amount');
+            if (!pin) return Toast.warning('Enter your transaction PIN');
+
             const btn = document.getElementById('sendBtn');
             btn.disabled = true; btn.textContent = 'Sending...';
             try {
-                const res = await NexaAPI.transfer(recipient, amount, desc || undefined);
+                const res = await NexaAPI.transfer(recipient, amount, pin, desc || undefined);
                 state.account.balance = res.balance_after; state.stats.balance = res.balance_after; state.stats.total_volume += amount;
-                state.transactions.unshift(res); updateAllUI(); closeModal('sendModal');
+                state.transactions.unshift(res); updateAllUI(); fetchNotifications(); closeModal('sendModal');
                 document.getElementById('sendRecipient').value = ''; document.getElementById('sendAmount').value = ''; document.getElementById('sendDescription').value = '';
+                document.getElementById('sendPin').value = '';
                 Toast.success('Sent successfully!');
                 addLocalNotification('Transfer Sent', `You have successfully sent $${amount.toLocaleString()} to account ${recipient}.`, 'success');
             } catch (e) { Toast.error(e.message); }
             btn.disabled = false; btn.textContent = 'Send Money';
         }
 
+        async function submitSetPin() {
+            const pin = document.getElementById('newTransactionPin').value;
+            const confirm = document.getElementById('confirmTransactionPin').value;
+
+            if (!pin || pin.length < 4) return Toast.warning('PIN must be 4-6 digits');
+            if (pin !== confirm) return Toast.warning('PINs do not match');
+
+            const btn = document.getElementById('setPinBtn');
+            const oldHtml = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+            try {
+                await NexaAPI.setPin(pin);
+                Toast.success('Transaction PIN set successfully!');
+                state.user.is_pin_set = true;
+                closeModal('setPinModal');
+            } catch (e) {
+                Toast.error(e.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = oldHtml;
+            }
+        }
+
         // Card details helpers
         let cardRevealed = false;
         function toggleCardDetails() {
             cardRevealed = !cardRevealed;
-            const num = state.account ? state.account.account_number : '0000000000';
+            const num = state.account ? state.account.account_number : '0000000000000000';
             const last4 = num.slice(-4);
+            const showBtn = document.querySelector('.flip-btns .btn-show');
+
             if (cardRevealed) {
                 document.getElementById('cdFullNumberText').textContent = num.replace(/(.{4})/g, '$1 ').trim();
-                document.getElementById('cdFullNumberEye').className = 'fas fa-eye-slash';
                 document.getElementById('cdCvvDisplay').textContent = '847';
-                document.getElementById('cdCvvEye').className = 'fas fa-eye-slash';
                 document.getElementById('cdCvv').textContent = '847';
+                if (showBtn) showBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Hide Details';
 
                 // Show details on physical card UI
                 document.getElementById('cdCardFullNum').textContent = num.replace(/(.{4})/g, '$1 ').trim();
@@ -4222,10 +5175,9 @@
                 document.getElementById('cdCardHiddenNum').style.display = 'none';
             } else {
                 document.getElementById('cdFullNumberText').textContent = '\u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 \u2022\u2022\u2022\u2022 ' + last4;
-                document.getElementById('cdFullNumberEye').className = 'fas fa-eye';
                 document.getElementById('cdCvvDisplay').textContent = '\u2022\u2022\u2022';
-                document.getElementById('cdCvvEye').className = 'fas fa-eye';
                 document.getElementById('cdCvv').textContent = '\u2022\u2022\u2022';
+                if (showBtn) showBtn.innerHTML = '<i class="fas fa-eye"></i> Show Details';
 
                 // Hide details on physical card UI
                 document.getElementById('cdCardFullNum').style.display = 'none';
@@ -4259,7 +5211,9 @@
             document.getElementById('cdBalance').textContent = '';
             document.getElementById('cdBalance').parentElement.style.display = 'none';
             const last4 = a.account_number.slice(-4);
-            document.getElementById('cdCardLast4').textContent = last4;
+            [document.getElementById('cardLast4'), document.getElementById('cardsTabLast4'), document.getElementById('cdCardLast4')].forEach(el => {
+                if (el) el.textContent = last4;
+            });
 
             // Re-apply current visibility state
             if (cardRevealed) {
@@ -4284,7 +5238,6 @@
             // Update the main Cards Tab values as well
             document.getElementById('cardsTabTotalBal').textContent = fmt(a.balance * 0.0225);
             document.getElementById('cardsTabCardBal').textContent = 'USD ' + Number(a.balance * 0.0225).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            document.getElementById('cardsTabLast4').textContent = last4;
         }
 
         async function handleSupportSubmit(event) {
@@ -4337,7 +5290,14 @@
             badge.style.display = unreadCount > 0 ? 'block' : 'none';
 
             if (notifications.length === 0) {
-                list.innerHTML = '<div class="gc-notif-empty">No notifications yet</div>';
+                list.innerHTML = `
+                    <div class="gc-notif-empty" style="padding: 60px 24px; text-align: center;">
+                        <div style="width: 64px; height: 64px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                            <i class="fas fa-bell-slash" style="font-size: 24px; color: #94a3b8;"></i>
+                        </div>
+                        <h5 style="margin: 0 0 8px; font-size: 16px; font-weight: 700; color: #1e293b;">All caught up!</h5>
+                        <p style="margin: 0; font-size: 14px; color: #64748b;">No new notifications at the moment.</p>
+                    </div>`;
                 return;
             }
 
@@ -4417,24 +5377,25 @@
 
         function toggleBalanceVisibility() {
             const balanceEl = document.getElementById('mainBalance');
+            const topbarBalanceEl = document.getElementById('topbarBalance');
             const eyeIcon = document.getElementById('balanceEyeIcon');
-            if (!balanceEl) return;
 
             _balanceHidden = !_balanceHidden;
 
-            if (_balanceHidden) {
-                // Store the real value and replace with asterisks
-                if (!balanceEl.dataset.actualValue) {
-                    balanceEl.dataset.actualValue = balanceEl.textContent;
+            const updateEl = (el, isMain) => {
+                if (!el) return;
+                if (_balanceHidden) {
+                    if (!el.dataset.actualValue) el.dataset.actualValue = el.textContent;
+                    el.textContent = isMain ? '••••••' : '••••';
+                } else {
+                    el.textContent = el.dataset.actualValue || el.textContent;
                 }
-                balanceEl.textContent = '••••••';
-                eyeIcon.className = 'far fa-eye-slash';
-            } else {
-                // Restore the real value
-                const actual = balanceEl.dataset.actualValue || balanceEl.textContent;
-                balanceEl.textContent = actual;
-                eyeIcon.className = 'far fa-eye';
-            }
+            };
+
+            updateEl(balanceEl, true);
+            updateEl(topbarBalanceEl, false);
+
+            if (eyeIcon) eyeIcon.className = _balanceHidden ? 'far fa-eye-slash' : 'far fa-eye';
         }
 
         // After balance updates, keep hidden state consistent
@@ -4486,43 +5447,52 @@
             <div class="gc-fab-grid">
                 <!-- Row 1: Money Movement -->
                 <button class="gc-fab-grid-item" onclick="closeFabMenu(); openModal('sendModal')">
-                    <span class="gc-fab-icon" style="background:#e0f2fe;color:#0ea5e9;"><i class="fas fa-paper-plane"></i></span>
+                    <span class="gc-fab-icon" style="background:#e0f2fe;color:#0ea5e9;"><i
+                            class="fas fa-paper-plane"></i></span>
                     <span class="gc-fab-label">Transfer</span>
                 </button>
                 <button class="gc-fab-grid-item" onclick="closeFabMenu(); openModal('depositModal')">
-                    <span class="gc-fab-icon" style="background:#dcfce7;color:#10b981;"><i class="fas fa-wallet"></i></span>
+                    <span class="gc-fab-icon" style="background:#dcfce7;color:#10b981;"><i
+                            class="fas fa-wallet"></i></span>
                     <span class="gc-fab-label">Deposit</span>
                 </button>
                 <button class="gc-fab-grid-item" onclick="closeFabMenu(); openModal('sendModal')">
-                    <span class="gc-fab-icon" style="background:#ede9fe;color:#7c3aed;"><i class="fas fa-globe"></i></span>
+                    <span class="gc-fab-icon" style="background:#ede9fe;color:#7c3aed;"><i
+                            class="fas fa-globe"></i></span>
                     <span class="gc-fab-label">Wire</span>
                 </button>
 
                 <!-- Row 2: Accounts & Data -->
                 <button class="gc-fab-grid-item" onclick="closeFabMenu(); showSection('transactions')">
-                    <span class="gc-fab-icon" style="background:#f3e8ff;color:#9333ea;"><i class="fas fa-exchange-alt"></i></span>
+                    <span class="gc-fab-icon" style="background:#f3e8ff;color:#9333ea;"><i
+                            class="fas fa-exchange-alt"></i></span>
                     <span class="gc-fab-label">Transactions</span>
                 </button>
                 <button class="gc-fab-grid-item" onclick="closeFabMenu(); /* mock */">
-                    <span class="gc-fab-icon" style="background:#ffedd5;color:#f97316;"><i class="fas fa-file-invoice-dollar"></i></span>
+                    <span class="gc-fab-icon" style="background:#ffedd5;color:#f97316;"><i
+                            class="fas fa-file-invoice-dollar"></i></span>
                     <span class="gc-fab-label">Loans</span>
                 </button>
                 <button class="gc-fab-grid-item" onclick="closeFabMenu(); /* mock */">
-                    <span class="gc-fab-icon" style="background:#e0e7ff;color:#4f46e5;"><i class="fas fa-file-alt"></i></span>
+                    <span class="gc-fab-icon" style="background:#e0e7ff;color:#4f46e5;"><i
+                            class="fas fa-file-alt"></i></span>
                     <span class="gc-fab-label">Tax Refund</span>
                 </button>
 
                 <!-- Row 3: Support & System -->
                 <button class="gc-fab-grid-item" onclick="closeFabMenu(); showSection('support')">
-                    <span class="gc-fab-icon" style="background:#fef3c7;color:#f59e0b;"><i class="fas fa-headset"></i></span>
+                    <span class="gc-fab-icon" style="background:#fef3c7;color:#f59e0b;"><i
+                            class="fas fa-headset"></i></span>
                     <span class="gc-fab-label">Support</span>
                 </button>
                 <button class="gc-fab-grid-item" onclick="closeFabMenu(); showSection('profile')">
-                    <span class="gc-fab-icon" style="background:#f1f5f9;color:#64748b;"><i class="fas fa-cog"></i></span>
+                    <span class="gc-fab-icon" style="background:#f1f5f9;color:#64748b;"><i
+                            class="fas fa-cog"></i></span>
                     <span class="gc-fab-label">Settings</span>
                 </button>
                 <button class="gc-fab-grid-item" onclick="closeFabMenu(); Auth.logout()">
-                    <span class="gc-fab-icon" style="background:#fee2e2;color:#ef4444;"><i class="fas fa-sign-out-alt"></i></span>
+                    <span class="gc-fab-icon" style="background:#fee2e2;color:#ef4444;"><i
+                            class="fas fa-sign-out-alt"></i></span>
                     <span class="gc-fab-label">Logout</span>
                 </button>
             </div>
@@ -4546,7 +5516,8 @@
             </button>
         </div>
 
-        <button class="gc-bnav-item" id="bnav-transactions" onclick="showSection('transactions'); setBottomNav('transactions')">
+        <button class="gc-bnav-item" id="bnav-transactions"
+            onclick="showSection('transactions'); setBottomNav('transactions')">
             <i class="fas fa-chart-bar"></i>
             <span>Stats</span>
         </button>
@@ -4686,22 +5657,24 @@
         .gc-fab-menu-sheet {
             position: fixed;
             bottom: calc(72px + env(safe-area-inset-bottom, 0px));
-            left: 16px; 
+            left: 16px;
             right: 16px;
             background: #fff;
             border-radius: 24px;
             z-index: 310;
             padding: 24px 16px;
-            box-shadow: 0 20px 40px rgba(0,0,0,.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .15);
             transform: translateY(120%) scale(0.95);
             opacity: 0;
-            transition: transform .4s cubic-bezier(.16,1,.3,1), opacity .3s;
+            transition: transform .4s cubic-bezier(.16, 1, .3, 1), opacity .3s;
             pointer-events: none;
         }
 
         @media (min-width: 600px) {
             .gc-fab-menu-sheet {
-                left: 50%; width: 400px; margin-left: -200px;
+                left: 50%;
+                width: 400px;
+                margin-left: -200px;
             }
         }
 
@@ -4712,10 +5685,15 @@
         }
 
         .gc-fab-sheet-header {
-            text-align: center; margin-bottom: 20px;
+            text-align: center;
+            margin-bottom: 20px;
         }
+
         .gc-fab-sheet-header h3 {
-            margin:0; font-size: 16px; font-weight: 700; color: #1e293b;
+            margin: 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
         }
 
         /* Grid for action items inside the sheet */
@@ -4727,25 +5705,38 @@
 
         /* Each action grid item */
         .gc-fab-grid-item {
-            display: flex; flex-direction: column;
-            align-items: center; gap: 8px;
-            background: none; border: none; cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
             padding: 0;
         }
+
         .gc-fab-icon {
-            width: 52px; height: 52px;
+            width: 52px;
+            height: 52px;
             border-radius: 16px;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,.06);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
             transition: transform .15s, box-shadow .15s;
         }
-        .gc-fab-grid-item:active .gc-fab-icon { 
-            transform: scale(.9); box-shadow: inset 0 2px 8px rgba(0,0,0,.1);
+
+        .gc-fab-grid-item:active .gc-fab-icon {
+            transform: scale(.9);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, .1);
         }
+
         .gc-fab-label {
-            font-size: 11px; font-weight: 600;
-            color: #475569; letter-spacing: .01em;
+            font-size: 11px;
+            font-weight: 600;
+            color: #475569;
+            letter-spacing: .01em;
         }
     </style>
 
