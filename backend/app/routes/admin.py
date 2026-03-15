@@ -1,6 +1,6 @@
 import secrets
 import datetime
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from ..database import get_db
@@ -10,6 +10,7 @@ from ..models.transaction import Transaction, TransactionType, TransactionStatus
 from ..models.admin import AdminPermissions, AdminLog
 from ..core.dependencies import get_current_admin, get_current_super_admin
 from ..schemas.admin import AdminDepositRequest, AdminPermissionUpdate, AdminRoleUpdate, AdminLogResponse, AdminPermissionsResponse, AdminUserActionsResponse
+from ..services.email_service import email_service
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
@@ -112,6 +113,7 @@ def delete_user(
 def admin_deposit(
     user_id: int,
     payload: AdminDepositRequest,
+    background_tasks: BackgroundTasks,
     admin: User = Depends(get_current_admin),
     db: Session = Depends(get_db)
 ):
@@ -140,12 +142,27 @@ def admin_deposit(
         amount=payload.amount,
         transaction_type=TransactionType.deposit,
         status=TransactionStatus.completed,
-        description=f"Admin Deposit by {admin.email}",
+        description="Deposit",
         reference_code=f"ADM-{secrets.token_hex(4).upper()}"
     )
     db.add(tx)
     _log_action(db, admin.id, "deposit", user.id, f"Deposited ${payload.amount} to {user.email}")
     db.commit()
+    db.refresh(tx)
+    db.refresh(account)
+
+    # Send email notification
+    background_tasks.add_task(
+        email_service.send_transaction_email,
+        email=user.email,
+        user_name=user.first_name,
+        tx_type="deposit",
+        amount=float(payload.amount),
+        balance=float(account.balance),
+        reference=tx.reference_code,
+        date_time=tx.created_at.strftime("%Y-%m-%d %H:%M:%S")
+    )
+
     return {"message": "Deposit successful"}
 
 

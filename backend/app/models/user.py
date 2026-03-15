@@ -20,6 +20,7 @@ class User(Base):
     verification_token = Column(String(255), nullable=True, index=True)
     token_expiry = Column(DateTime, nullable=True)
     transaction_pin = Column(String(255), nullable=True)  # Hashed 4-6 digit PIN
+    profile_image_url = Column(String(255), nullable=True)
     login_count = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)

@@ -1,5 +1,5 @@
 from decimal import Decimal
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, status, Query, BackgroundTasks
 from sqlalchemy.orm import Session
 from ..database import get_db
 from ..models.user import User
@@ -9,6 +9,7 @@ from ..schemas.transaction import DepositRequest, WithdrawRequest, TransferReque
 from ..core.dependencies import get_current_user
 from ..models.notification import Notification
 from ..services.account_service import generate_reference_code
+from ..services.email_service import email_service
 
 router = APIRouter(prefix="/api/transactions", tags=["transactions"])
 
@@ -91,6 +92,7 @@ def get_transactions(
 @router.post("/deposit")
 def deposit(
     payload: DepositRequest,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -129,12 +131,25 @@ def deposit(
     db.add(notif)
     db.commit()
 
+    # Send email notification
+    background_tasks.add_task(
+        email_service.send_transaction_email,
+        email=current_user.email,
+        user_name=current_user.first_name,
+        tx_type="deposit",
+        amount=float(payload.amount),
+        balance=float(account.balance),
+        reference=tx.reference_code,
+        date_time=tx.created_at.strftime("%Y-%m-%d %H:%M:%S")
+    )
+
     return {**_fmt(tx, db), "balance_after": float(account.balance)}
 
 
 @router.post("/withdraw")
 def withdraw(
     payload: WithdrawRequest,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -176,12 +191,24 @@ def withdraw(
     db.add(notif)
     db.commit()
 
-    return {**_fmt(tx, db), "balance_after": float(account.balance)}
+    # Send email notification
+    background_tasks.add_task(
+        email_service.send_transaction_email,
+        email=current_user.email,
+        user_name=current_user.first_name,
+        tx_type="withdrawal",
+        amount=float(payload.amount),
+        balance=float(account.balance),
+        reference=tx.reference_code,
+        date_time=tx.created_at.strftime("%Y-%m-%d %H:%M:%S")
+    )
 
+    return {**_fmt(tx, db), "balance_after": float(account.balance)}
 
 @router.post("/transfer")
 def transfer(
     payload: TransferRequest,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -246,5 +273,32 @@ def transfer(
         db.add(receiver_notif)
 
     db.commit()
+
+    # Send email notification for sender
+    background_tasks.add_task(
+        email_service.send_transaction_email,
+        email=current_user.email,
+        user_name=current_user.first_name,
+        tx_type="transfer_sent",
+        amount=float(payload.amount),
+        balance=float(sender_acc.balance),
+        reference=tx.reference_code,
+        date_time=tx.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+        recipient_name=receiver_user.full_name if receiver_user else "NexaBank User"
+    )
+
+    # Send email notification for receiver
+    if receiver_user:
+        background_tasks.add_task(
+            email_service.send_transaction_email,
+            email=receiver_user.email,
+            user_name=receiver_user.first_name,
+            tx_type="transfer_received",
+            amount=float(payload.amount),
+            balance=float(receiver_acc.balance),
+            reference=tx.reference_code,
+            date_time=tx.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            sender_name=current_user.full_name
+        )
 
     return {**_fmt(tx, db), "balance_after": float(sender_acc.balance)}

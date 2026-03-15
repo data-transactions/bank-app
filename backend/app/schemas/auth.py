@@ -1,5 +1,6 @@
 import re
 import datetime
+from typing import Optional
 from pydantic import BaseModel, EmailStr, field_validator
 
 
@@ -51,6 +52,21 @@ class SetPinRequest(BaseModel):
         return v
 
 
+class UserUpdateRequest(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+
+    @field_validator("first_name", "last_name")
+    @classmethod
+    def validate_names(cls, v: str, info):
+        if v is None: return v
+        if len(v) < 3:
+            raise ValueError(f"{info.field_name.replace('_', ' ').capitalize()} must be at least 3 characters long")
+        if any(char.isdigit() for char in v):
+            raise ValueError(f"{info.field_name.replace('_', ' ').capitalize()} cannot contain numbers")
+        return v
+
+
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
@@ -66,6 +82,7 @@ class UserResponse(BaseModel):
     is_suspended: bool
     is_verified: bool
     is_pin_set: bool
+    profile_image_url: Optional[str] = None
     login_count: int
     created_at: datetime.datetime
 
