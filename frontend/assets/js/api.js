@@ -36,9 +36,14 @@ async function apiRequest(method, path, body = null, isFormData = false) {
             return;
         }
 
-        const data = res.headers.get('content-type')?.includes('application/json')
-            ? await res.json()
-            : null;
+        let data = null;
+        if (res.status !== 204) {
+            const contentType = res.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const text = await res.text();
+                data = text ? JSON.parse(text) : null;
+            }
+        }
         if (!res.ok) {
             let msg = data?.detail || `HTTP ${res.status}`;
             
@@ -78,6 +83,7 @@ const api = {
     post: (path, body) => apiRequest('POST', path, body),
     put: (path, body) => apiRequest('PUT', path, body),
     patch: (path, body) => apiRequest('PATCH', path, body),
+    del: (path) => apiRequest('DELETE', path),
     upload: (path, formData) => apiRequest('POST', path, formData, true),
 
     // Auth
@@ -89,9 +95,10 @@ const api = {
         password 
     }),
     verifyEmail: (email, token) => api.get(`/api/auth/verify?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`),
+    setPin: (pin) => api.post('/api/auth/set-pin', { pin }),
 
     // Users
-    getMe: () => api.get('/api/users/me'),
+    getMe: () => api.get('/api/auth/me'),
     updateMe: (data) => api.put('/api/users/me', data),
     uploadAvatar: (file) => {
         const fd = new FormData();
@@ -106,9 +113,9 @@ const api = {
     // Transactions
     getTransactions: (limit = 50) => api.get(`/api/transactions/?limit=${limit}`),
     getTransaction: (id) => api.get(`/api/transactions/${id}`),
-    deposit: (amount) => api.post('/api/transactions/deposit', { amount }),
-    transfer: (receiver_account_number, amount, description) =>
-        api.post('/api/transactions/transfer', { receiver_account_number, amount, description }),
+    deposit: (amount, pin) => api.post('/api/transactions/deposit', { amount, pin }),
+    transfer: (receiver_account_number, amount, pin, description) =>
+        api.post('/api/transactions/transfer', { receiver_account_number, amount, pin, description }),
 
     // PDF
     receiptUrl: (txId) => `${API_BASE}/api/pdf/receipt/${txId}?token=${getToken()}`,

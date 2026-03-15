@@ -36,6 +36,37 @@
             border-radius: 50%;
             background: rgba(255,255,255,0.04);
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-card {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: modalIn 0.3s ease-out;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .role-badge { padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .role-user { background: #f0fdf4; color: #16a34a; }
+        .role-admin { background: #ede9fe; color: #7c3aed; }
+        .role-super { background: #fff7ed; color: #c2410c; border: 1px solid #fb923c; }
+        .status-suspended { background: #fee2e2; color: #dc2626; }
     </style>
 </head>
 
@@ -74,6 +105,12 @@
                     <line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
                 </svg>
                 Transactions
+            </a>
+            <a class="sidebar-item" id="nav-logs" onclick="showSection('logs')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" />
+                </svg>
+                Activity Logs
             </a>
         </nav>
 
@@ -215,6 +252,110 @@
                 </div>
             </div>
         </section>
+
+        <!-- SECTION: LOGS -->
+        <section id="section-logs" class="dashboard-content" style="display:none;">
+            <div class="mb-6">
+                <h1 class="text-2xl font-extrabold text-slate-900">Activity Logs</h1>
+                <p class="text-slate-500 text-sm mt-1">Audit trail of all administrative actions.</p>
+            </div>
+            <div class="card">
+                <div class="overflow-x-auto">
+                    <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                        <thead>
+                            <tr style="border-bottom:2px solid #f1f5f9;">
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Timestamp</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Admin</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Action</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Target</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-body">
+                            <tr><td colspan="5" style="text-align:center;padding:32px;color:#94a3b8;">Loading…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- User Detail Modal -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal-card">
+            <div class="flex justify-between items-start mb-6">
+                <div class="flex items-center gap-4">
+                    <div id="modal-user-avatar" class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-400 text-lg"></div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800" id="modal-user-name">User Details</h2>
+                        <p class="text-xs text-slate-400" id="modal-user-email"></p>
+                    </div>
+                </div>
+                <button class="text-slate-400 hover:text-slate-600" onclick="closeUserModal()">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="bg-slate-50 p-4 rounded-xl">
+                    <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Account Balance</p>
+                    <p class="text-lg font-extrabold text-slate-800" id="modal-user-balance">$0.00</p>
+                </div>
+                <div class="bg-slate-50 p-4 rounded-xl">
+                    <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Role & Status</p>
+                    <div class="flex items-center gap-2 mt-1" id="modal-user-status"></div>
+                </div>
+            </div>
+
+            <div id="modal-status-message" class="mb-6 p-4 bg-amber-50 text-amber-800 rounded-xl text-sm font-medium border border-amber-100" style="display:none;"></div>
+
+            <div class="space-y-4">
+                <!-- Deposit -->
+                <div id="admin-deposit-section" style="display:none;">
+                    <label class="block text-xs font-bold text-slate-500 mb-2 uppercase">Manual Deposit</label>
+                    <div class="flex gap-2">
+                        <input type="number" id="depositAmount" class="form-input flex-1" placeholder="Amount ($)">
+                        <button class="btn btn-primary" onclick="handleAdminDeposit()">Deposit</button>
+                    </div>
+                </div>
+
+                <!-- Super Admin Controls -->
+                <div id="super-admin-controls" style="display:none;" class="pt-4 border-t border-slate-100">
+                    <label class="block text-xs font-bold text-slate-500 mb-3 uppercase">Admin Permissions</label>
+                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl mb-3">
+                        <span class="text-sm font-medium text-slate-700">Admin Privileges</span>
+                        <button id="btn-toggle-role" class="btn btn-sm btn-outline" onclick="handleRoleToggle()">Promote to Admin</button>
+                    </div>
+                    <div id="permissions-panel" class="p-4 bg-slate-50 rounded-xl space-y-3">
+                        <p class="text-xs font-bold text-slate-400 uppercase">Admin Permissions</p>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="perm-deposit"> <span class="text-sm">Can Deposit</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="perm-delete"> <span class="text-sm">Can Delete</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="perm-suspend"> <span class="text-sm">Can Suspend</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="perm-manage"> <span class="text-sm">Can Manage Admins</span>
+                        </label>
+                        <div class="pt-2">
+                            <label class="block text-[10px] font-bold text-slate-400 mb-1 uppercase">Max Deposit Limit</label>
+                            <input type="number" id="perm-max-deposit" class="form-input text-sm" placeholder="Limit ($)">
+                        </div>
+                        <button class="btn btn-sm btn-outline w-full mt-2" onclick="saveAdminPermissions()">Save Permissions</button>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="pt-4 flex gap-3">
+                    <button id="btn-suspend" class="btn btn-outline flex-1 border-slate-200 text-slate-700" onclick="handleAdminSuspend()">Suspend</button>
+                    <button id="btn-delete" class="btn btn-outline flex-1 border-red-100 text-red-600 hover:bg-red-50" onclick="handleAdminDelete()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
     </main>
 
     <script src="/assets/js/api.js"></script>
@@ -231,13 +372,16 @@
                 window.location.href = '/login/';
                 return;
             }
-            if (!payload.is_admin) {
+            if (payload.role !== 'admin' && payload.role !== 'super_admin') {
                 window.location.href = '/dashboard/';
             }
         })();
 
         // ── State ──
-        let allUsers = [], allTxns = [];
+        let allUsers = [], allTxns = [], allLogs = [];
+        let selectedUserId = null;
+        let currentUserRole = null;
+        let currentUserPermissions = null;
 
         // ── Init ──
         document.addEventListener('DOMContentLoaded', () => {
@@ -260,10 +404,12 @@
 
         async function loadAdminData() {
             try {
-                const [stats, users, txns] = await Promise.all([
+                const [stats, users, txns, logs, perms] = await Promise.all([
                     NexaAPI.get('/api/admin/stats'),
                     NexaAPI.get('/api/admin/users'),
                     NexaAPI.get('/api/admin/transactions'),
+                    NexaAPI.get('/api/admin/logs'),
+                    NexaAPI.get('/api/admin/permissions/me')
                 ]);
 
                 // Stats
@@ -285,10 +431,16 @@
 
                 allUsers = users || [];
                 allTxns = txns || [];
+                allLogs = logs || [];
+
+                const payload = parseJwt(NexaAPI.getToken());
+                currentUserRole = payload?.role;
+                currentUserPermissions = perms;
 
                 renderRecentTxns();
                 renderUsers();
                 renderTxns();
+                renderLogs();
             } catch (e) {
                 Toast.error('Failed to load admin data: ' + e.message);
             }
@@ -312,7 +464,7 @@
                     </div>
                     <div class="tx-info">
                         <p class="tx-name">${capitalize(tx.transaction_type)}</p>
-                        <p class="tx-date">${formatRelativeTime(tx.timestamp)}</p>
+                        <p class="tx-date">${formatRelativeTime(tx.created_at)}</p>
                     </div>
                     <p class="tx-amount ${tx.transaction_type === 'deposit' ? 'credit' : 'debit'} font-bold">
                         ${tx.transaction_type === 'deposit' ? '+' : '-'}${formatCurrency(tx.amount)}
@@ -329,17 +481,18 @@
                 return;
             }
             tbody.innerHTML = allUsers.map(u => `
-                <tr style="border-bottom:1px solid #f1f5f9;">
+                <tr style="border-bottom:1px solid #f1f5f9; cursor:pointer;" onclick="openUserModal(${u.id})" class="hover:bg-slate-50 transition-colors">
                     <td style="padding:14px 16px;font-weight:500;color:#1e293b;">${escHtml(u.full_name)}</td>
                     <td style="padding:14px 16px;color:#64748b;">${escHtml(u.email)}</td>
                     <td style="padding:14px 16px;font-family:monospace;color:#475569;">${escHtml(u.account_number || '—')}</td>
                     <td style="padding:14px 16px;font-weight:600;color:#1e293b;">${formatCurrency(u.balance ?? 0)}</td>
                     <td style="padding:14px 16px;">
-                        <span style="background:${u.is_admin ? '#ede9fe' : '#f0fdf4'};color:${u.is_admin ? '#7c3aed' : '#16a34a'};padding:2px 10px;border-radius:9999px;font-size:11px;font-weight:700;">
-                            ${u.is_admin ? 'Admin' : 'User'}
+                        <span class="role-badge ${u.role === 'super_admin' ? 'role-super' : (u.role === 'admin' ? 'role-admin' : 'role-user')}">
+                            ${u.role === 'user' ? 'user' : 'admin'}
                         </span>
+                        ${u.is_suspended ? '<span class="role-badge status-suspended ml-1">Suspended</span>' : ''}
                     </td>
-                    <td style="padding:14px 16px;color:#94a3b8;font-size:0.8rem;">${new Date(u.created_at).toLocaleDateString()}</td>
+                    <td style="padding:14px 16px;color:#94a3b8;font-size:0.8rem;">${u.created_at ? new Date(u.created_at).toLocaleDateString() : '—'}</td>
                 </tr>
             `).join('');
         }
@@ -355,7 +508,7 @@
             }
             tbody.innerHTML = txns.map(tx => `
                 <tr style="border-bottom:1px solid #f1f5f9;">
-                    <td style="padding:12px 16px;color:#64748b;font-size:0.8rem;">${new Date(tx.timestamp).toLocaleString()}</td>
+                    <td style="padding:12px 16px;color:#64748b;font-size:0.8rem;">${tx.created_at ? new Date(tx.created_at).toLocaleString() : 'Invalid Date'}</td>
                     <td style="padding:12px 16px;">
                         <span style="background:${typeColor(tx.transaction_type).bg};color:${typeColor(tx.transaction_type).fg};padding:2px 10px;border-radius:9999px;font-size:11px;font-weight:700;">
                             ${capitalize(tx.transaction_type)}
@@ -374,14 +527,214 @@
             `).join('');
         }
 
+        // ── Logs ──
+        function renderLogs() {
+            const tbody = document.getElementById('logs-body');
+            if (!allLogs.length) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:#94a3b8;">No logs found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = allLogs.map(l => `
+                <tr style="border-bottom:1px solid #f1f5f9;">
+                    <td style="padding:12px 16px;color:#94a3b8;font-size:0.8rem;">${new Date(l.timestamp).toLocaleString()}</td>
+                    <td style="padding:12px 16px;font-weight:600;color:#1e293b;">${escHtml(l.admin_name)}</td>
+                    <td style="padding:12px 16px;">
+                        <span style="padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;background:#f1f5f9;color:#475569;">
+                            ${escHtml(l.action)}
+                        </span>
+                    </td>
+                    <td style="padding:12px 16px;color:#64748b;">${escHtml(l.target_user_name || '—')}</td>
+                    <td style="padding:12px 16px;color:#64748b;font-size:0.85rem;">${escHtml(l.details || '')}</td>
+                </tr>
+            `).join('');
+        }
+
+        // ── Modal Logic ──
+        async function openUserModal(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
+            selectedUserId = userId;
+            
+            // Populate basic info
+            document.getElementById('modal-user-name').textContent = user.full_name;
+            document.getElementById('modal-user-email').textContent = user.email;
+            document.getElementById('modal-user-balance').textContent = formatCurrency(user.balance);
+            document.getElementById('modal-user-avatar').textContent = user.full_name.split(' ').map(n => n[0]).join('').toUpperCase();
+            
+            const statusBox = document.getElementById('modal-user-status');
+            statusBox.innerHTML = `
+                <span class="role-badge ${user.role === 'super_admin' ? 'role-super' : (user.role === 'admin' ? 'role-admin' : 'role-user')}">
+                    ${user.role === 'user' ? 'user' : 'admin'}
+                </span>
+                ${user.is_suspended ? '<span class="role-badge status-suspended">Suspended</span>' : ''}
+            `;
+
+            // Reset inputs
+            document.getElementById('depositAmount').value = '';
+            document.getElementById('btn-suspend').textContent = user.is_suspended ? 'Unsuspend' : 'Suspend';
+
+            // Fetch backend-defined actions
+            try {
+                const actions = await NexaAPI.get(`/api/admin/users/${userId}/actions`);
+                
+                // Status Message Area
+                const msgArea = document.getElementById('modal-status-message');
+                if (actions.message) {
+                    msgArea.textContent = actions.message;
+                    msgArea.style.display = 'block';
+                } else {
+                    msgArea.style.display = 'none';
+                }
+
+                // Deposit Section
+                document.getElementById('admin-deposit-section').style.display = actions.show_deposit ? 'block' : 'none';
+
+                // Super Admin / Management Controls
+                const superControls = document.getElementById('super-admin-controls');
+                if (actions.show_role_toggle || actions.show_permissions_panel) {
+                    superControls.style.display = 'block';
+                    
+                    const roleBtn = document.getElementById('btn-toggle-role');
+                    if (actions.show_role_toggle === 'promote') {
+                        roleBtn.style.display = 'inline-flex';
+                        roleBtn.textContent = 'Promote to Admin';
+                    } else if (actions.show_role_toggle === 'demote') {
+                        roleBtn.style.display = 'inline-flex';
+                        roleBtn.textContent = 'Demote to User';
+                    } else {
+                        roleBtn.style.display = 'none';
+                    }
+
+                    const permPanel = document.getElementById('permissions-panel');
+                    if (actions.show_permissions_panel) {
+                        permPanel.style.display = 'block';
+                        // Load permissions
+                        const perms = await NexaAPI.get(`/api/admin/users/${userId}/permissions`);
+                        document.getElementById('perm-deposit').checked = perms.can_deposit;
+                        document.getElementById('perm-delete').checked = perms.can_delete;
+                        document.getElementById('perm-suspend').checked = perms.can_suspend;
+                        document.getElementById('perm-manage').checked = perms.can_manage_admins;
+                        document.getElementById('perm-max-deposit').value = perms.max_deposit_limit || 0;
+                    } else {
+                        permPanel.style.display = 'none';
+                    }
+                } else {
+                    superControls.style.display = 'none';
+                }
+
+                // Action buttons
+                document.getElementById('btn-suspend').style.display = actions.show_suspend ? 'block' : 'none';
+                document.getElementById('btn-delete').style.display = actions.show_delete ? 'block' : 'none';
+
+                document.getElementById('userModal').classList.add('open');
+            } catch (e) {
+                Toast.error('Failed to load user actions: ' + e.message);
+            }
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').classList.remove('open');
+            selectedUserId = null;
+        }
+
+        // ── Admin Actions ──
+        async function handleAdminDeposit() {
+            const amount = parseFloat(document.getElementById('depositAmount').value);
+            if (!amount || amount <= 0) return Toast.error('Please enter a valid amount');
+            
+            try {
+                await NexaAPI.post(`/api/admin/users/${selectedUserId}/deposit`, { amount });
+                Toast.success('Deposit successful');
+                loadAdminData();
+                closeUserModal();
+            } catch (e) {
+                Toast.error(e.message);
+            }
+        }
+
+        async function handleAdminSuspend() {
+            const user = allUsers.find(u => u.id === selectedUserId);
+            const action = user.is_suspended ? 'unsuspend' : 'suspend';
+            
+            try {
+                await NexaAPI.post(`/api/admin/users/${selectedUserId}/${action}`);
+                Toast.success(`User ${action}ed`);
+                loadAdminData();
+                closeUserModal();
+            } catch (e) {
+                Toast.error(e.message);
+            }
+        }
+
+        async function handleAdminDelete() {
+            const meId = parseJwt(NexaAPI.getToken())?.sub;
+            if (String(selectedUserId) === String(meId)) {
+                return Toast.error('You cannot delete your own account from the admin panel.');
+            }
+
+            const user = allUsers.find(u => u.id === selectedUserId);
+            if (currentUserRole === 'admin' && user.role !== 'user') {
+                return Toast.error('You do not have permission to delete other administrative accounts.');
+            }
+
+            if (user.role === 'super_admin') {
+                return Toast.error('Administrative accounts with full system access cannot be deleted.');
+            }
+
+            if (!confirm(`Are you serious? This will permanently delete the user (${user.email}) and all their data.`)) return;
+            
+            try {
+                await NexaAPI.del(`/api/admin/users/${selectedUserId}`);
+                Toast.success('User deleted successfully');
+                loadAdminData();
+                closeUserModal();
+            } catch (e) {
+                Toast.error(e.message);
+            }
+        }
+
+        async function handleRoleToggle() {
+            const user = allUsers.find(u => u.id === selectedUserId);
+            const newRole = user.role === 'user' ? 'admin' : 'user';
+            
+            try {
+                await NexaAPI.post(`/api/admin/users/${selectedUserId}/role`, { role: newRole });
+                Toast.success(`User role updated to ${newRole}`);
+                loadAdminData();
+                closeUserModal();
+            } catch (e) {
+                Toast.error(e.message);
+            }
+        }
+
+        async function saveAdminPermissions() {
+            const payload = {
+                can_deposit: document.getElementById('perm-deposit').checked,
+                can_delete: document.getElementById('perm-delete').checked,
+                can_suspend: document.getElementById('perm-suspend').checked,
+                can_manage_admins: document.getElementById('perm-manage').checked,
+                max_deposit_limit: parseInt(document.getElementById('perm-max-deposit').value) || 0
+            };
+            
+            try {
+                await NexaAPI.patch(`/api/admin/users/${selectedUserId}/permissions`, payload);
+                Toast.success('Permissions updated');
+                loadAdminData();
+                closeUserModal();
+            } catch (e) {
+                Toast.error(e.message);
+            }
+        }
+
         // ── Section nav ──
         function showSection(name) {
-            ['overview', 'users', 'transactions'].forEach(s => {
-                document.getElementById(`section-${s}`).style.display = s === name ? 'block' : 'none';
+            ['overview', 'users', 'transactions', 'logs'].forEach(s => {
+                const el = document.getElementById(`section-${s}`);
+                if (el) el.style.display = s === name ? 'block' : 'none';
                 const navEl = document.getElementById(`nav-${s}`);
                 if (navEl) navEl.classList.toggle('active', s === name);
             });
-            const titles = { overview: 'Admin Overview', users: 'Users', transactions: 'All Transactions' };
+            const titles = { overview: 'Admin Overview', users: 'Users', transactions: 'All Transactions', logs: 'Activity Logs' };
             document.getElementById('topbar-title').textContent = titles[name] || 'Admin';
             closeSidebar();
             window.scrollTo(0, 0);
@@ -401,7 +754,10 @@
             return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
         }
         function formatRelativeTime(iso) {
-            const diff = Date.now() - new Date(iso).getTime();
+            if (!iso) return '—';
+            const date = new Date(iso);
+            if (isNaN(date.getTime())) return '—';
+            const diff = Date.now() - date.getTime();
             const m = Math.floor(diff / 60000);
             if (m < 1) return 'just now';
             if (m < 60) return `${m}m ago`;
