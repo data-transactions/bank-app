@@ -73,7 +73,7 @@
 
             <div class="mb-10">
                 <h1 class="text-4xl font-extrabold mb-3 font-display tracking-tight" style="color:var(--brand-dark);">
-                    Welcome back</h1>
+                    Welcome</h1>
                 <p class="text-slate-500 leading-relaxed">Log in to your secure NexaBank dashboard.</p>
             </div>
 
@@ -213,7 +213,7 @@
                 const data = await NexaAPI.login(email, password);
                 if (data && data.access_token) {
                     NexaAPI.setToken(data.access_token);
-                    showLoginAlert('Welcome back! Redirecting...', 'success');
+                    showLoginAlert('Welcome! Redirecting...', 'success');
                     setTimeout(() => { redirectToDashboard(); }, 800);
                 } else {
                     throw new Error('Invalid server response');
