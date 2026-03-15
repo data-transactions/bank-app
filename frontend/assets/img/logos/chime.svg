@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 64" width="200" height="64">
+  <rect width="200" height="64" fill="white"/>
+  <!-- Chime leaf/checkmark icon -->
+  <g transform="translate(10, 12)">
+    <circle cx="20" cy="20" r="20" fill="#00D54B"/>
+    <path d="M10 20 L17 27 L30 13" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+  <!-- Chime wordmark -->
+  <text x="60" y="42" font-family="Arial, sans-serif" font-weight="700" font-size="28" fill="#1B1B1B" letter-spacing="-0.5">Chime</text>
+</svg>

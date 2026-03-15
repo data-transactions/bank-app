@@ -39,45 +39,60 @@
             min-height: 100vh;
         }
 
-        /* SIDEBAR */
+        /* ─── SIDEBAR (Dark Navy) ─────────────────────────── */
         .gc-sidebar {
             width: 240px;
-            background: var(--gc-sidebar);
-            border-right: 1px solid var(--gc-border);
+            background: #0f172a;
             display: flex;
             flex-direction: column;
             position: fixed;
             top: 0;
             left: 0;
             bottom: 0;
-            z-index: 100;
+            z-index: 200;
             overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: none;
+            transition: transform .3s cubic-bezier(.4, 0, .2, 1),
+                width .3s cubic-bezier(.4, 0, .2, 1),
+                box-shadow .3s cubic-bezier(.4, 0, .2, 1);
+            will-change: transform;
+        }
+
+        .gc-sidebar::-webkit-scrollbar {
+            display: none;
         }
 
         .gc-sidebar-logo {
-            padding: 20px 20px 16px;
+            padding: 22px 20px 18px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 22px;
+            gap: 10px;
+            font-size: 20px;
             font-weight: 800;
-            color: var(--gc-dark);
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255, 255, 255, .07);
         }
 
         .gc-sidebar-logo span {
             font-family: 'Inter', serif;
+            letter-spacing: -.3px;
         }
 
         .gc-user-card {
-            padding: 12px 20px;
+            padding: 16px 20px 10px;
             display: flex;
             align-items: center;
             gap: 10px;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         .gc-user-avatar {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             background: linear-gradient(135deg, #0ea5e9, #6366f1);
             display: flex;
@@ -85,46 +100,58 @@
             justify-content: center;
             color: #fff;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 15px;
             flex-shrink: 0;
             background-size: cover;
             background-position: center;
+            box-shadow: 0 0 0 2px rgba(14, 165, 233, .4);
         }
 
         .gc-user-info {
             font-size: 13px;
-            line-height: 1.3;
+            line-height: 1.35;
+            overflow: hidden;
         }
 
         .gc-user-info strong {
             display: block;
-            color: var(--gc-dark);
+            color: #f1f5f9;
             font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 145px;
         }
 
         .gc-user-info small {
-            color: var(--gc-text-light);
+            color: #64748b;
             font-size: 11px;
         }
 
         .gc-kyc-badge {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            font-size: 11px;
-            color: var(--gc-green);
+            gap: 5px;
+            font-size: 10px;
+            color: #34d399;
             font-weight: 600;
-            margin: 0 20px 8px;
+            margin: 0 20px 6px;
+            background: rgba(52, 211, 153, .1);
+            padding: 3px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(52, 211, 153, .2);
+            white-space: nowrap;
+            width: fit-content;
         }
 
         .gc-kyc-badge i {
-            font-size: 10px;
+            font-size: 9px;
         }
 
         .gc-user-btns {
             display: flex;
             gap: 6px;
-            padding: 0 20px 16px;
+            padding: 0 20px 14px;
         }
 
         .gc-user-btns button {
@@ -134,82 +161,116 @@
             font-weight: 600;
             border-radius: 6px;
             cursor: pointer;
-            border: 1px solid var(--gc-border);
-            background: #fff;
-            color: var(--gc-text);
+            border: 1px solid rgba(255, 255, 255, .12);
+            background: rgba(255, 255, 255, .05);
+            color: #cbd5e1;
             transition: .2s;
+            white-space: nowrap;
         }
 
         .gc-user-btns button:hover {
-            background: var(--gc-bg);
+            background: rgba(255, 255, 255, .1);
+            color: #fff;
         }
 
         .gc-user-btns .logout-btn {
-            color: var(--gc-red);
-            border-color: var(--gc-red);
+            color: #fca5a5;
+            border-color: rgba(239, 68, 68, .3);
+        }
+
+        .gc-user-btns .logout-btn:hover {
+            background: rgba(239, 68, 68, .12);
+            color: #ef4444;
         }
 
         .gc-nav-label {
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: .08em;
-            color: var(--gc-text-light);
+            letter-spacing: .1em;
+            color: #475569;
             padding: 16px 20px 6px;
+            white-space: nowrap;
         }
 
         .gc-nav-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 9px 20px;
+            gap: 12px;
+            padding: 10px 20px;
             font-size: 13px;
             font-weight: 500;
-            color: var(--gc-text);
+            color: #94a3b8;
             cursor: pointer;
-            transition: .15s;
+            transition: background .15s, color .15s, border-color .15s;
             border-left: 3px solid transparent;
+            white-space: nowrap;
+            overflow: hidden;
+            min-height: 40px;
         }
 
         .gc-nav-item:hover {
-            background: #f8fafc;
-            color: var(--gc-blue);
+            background: rgba(255, 255, 255, .05);
+            color: #e2e8f0;
+            border-left-color: rgba(14, 165, 233, .4);
         }
 
         .gc-nav-item.active {
-            background: #e0f2fe;
-            color: var(--gc-blue);
-            border-left-color: var(--gc-blue);
+            background: rgba(14, 165, 233, .15);
+            color: #38bdf8;
+            border-left-color: #0ea5e9;
             font-weight: 600;
         }
 
         .gc-nav-item i {
-            width: 18px;
+            width: 16px;
             text-align: center;
-            font-size: 14px;
+            font-size: 13px;
+            flex-shrink: 0;
         }
 
         .gc-sidebar-footer {
             margin-top: auto;
-            padding: 12px 20px;
-            border-top: 1px solid var(--gc-border);
+            padding: 14px 20px;
+            border-top: 1px solid rgba(255, 255, 255, .06);
             display: flex;
             align-items: center;
             gap: 8px;
             font-size: 11px;
-            color: var(--gc-text-light);
+            color: #475569;
+            white-space: nowrap;
         }
 
         .gc-sidebar-footer i {
-            color: var(--gc-green);
-            font-size: 10px;
+            color: #34d399;
+            font-size: 9px;
         }
 
-        /* MAIN */
+        /* ─── SIDEBAR OVERLAY ────────────────────────────── */
+        .gc-sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, .6);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            z-index: 199;
+            opacity: 0;
+            transition: opacity .3s;
+            pointer-events: none;
+        }
+
+        .gc-sidebar-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* ─── MAIN ──────────────────────────────────────────── */
         .gc-main {
             margin-left: 240px;
             flex: 1;
             min-height: 100vh;
+            min-width: 0;
         }
 
         /* TOPBAR */
@@ -1798,7 +1859,8 @@
             font-size: 14px;
         }
 
-        .gc-input-wrapper .form-input, .gc-input-wrapper select {
+        .gc-input-wrapper .form-input,
+        .gc-input-wrapper select {
             padding-left: 44px;
             height: 48px;
         }
@@ -1918,21 +1980,27 @@
                 transform: translateX(-100%);
                 transition: transform 0.3s ease;
             }
+
             .gc-sidebar.open {
                 transform: translateX(0);
             }
+
             .gc-main {
                 margin-left: 0;
             }
+
             .gc-topbar-mobile-toggle {
                 display: flex !important;
             }
+
             .gc-grid {
                 grid-template-columns: 1fr;
             }
+
             .gc-stat-row {
                 flex-wrap: wrap;
             }
+
             .gc-stat-card {
                 flex: 1 1 calc(50% - 16px);
             }
@@ -1942,23 +2010,28 @@
             .gc-stat-card {
                 flex: 1 1 100%;
             }
+
             .gc-actions-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
             .gc-credit-card {
                 width: 100%;
             }
+
             .gc-welcome h2 {
                 font-size: 24px;
             }
+
             .gc-topbar {
                 padding: 12px 16px;
             }
+
             .gc-content {
                 padding: 16px;
             }
         }
-    </style>
+
         .gc-notification-header {
             padding: 14px 18px;
             border-bottom: 1px solid var(--gc-border);
@@ -2017,10 +2090,25 @@
             flex-shrink: 0;
         }
 
-        .gc-notif-icon.info { background: #e0f2fe; color: #0ea5e9; }
-        .gc-notif-icon.success { background: #dcfce7; color: #10b981; }
-        .gc-notif-icon.warning { background: #fef3c7; color: #f59e0b; }
-        .gc-notif-icon.danger { background: #fee2e2; color: #ef4444; }
+        .gc-notif-icon.info {
+            background: #e0f2fe;
+            color: #0ea5e9;
+        }
+
+        .gc-notif-icon.success {
+            background: #dcfce7;
+            color: #10b981;
+        }
+
+        .gc-notif-icon.warning {
+            background: #fef3c7;
+            color: #f59e0b;
+        }
+
+        .gc-notif-icon.danger {
+            background: #fee2e2;
+            color: #ef4444;
+        }
 
         .gc-notif-content {
             flex: 1;
@@ -2051,10 +2139,638 @@
             color: var(--gc-text-light);
             font-size: 13px;
         }
+
+        /* ═══════════════════════════════════════════════════════
+           RESPONSIVE — Mobile-first breakpoints
+           ═══════════════════════════════════════════════════════ */
+
+        /* Hamburger toggle button (visible on mobile/tablet) */
+        .gc-topbar-mobile-toggle {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--gc-text);
+            font-size: 18px;
+            transition: background .2s;
+            border: 1px solid var(--gc-border);
+            background: #fff;
+            flex-shrink: 0;
+        }
+
+        .gc-topbar-mobile-toggle:hover {
+            background: var(--gc-bg);
+        }
+
+        /* Safe-area support (notch / home-bar) */
+        @supports (padding: env(safe-area-inset-bottom)) {
+            .gc-sidebar {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+
+        /* ── Desktop XL (≥ 1400px) ───────────────────────────── */
+        @media (min-width: 1400px) {
+            .gc-sidebar {
+                width: 260px;
+            }
+
+            .gc-main {
+                margin-left: 260px;
+            }
+
+            .gc-content {
+                padding: 32px 40px;
+            }
+
+            .gc-grid {
+                grid-template-columns: 1fr 360px;
+                gap: 24px;
+            }
+
+            .gc-stat-row {
+                gap: 20px;
+            }
+        }
+
+        /* ── iPad Pro (1024px – 1199px) ────────────────────────────── */
+        @media (min-width: 1024px) and (max-width: 1199px) {
+            .gc-sidebar {
+                width: 220px;
+            }
+
+            .gc-main {
+                margin-left: 220px;
+            }
+
+            .gc-topbar {
+                padding: 12px 22px;
+            }
+
+            .gc-content {
+                padding: 24px 22px;
+            }
+
+            .gc-grid {
+                grid-template-columns: 1fr 280px;
+                gap: 18px;
+            }
+
+            .gc-stat-row {
+                gap: 14px;
+            }
+
+            .gc-welcome .greeting-left .greet-name {
+                font-size: 28px;
+            }
+
+            .gc-welcome .balance-value {
+                font-size: 26px;
+            }
+
+            .gc-promo-image {
+                display: none;
+            }
+
+            .gc-card-promo-content {
+                max-width: 100%;
+            }
+
+            .flip-card-container {
+                width: 280px;
+                height: 188px;
+            }
+        }
+
+        /* ── iPad Air (820px – 1023px) — uses bottom nav ──────────── */
+        @media (min-width: 820px) and (max-width: 1023px) {
+            .gc-sidebar {
+                display: none !important;
+            }
+
+            .gc-main {
+                margin-left: 0;
+                padding-bottom: 72px;
+            }
+
+            .gc-topbar {
+                padding: 12px 20px;
+            }
+
+            .gc-topbar-mobile-toggle {
+                display: none !important;
+            }
+
+            .gc-content {
+                padding: 20px;
+            }
+
+            .gc-stat-row {
+                gap: 12px;
+            }
+
+            .gc-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+
+            .gc-right-panel {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .gc-right-panel>* {
+                flex: 1 1 240px;
+            }
+
+            .gc-welcome .greeting-left .greet-name {
+                font-size: 26px;
+            }
+
+            .gc-welcome .balance-value {
+                font-size: 26px;
+            }
+
+            .gc-actions-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .gc-how-it-works-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .gc-promo-image {
+                display: none;
+            }
+
+            .gc-card-promo-content {
+                max-width: 100%;
+            }
+
+            .flip-card-container {
+                width: 300px;
+                height: 200px;
+            }
+        }
+
+        /* ── iPad Mini (768px – 819px) — uses bottom nav ─────────── */
+        @media (min-width: 768px) and (max-width: 819px) {
+            .gc-sidebar {
+                display: none !important;
+            }
+
+            .gc-sidebar-overlay {
+                display: none !important;
+            }
+
+            .gc-main {
+                margin-left: 0;
+                padding-bottom: 72px;
+            }
+
+            .gc-topbar {
+                padding: 12px 18px;
+            }
+
+            .gc-topbar-mobile-toggle {
+                display: none !important;
+            }
+
+            .gc-content {
+                padding: 18px;
+            }
+
+            .gc-stat-row {
+                gap: 12px;
+            }
+
+            .gc-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .gc-right-panel {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .gc-right-panel>* {
+                flex: 1 1 220px;
+            }
+
+            .gc-welcome .greeting-left .greet-name {
+                font-size: 26px;
+            }
+
+            .gc-welcome .balance-value {
+                font-size: 26px;
+            }
+
+            .gc-welcome .greeting {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .gc-welcome .greeting-right {
+                display: none;
+            }
+
+            .gc-actions-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .gc-how-it-works-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .gc-promo-image {
+                display: none;
+            }
+
+            .gc-card-promo-content {
+                max-width: 100%;
+            }
+
+            .flip-card-container {
+                width: 100%;
+                max-width: 310px;
+                height: 200px;
+            }
+
+            #section-profile>div {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+            }
+
+            .gc-tx-section {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .gc-tx-table {
+                min-width: 500px;
+            }
+        }
+
+        /* ── Mobile Large (480px – 767px) ───────────────────── */
+        @media (min-width: 480px) and (max-width: 767px) {
+            .gc-sidebar {
+                display: none !important;
+            }
+
+            .gc-sidebar-overlay {
+                display: none !important;
+            }
+
+            .gc-main {
+                margin-left: 0;
+                padding-bottom: 72px;
+            }
+
+            .gc-topbar {
+                padding: 10px 16px;
+                height: 56px;
+            }
+
+            .gc-topbar-mobile-toggle {
+                display: none !important;
+            }
+
+            .gc-content {
+                padding: 16px;
+            }
+
+            .gc-stat-row {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin-bottom: 14px;
+            }
+
+            .gc-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            .gc-right-panel {
+                flex-direction: column;
+            }
+
+            .gc-welcome {
+                padding: 20px;
+            }
+
+            .gc-welcome .greeting {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .gc-welcome .greeting-right {
+                display: none;
+            }
+
+            .gc-welcome .greeting-left .greet-name {
+                font-size: 24px;
+            }
+
+            .gc-welcome .balance-value {
+                font-size: 26px;
+            }
+
+            .gc-welcome .account-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .gc-welcome .acct-actions {
+                width: 100%;
+            }
+
+            .gc-welcome .acct-actions button {
+                flex: 1;
+            }
+
+            .gc-actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .gc-promo-image {
+                display: none;
+            }
+
+            .gc-card-promo-content {
+                max-width: 100%;
+            }
+
+            .gc-how-it-works-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gc-credit-card {
+                width: 100%;
+            }
+
+            .flip-card-container {
+                width: 100%;
+                max-width: 320px;
+                height: 200px;
+            }
+
+            .gc-card-action-btns {
+                margin-left: 0;
+                flex-wrap: wrap;
+            }
+
+            .gc-additional-details>div {
+                grid-template-columns: 1fr !important;
+            }
+
+            #section-profile>div {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+            }
+
+            .gc-modal-overlay {
+                padding: 12px;
+            }
+
+            .gc-tx-section {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .gc-tx-table {
+                min-width: 460px;
+            }
+        }
+
+        /* ── Mobile Small (< 480px) ─────────────────────────── */
+        @media (max-width: 479px) {
+            .gc-sidebar {
+                display: none !important;
+            }
+
+            .gc-sidebar-overlay {
+                display: none !important;
+            }
+
+            .gc-main {
+                margin-left: 0;
+                padding-bottom: 72px;
+            }
+
+            .gc-topbar {
+                padding: 8px 12px;
+                height: 52px;
+            }
+
+            .gc-topbar-mobile-toggle {
+                display: none !important;
+            }
+
+            .gc-content {
+                padding: 14px 12px;
+            }
+
+            #topbarDate {
+                display: none;
+            }
+
+            .gc-balance-badge {
+                padding: 5px 10px;
+                font-size: 12px;
+            }
+
+            .gc-stat-row {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 10px;
+                margin-bottom: 12px;
+            }
+
+            .gc-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .gc-right-panel {
+                flex-direction: column;
+            }
+
+            .gc-welcome {
+                padding: 18px;
+                border-radius: 12px;
+            }
+
+            .gc-welcome .greeting {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .gc-welcome .greeting-right {
+                display: none;
+            }
+
+            .gc-welcome .greeting-left .greet-name {
+                font-size: 20px;
+            }
+
+            .gc-welcome .greeting-left .greet-text {
+                font-size: 16px;
+            }
+
+            .gc-welcome .balance-value {
+                font-size: 22px;
+            }
+
+            .gc-welcome .account-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding-top: 12px;
+            }
+
+            .gc-welcome .acct-actions {
+                width: 100%;
+            }
+
+            .gc-welcome .acct-actions button {
+                flex: 1;
+                font-size: 11px;
+                padding: 6px 8px;
+            }
+
+            .gc-actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .gc-action-card {
+                padding: 16px 10px;
+            }
+
+            .gc-action-card .action-icon {
+                width: 38px;
+                height: 38px;
+                font-size: 16px;
+            }
+
+            .gc-credit-card {
+                width: 100%;
+                height: 175px;
+                padding: 18px;
+            }
+
+            .gc-cards-top-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .gc-promo-image {
+                display: none;
+            }
+
+            .gc-card-promo-content {
+                max-width: 100%;
+            }
+
+            .gc-how-it-works-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flip-card-container {
+                width: 100%;
+                max-width: 280px;
+                height: 185px;
+            }
+
+            .gc-card-action-btns {
+                margin-left: 0;
+                flex-wrap: wrap;
+            }
+
+            .gc-additional-details>div {
+                grid-template-columns: 1fr !important;
+            }
+
+            #section-profile>div {
+                display: grid !important;
+                grid-template-columns: 1fr !important;
+            }
+
+            .gc-support-container {
+                padding: 20px 12px;
+            }
+
+            .gc-modal-overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
+
+            .gc-modal {
+                border-radius: 20px 20px 0 0;
+                max-height: 90vh;
+                padding: 24px 20px;
+            }
+
+            .gc-tx-section {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .gc-tx-table {
+                min-width: 440px;
+            }
+
+            #section-transactions>div:first-child {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 10px !important;
+            }
+
+            .gc-footer {
+                flex-direction: column;
+                text-align: center;
+                padding: 14px 12px;
+            }
+
+            .gc-footer-links {
+                justify-content: center;
+            }
+
+            .gc-notification-dropdown {
+                width: min(290px, calc(100vw - 24px));
+                right: -40px;
+            }
+        }
+
+        /* ── Touch device tweaks ────────────────────────────── */
+        @media (hover: none) and (pointer: coarse) {
+            .gc-action-card:hover {
+                transform: none;
+                box-shadow: none;
+            }
+
+            .gc-nav-item {
+                min-height: 44px;
+            }
+
+            a,
+            button,
+            [onclick] {
+                touch-action: manipulation;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- Sidebar overlay (mobile/tablet backdrop) -->
+    <div class="gc-sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
     <!-- SIDEBAR -->
     <aside class="gc-sidebar" id="sidebar">
         <div class="gc-sidebar-logo">
@@ -2097,8 +2813,8 @@
         <div class="gc-nav-label">Account</div>
         <div class="gc-nav-item" id="nav-profile" onclick="showSection('profile')"><i class="fas fa-cog"></i> Settings
         </div>
-        <div class="gc-nav-item" id="nav-support" onclick="showSection('support')"><i
-                class="fas fa-headset"></i> Support Ticket</div>
+        <div class="gc-nav-item" id="nav-support" onclick="showSection('support')"><i class="fas fa-headset"></i>
+            Support Ticket</div>
 
         <div class="gc-sidebar-footer"><i class="fas fa-lock"></i> Secure Banking &nbsp; v1.2.0</div>
     </aside>
@@ -2108,16 +2824,17 @@
         <!-- TOPBAR -->
         <div class="gc-topbar">
             <div class="gc-topbar-left" style="display: flex; align-items: center; gap: 12px;">
-                <div class="gc-topbar-mobile-toggle" onclick="toggleSidebar()" style="display: none; cursor: pointer; font-size: 20px; color: var(--gc-text);">
+                <div class="gc-topbar-mobile-toggle" id="sidebarToggleBtn" onclick="toggleSidebar()">
                     <i class="fas fa-bars"></i>
                 </div>
-                <i class="far fa-calendar-alt"></i> <span id="topbarDate"></span></div>
+                <i class="far fa-calendar-alt"></i> <span id="topbarDate"></span>
+            </div>
             <div class="gc-topbar-right">
                 <div class="gc-balance-badge"><i class="fas fa-wallet"></i> <span id="topbarBalance">$0.00</span></div>
                 <div class="gc-topbar-icon" onclick="toggleNotifications(event)">
                     <i class="far fa-bell"></i>
                     <div class="gc-notification-badge" id="notifBadge"></div>
-                    
+
                     <div class="gc-notification-dropdown" id="notifDropdown" onclick="event.stopPropagation()">
                         <div class="gc-notification-header">
                             <h4>Notifications</h4>
@@ -2591,7 +3308,8 @@
                     <div class="gc-support-icon-circle">
                         <i class="fas fa-comment-dots"></i>
                     </div>
-                    <h2><i class="fas fa-plus-circle" style="font-size: 18px; color: var(--gc-blue);"></i> Submit a Support Ticket</h2>
+                    <h2><i class="fas fa-plus-circle" style="font-size: 18px; color: var(--gc-blue);"></i> Submit a
+                        Support Ticket</h2>
                     <p>We're here to help. Tell us about your issue and we'll find a solution.</p>
                 </div>
 
@@ -2600,7 +3318,8 @@
                         <label>Ticket Title</label>
                         <div class="gc-input-wrapper">
                             <i class="far fa-bookmark"></i>
-                            <input type="text" id="ticketTitle" class="form-input" placeholder="Briefly describe your issue" required>
+                            <input type="text" id="ticketTitle" class="form-input"
+                                placeholder="Briefly describe your issue" required>
                         </div>
                         <small>Be specific to help us understand your issue</small>
                     </div>
@@ -2623,7 +3342,9 @@
                         <label>Describe Your Issue</label>
                         <div class="gc-input-wrapper">
                             <i class="far fa-comment-alt"></i>
-                            <textarea id="ticketDescription" class="form-input" placeholder="Please provide all relevant details about your issue so we can help you better" required></textarea>
+                            <textarea id="ticketDescription" class="form-input"
+                                placeholder="Please provide all relevant details about your issue so we can help you better"
+                                required></textarea>
                         </div>
                         <small>Include any relevant details that might help us resolve your issue</small>
                     </div>
@@ -2632,7 +3353,8 @@
                         <i class="fas fa-info-circle"></i>
                         <div>
                             <strong>Support Information</strong>
-                            <p>Our support team typically responds within 24 hours. For urgent matters, please select "High Priority" and we'll do our best to assist you sooner.</p>
+                            <p>Our support team typically responds within 24 hours. For urgent matters, please select
+                                "High Priority" and we'll do our best to assist you sooner.</p>
                         </div>
                     </div>
 
@@ -3130,7 +3852,7 @@
                 Toast.error('Failed to load dashboard: ' + e.message);
             }
         }
- function updateAllUI() {
+        function updateAllUI() {
             if (!state.notificationsInitialized) {
                 fetchNotifications();
                 setInterval(fetchNotifications, 60000);
@@ -3402,7 +4124,7 @@
             };
 
             const empty = (cols) => '<tr><td colspan="' + cols + '" style="text-align:center;padding:30px;color:var(--gc-text-light);">No transactions yet. Make a deposit to get started!</td></tr>';
-            
+
             document.getElementById('recentTxBody').innerHTML = txs.length ? txs.slice(0, 5).map(tx => renderRow(tx, true)).join('') : empty(6);
             document.getElementById('allTxBody').innerHTML = txs.length ? txs.map(tx => renderRow(tx, false)).join('') : empty(9);
         }
@@ -3570,14 +4292,14 @@
             const title = document.getElementById('ticketTitle').value.trim();
             const priority = document.getElementById('ticketPriority').value;
             const description = document.getElementById('ticketDescription').value.trim();
-            
+
             if (!title || !description) return Toast.warning('Please fill in all required fields');
-            
+
             const btn = document.getElementById('supportSubmitBtn');
             const oldHtml = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
-            
+
             // Mock submission delay
             setTimeout(() => {
                 Toast.success('Support ticket submitted successfully! Reference: NX-' + Math.floor(Math.random() * 900000 + 100000));
@@ -3610,23 +4332,23 @@
         function renderNotifications() {
             const list = document.getElementById('notifList');
             const badge = document.getElementById('notifBadge');
-            
+
             const unreadCount = notifications.filter(n => !n.is_read).length;
             badge.style.display = unreadCount > 0 ? 'block' : 'none';
-            
+
             if (notifications.length === 0) {
                 list.innerHTML = '<div class="gc-notif-empty">No notifications yet</div>';
                 return;
             }
-            
+
             list.innerHTML = notifications.map(n => {
                 let icon = 'info-circle';
                 if (n.type === 'success') icon = 'check-circle';
                 if (n.type === 'warning') icon = 'exclamation-triangle';
                 if (n.type === 'danger') icon = 'times-circle';
-                
+
                 const timeStr = new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                
+
                 return `
                     <div class="gc-notification-item ${n.is_read ? '' : 'unread'}" onclick="markNotificationAsRead(${n.id})">
                         <div class="gc-notif-icon ${n.type}">
@@ -3725,7 +4447,361 @@
                 balanceEl.textContent = newValue;
             }
         }
+        /* ── Responsive sidebar JS ── */
+        function toggleSidebar() {
+            var sb = document.getElementById('sidebar');
+            var ov = document.getElementById('sidebarOverlay');
+            var opening = !sb.classList.contains('open');
+            sb.classList.toggle('open', opening);
+            ov.classList.toggle('active', opening);
+            document.body.style.overflow = opening ? 'hidden' : '';
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        // Auto-close sidebar on nav item click (mobile/tablet)
+        document.querySelectorAll('.gc-nav-item').forEach(function (item) {
+            item.addEventListener('click', function () {
+                if (window.innerWidth < 820) closeSidebar();
+            });
+        });
+        // Close with Escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeSidebar();
+        });
+    </script>
+    <!-- ══ MOBILE BOTTOM NAV ══════════════════════════════════════ -->
+    <nav class="gc-bottom-nav" id="bottomNav" aria-label="Mobile navigation">
 
+        <!-- FAB backdrop (closes menu when tapped outside) -->
+        <div class="gc-fab-backdrop" id="fabBackdrop" onclick="closeFabMenu()"></div>
+
+        <!-- FAB action items (Bottom-sheet grid menu) -->
+        <div class="gc-fab-menu-sheet" id="fabActions">
+            <div class="gc-fab-sheet-header">
+                <h3>Quick Actions</h3>
+            </div>
+            <div class="gc-fab-grid">
+                <!-- Row 1: Money Movement -->
+                <button class="gc-fab-grid-item" onclick="closeFabMenu(); openModal('sendModal')">
+                    <span class="gc-fab-icon" style="background:#e0f2fe;color:#0ea5e9;"><i class="fas fa-paper-plane"></i></span>
+                    <span class="gc-fab-label">Transfer</span>
+                </button>
+                <button class="gc-fab-grid-item" onclick="closeFabMenu(); openModal('depositModal')">
+                    <span class="gc-fab-icon" style="background:#dcfce7;color:#10b981;"><i class="fas fa-wallet"></i></span>
+                    <span class="gc-fab-label">Deposit</span>
+                </button>
+                <button class="gc-fab-grid-item" onclick="closeFabMenu(); openModal('sendModal')">
+                    <span class="gc-fab-icon" style="background:#ede9fe;color:#7c3aed;"><i class="fas fa-globe"></i></span>
+                    <span class="gc-fab-label">Wire</span>
+                </button>
+
+                <!-- Row 2: Accounts & Data -->
+                <button class="gc-fab-grid-item" onclick="closeFabMenu(); showSection('transactions')">
+                    <span class="gc-fab-icon" style="background:#f3e8ff;color:#9333ea;"><i class="fas fa-exchange-alt"></i></span>
+                    <span class="gc-fab-label">Transactions</span>
+                </button>
+                <button class="gc-fab-grid-item" onclick="closeFabMenu(); /* mock */">
+                    <span class="gc-fab-icon" style="background:#ffedd5;color:#f97316;"><i class="fas fa-file-invoice-dollar"></i></span>
+                    <span class="gc-fab-label">Loans</span>
+                </button>
+                <button class="gc-fab-grid-item" onclick="closeFabMenu(); /* mock */">
+                    <span class="gc-fab-icon" style="background:#e0e7ff;color:#4f46e5;"><i class="fas fa-file-alt"></i></span>
+                    <span class="gc-fab-label">Tax Refund</span>
+                </button>
+
+                <!-- Row 3: Support & System -->
+                <button class="gc-fab-grid-item" onclick="closeFabMenu(); showSection('support')">
+                    <span class="gc-fab-icon" style="background:#fef3c7;color:#f59e0b;"><i class="fas fa-headset"></i></span>
+                    <span class="gc-fab-label">Support</span>
+                </button>
+                <button class="gc-fab-grid-item" onclick="closeFabMenu(); showSection('profile')">
+                    <span class="gc-fab-icon" style="background:#f1f5f9;color:#64748b;"><i class="fas fa-cog"></i></span>
+                    <span class="gc-fab-label">Settings</span>
+                </button>
+                <button class="gc-fab-grid-item" onclick="closeFabMenu(); Auth.logout()">
+                    <span class="gc-fab-icon" style="background:#fee2e2;color:#ef4444;"><i class="fas fa-sign-out-alt"></i></span>
+                    <span class="gc-fab-label">Logout</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Nav items -->
+        <button class="gc-bnav-item" id="bnav-overview" onclick="showSection('overview'); setBottomNav('overview')">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </button>
+
+        <button class="gc-bnav-item" id="bnav-cards" onclick="showSection('cards'); setBottomNav('cards')">
+            <i class="fas fa-credit-card"></i>
+            <span>Cards</span>
+        </button>
+
+        <!-- Centre FAB -->
+        <div class="gc-bnav-fab-wrap">
+            <button class="gc-bnav-fab" id="fabBtn" onclick="toggleFabMenu()" aria-label="Quick actions">
+                <i class="fas fa-plus" id="fabIcon"></i>
+            </button>
+        </div>
+
+        <button class="gc-bnav-item" id="bnav-transactions" onclick="showSection('transactions'); setBottomNav('transactions')">
+            <i class="fas fa-chart-bar"></i>
+            <span>Stats</span>
+        </button>
+
+        <button class="gc-bnav-item" id="bnav-profile" onclick="showSection('profile'); setBottomNav('profile')">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </button>
+    </nav>
+
+    <style>
+        /* ══ BOTTOM NAV — only visible on mobile/tablet ══════════════════ */
+        .gc-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 300;
+            background: #fff;
+            border-top: 1px solid #e2e8f0;
+            padding: 8px 4px calc(8px + env(safe-area-inset-bottom, 0px));
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-around;
+            box-shadow: 0 -4px 24px rgba(15, 23, 42, .08);
+            gap: 0;
+        }
+
+        @media (max-width: 1023px) {
+            .gc-bottom-nav {
+                display: flex;
+            }
+
+            /* Push main content up so it isn't hidden behind the nav bar */
+            .gc-main {
+                padding-bottom: 72px;
+            }
+        }
+
+        /* Individual nav buttons */
+        .gc-bnav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            flex: 1;
+            font-size: 10px;
+            font-weight: 600;
+            color: #94a3b8;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 0;
+            transition: color .2s, transform .15s;
+            letter-spacing: .01em;
+        }
+
+        .gc-bnav-item i {
+            font-size: 19px;
+            line-height: 1;
+            transition: transform .2s;
+        }
+
+        .gc-bnav-item.active {
+            color: #0ea5e9;
+        }
+
+        .gc-bnav-item.active i {
+            transform: scale(1.15);
+        }
+
+        .gc-bnav-item:active {
+            transform: scale(.92);
+        }
+
+        /* FAB wrapper (reserves space in centre position) */
+        .gc-bnav-fab-wrap {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Centre FAB button */
+        .gc-bnav-fab {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 22px;
+            box-shadow: 0 4px 20px rgba(14, 165, 233, .5);
+            transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s, background .2s;
+            position: relative;
+            margin-top: -22px;
+            /* lift above nav bar */
+            z-index: 310;
+        }
+
+        .gc-bnav-fab:active {
+            transform: scale(.9);
+        }
+
+        .gc-bnav-fab.open {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            box-shadow: 0 4px 20px rgba(239, 68, 68, .45);
+            transform: rotate(45deg);
+        }
+
+        /* Backdrop */
+        .gc-fab-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 305;
+            background: rgba(15, 23, 42, .5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            opacity: 0;
+            transition: opacity .3s ease;
+        }
+
+        .gc-fab-backdrop.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Action items bottom sheet */
+        .gc-fab-menu-sheet {
+            position: fixed;
+            bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+            left: 16px; 
+            right: 16px;
+            background: #fff;
+            border-radius: 24px;
+            z-index: 310;
+            padding: 24px 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,.15);
+            transform: translateY(120%) scale(0.95);
+            opacity: 0;
+            transition: transform .4s cubic-bezier(.16,1,.3,1), opacity .3s;
+            pointer-events: none;
+        }
+
+        @media (min-width: 600px) {
+            .gc-fab-menu-sheet {
+                left: 50%; width: 400px; margin-left: -200px;
+            }
+        }
+
+        .gc-fab-menu-sheet.open {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .gc-fab-sheet-header {
+            text-align: center; margin-bottom: 20px;
+        }
+        .gc-fab-sheet-header h3 {
+            margin:0; font-size: 16px; font-weight: 700; color: #1e293b;
+        }
+
+        /* Grid for action items inside the sheet */
+        .gc-fab-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px 10px;
+        }
+
+        /* Each action grid item */
+        .gc-fab-grid-item {
+            display: flex; flex-direction: column;
+            align-items: center; gap: 8px;
+            background: none; border: none; cursor: pointer;
+            padding: 0;
+        }
+        .gc-fab-icon {
+            width: 52px; height: 52px;
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.06);
+            transition: transform .15s, box-shadow .15s;
+        }
+        .gc-fab-grid-item:active .gc-fab-icon { 
+            transform: scale(.9); box-shadow: inset 0 2px 8px rgba(0,0,0,.1);
+        }
+        .gc-fab-label {
+            font-size: 11px; font-weight: 600;
+            color: #475569; letter-spacing: .01em;
+        }
+    </style>
+
+    <script>
+        /* ══ BOTTOM NAV JS ══════════════════════════════════════════════ */
+        var _fabOpen = false;
+
+        function toggleFabMenu() {
+            _fabOpen = !_fabOpen;
+            var btn = document.getElementById('fabBtn');
+            var actions = document.getElementById('fabActions');
+            var backdrop = document.getElementById('fabBackdrop');
+            btn.classList.toggle('open', _fabOpen);
+            actions.classList.toggle('open', _fabOpen);
+            backdrop.classList.toggle('active', _fabOpen);
+        }
+
+        function closeFabMenu() {
+            _fabOpen = false;
+            var btn = document.getElementById('fabBtn');
+            var actions = document.getElementById('fabActions');
+            var backdrop = document.getElementById('fabBackdrop');
+            if (btn) btn.classList.remove('open');
+            if (actions) actions.classList.remove('open');
+            if (backdrop) backdrop.classList.remove('active');
+        }
+
+        function setBottomNav(section) {
+            closeFabMenu();
+            document.querySelectorAll('.gc-bnav-item').forEach(function (el) {
+                el.classList.remove('active');
+            });
+            var target = document.getElementById('bnav-' + section);
+            if (target) target.classList.add('active');
+        }
+
+        // Sync bottom nav when sidebar nav is used
+        (function patchShowSection() {
+            var origShow = window.showSection;
+            if (typeof origShow === 'function') {
+                window.showSection = function (sec) {
+                    origShow(sec);
+                    setBottomNav(sec);
+                };
+            }
+        })();
+
+        // Set initial active state
+        document.addEventListener('DOMContentLoaded', function () {
+            setBottomNav('overview');
+        });
+
+        // Also close fab if Escape is pressed
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeFabMenu();
+        });
     </script>
 </body>
 
