@@ -40,6 +40,17 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class SetPinRequest(BaseModel):
+    pin: str
+
+    @field_validator("pin")
+    @classmethod
+    def validate_pin(cls, v):
+        if not v.isdigit() or not (4 <= len(v) <= 6):
+            raise ValueError("PIN must be 4-6 digits long")
+        return v
+
+
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
@@ -51,8 +62,11 @@ class UserResponse(BaseModel):
     last_name: str
     full_name: str
     email: EmailStr
-    is_admin: bool
+    role: str
+    is_suspended: bool
     is_verified: bool
+    is_pin_set: bool
+    login_count: int
     created_at: datetime.datetime
 
     class Config:

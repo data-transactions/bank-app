@@ -98,6 +98,11 @@ def deposit(
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
 
+    # Verify PIN
+    from ..core.security import verify_password
+    if not current_user.transaction_pin or not verify_password(payload.pin, current_user.transaction_pin):
+        raise HTTPException(status_code=403, detail="Invalid transaction PIN")
+
     tx = Transaction(
         sender_account_id=None,
         receiver_account_id=account.id,
@@ -136,6 +141,12 @@ def withdraw(
     account = db.query(Account).filter(Account.user_id == current_user.id).with_for_update().first()
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
+
+    # Verify PIN
+    from ..core.security import verify_password
+    if not current_user.transaction_pin or not verify_password(payload.pin, current_user.transaction_pin):
+        raise HTTPException(status_code=403, detail="Invalid transaction PIN")
+
     if account.balance < Decimal(str(payload.amount)):
         raise HTTPException(status_code=400, detail="Insufficient funds")
 
@@ -177,6 +188,11 @@ def transfer(
     sender_acc = db.query(Account).filter(Account.user_id == current_user.id).with_for_update().first()
     if not sender_acc:
         raise HTTPException(status_code=404, detail="Sender account not found")
+
+    # Verify PIN
+    from ..core.security import verify_password
+    if not current_user.transaction_pin or not verify_password(payload.pin, current_user.transaction_pin):
+        raise HTTPException(status_code=403, detail="Invalid transaction PIN")
 
     receiver_acc = db.query(Account).filter(
         Account.account_number == payload.receiver_account_number
