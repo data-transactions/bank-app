@@ -286,7 +286,7 @@
             border-bottom: 1px solid var(--gc-border);
             position: sticky;
             top: 0;
-            z-index: 90;
+            z-index: 1000;
         }
 
         .gc-topbar-left {
@@ -1769,15 +1769,31 @@
             }
         }
 
-        @media(max-width:768px) {
+        @media(max-width:1023px) {
             .gc-sidebar {
                 transform: translateX(-100%);
+                z-index: 2200;
             }
 
             .gc-sidebar.open {
-                transform: translateX(0);
+                transform: translateX(0) !important;
             }
 
+            .gc-sidebar-overlay {
+                z-index: 2100;
+            }
+
+            .gc-sidebar-overlay.active {
+                display: block !important;
+                opacity: 1;
+            }
+
+            .gc-topbar {
+                z-index: 2000;
+            }
+        }
+
+        @media(max-width:768px) {
             .gc-main {
                 margin-left: 0;
             }
@@ -2602,6 +2618,16 @@
             background: var(--gc-bg);
         }
 
+        /* Highlight Services */
+        #nav-loan-request, #nav-irs-refund {
+            border-left: 3px solid #0ea5e9;
+            background: rgba(14, 165, 233, 0.05);
+        }
+        
+        #nav-loan-request:hover, #nav-irs-refund:hover {
+            background: rgba(14, 165, 233, 0.1);
+        }
+
         .gc-main {
             margin-left: 240px;
             min-height: 100vh;
@@ -2678,12 +2704,11 @@
         /* ── iPad Air (820px – 1023px) — uses bottom nav ──────────── */
         @media (min-width: 820px) and (max-width: 1023px) {
             .gc-sidebar {
-                display: none !important;
+                transform: translateX(-100%);
             }
 
             .gc-main {
                 margin-left: 0;
-                padding-bottom: 72px;
             }
 
             .gc-topbar {
@@ -2691,7 +2716,7 @@
             }
 
             .gc-topbar-mobile-toggle {
-                display: none !important;
+                display: flex !important;
             }
 
             .gc-content {
@@ -2749,16 +2774,15 @@
         /* ── iPad Mini (768px – 819px) — uses bottom nav ─────────── */
         @media (min-width: 768px) and (max-width: 819px) {
             .gc-sidebar {
-                display: none !important;
+                transform: translateX(-100%);
             }
 
             .gc-sidebar-overlay {
-                display: none !important;
+                display: none;
             }
 
             .gc-main {
                 margin-left: 0;
-                padding-bottom: 72px;
             }
 
             .gc-topbar {
@@ -2766,7 +2790,7 @@
             }
 
             .gc-topbar-mobile-toggle {
-                display: none !important;
+                display: flex !important;
             }
 
             .gc-content {
@@ -2848,16 +2872,15 @@
         /* ── Mobile Large (480px – 767px) ───────────────────── */
         @media (min-width: 480px) and (max-width: 767px) {
             .gc-sidebar {
-                display: none !important;
+                transform: translateX(-100%);
             }
 
             .gc-sidebar-overlay {
-                display: none !important;
+                display: none;
             }
 
             .gc-main {
                 margin-left: 0;
-                padding-bottom: 72px;
             }
 
             .gc-topbar {
@@ -2866,7 +2889,7 @@
             }
 
             .gc-topbar-mobile-toggle {
-                display: none !important;
+                display: flex !important;
             }
 
             .gc-content {
@@ -2981,16 +3004,15 @@
         /* ── Mobile Small (< 480px) ─────────────────────────── */
         @media (max-width: 479px) {
             .gc-sidebar {
-                display: none !important;
+                transform: translateX(-100%);
             }
 
             .gc-sidebar-overlay {
-                display: none !important;
+                display: none;
             }
 
             .gc-main {
                 margin-left: 0;
-                padding-bottom: 72px;
             }
 
             .gc-topbar {
@@ -2999,7 +3021,7 @@
             }
 
             .gc-topbar-mobile-toggle {
-                display: none !important;
+                display: flex !important;
             }
 
             .gc-content {
@@ -3236,7 +3258,7 @@
             .gc-footer {
                 flex-direction: column !important;
                 gap: 16px !important;
-                padding: 20px 16px 100px !important; /* Extra padding for bottom nav */
+                padding: 24px 16px !important; 
                 text-align: center !important;
             }
 
@@ -3246,15 +3268,10 @@
                 gap: 12px !important;
             }
 
-            .gc-bottom-nav {
-                position: fixed !important;
-                bottom: 0 !important;
-                left: 0 !important;
-                right: 0 !important;
-                width: 100% !important;
-                display: flex !important;
+            .gc-sidebar-overlay {
                 z-index: 2100 !important;
             }
+
 
             /* Ensure main content is full width on mobile */
             .gc-main, .gc-content {
@@ -5592,369 +5609,7 @@
             if (e.key === 'Escape') closeSidebar();
         });
     </script>
-    <!-- ══ MOBILE BOTTOM NAV ══════════════════════════════════════ -->
-    <nav class="gc-bottom-nav" id="bottomNav" aria-label="Mobile navigation">
 
-        <!-- FAB backdrop (closes menu when tapped outside) -->
-        <div class="gc-fab-backdrop" id="fabBackdrop" onclick="closeFabMenu()"></div>
-
-        <!-- FAB action items (Bottom-sheet grid menu) -->
-        <div class="gc-fab-menu-sheet" id="fabActions">
-            <div class="gc-fab-sheet-header">
-                <h3>Quick Actions</h3>
-            </div>
-            <div class="gc-fab-grid">
-                <!-- Row 1: Money Movement -->
-                <button class="gc-fab-grid-item" onclick="closeFabMenu(); openModal('sendModal')">
-                    <span class="gc-fab-icon" style="background:#e0f2fe;color:#0ea5e9;"><i
-                            class="fas fa-paper-plane"></i></span>
-                    <span class="gc-fab-label">Transfer</span>
-                </button>
-                <button class="gc-fab-grid-item" onclick="closeFabMenu(); openModal('depositModal')">
-                    <span class="gc-fab-icon" style="background:#dcfce7;color:#10b981;"><i
-                            class="fas fa-wallet"></i></span>
-                    <span class="gc-fab-label">Deposit</span>
-                </button>
-                <button class="gc-fab-grid-item" onclick="closeFabMenu(); openModal('sendModal')">
-                    <span class="gc-fab-icon" style="background:#ede9fe;color:#7c3aed;"><i
-                            class="fas fa-globe"></i></span>
-                    <span class="gc-fab-label">Wire</span>
-                </button>
-
-                <!-- Row 2: Accounts & Data -->
-                <button class="gc-fab-grid-item" onclick="closeFabMenu(); showSection('transactions')">
-                    <span class="gc-fab-icon" style="background:#f3e8ff;color:#9333ea;"><i
-                            class="fas fa-exchange-alt"></i></span>
-                    <span class="gc-fab-label">Transactions</span>
-                </button>
-                <button class="gc-fab-grid-item" onclick="closeFabMenu(); /* mock */">
-                    <span class="gc-fab-icon" style="background:#ffedd5;color:#f97316;"><i
-                            class="fas fa-file-invoice-dollar"></i></span>
-                    <span class="gc-fab-label">Loans</span>
-                </button>
-                <button class="gc-fab-grid-item" onclick="closeFabMenu(); /* mock */">
-                    <span class="gc-fab-icon" style="background:#e0e7ff;color:#4f46e5;"><i
-                            class="fas fa-file-alt"></i></span>
-                    <span class="gc-fab-label">Tax Refund</span>
-                </button>
-
-                <!-- Row 3: Support & System -->
-                <button class="gc-fab-grid-item" onclick="closeFabMenu(); showSection('support')">
-                    <span class="gc-fab-icon" style="background:#fef3c7;color:#f59e0b;"><i
-                            class="fas fa-headset"></i></span>
-                    <span class="gc-fab-label">Support</span>
-                </button>
-                <button class="gc-fab-grid-item" onclick="closeFabMenu(); showSection('profile')">
-                    <span class="gc-fab-icon" style="background:#f1f5f9;color:#64748b;"><i
-                            class="fas fa-cog"></i></span>
-                    <span class="gc-fab-label">Settings</span>
-                </button>
-                <button class="gc-fab-grid-item" onclick="closeFabMenu(); Auth.logout()">
-                    <span class="gc-fab-icon" style="background:#fee2e2;color:#ef4444;"><i
-                            class="fas fa-sign-out-alt"></i></span>
-                    <span class="gc-fab-label">Logout</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Nav items -->
-        <button class="gc-bnav-item" id="bnav-overview" onclick="showSection('overview'); setBottomNav('overview')">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </button>
-
-        <button class="gc-bnav-item" id="bnav-cards" onclick="showSection('cards'); setBottomNav('cards')">
-            <i class="fas fa-credit-card"></i>
-            <span>Cards</span>
-        </button>
-
-        <!-- Centre FAB -->
-        <div class="gc-bnav-fab-wrap">
-            <button class="gc-bnav-fab" id="fabBtn" onclick="toggleFabMenu()" aria-label="Quick actions">
-                <i class="fas fa-plus" id="fabIcon"></i>
-            </button>
-        </div>
-
-        <button class="gc-bnav-item" id="bnav-transactions"
-            onclick="showSection('transactions'); setBottomNav('transactions')">
-            <i class="fas fa-chart-bar"></i>
-            <span>Stats</span>
-        </button>
-
-        <button class="gc-bnav-item" id="bnav-profile" onclick="showSection('profile'); setBottomNav('profile')">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
-        </button>
-    </nav>
-
-    <style>
-        /* ══ BOTTOM NAV — only visible on mobile/tablet ══════════════════ */
-        .gc-bottom-nav {
-            display: none;
-            position: fixed;
-            bottom: env(safe-area-inset-bottom, 0px);
-            left: 0;
-            right: 0;
-            width: 100%;
-            height: 72px;
-            z-index: 2000;
-            background: #fff;
-            border-top: 1px solid #e2e8f0;
-            padding: 8px 4px;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-around;
-            box-shadow: 0 -4px 24px rgba(15, 23, 42, .08);
-            gap: 0;
-        }
-
-        @media (max-width: 1023px) {
-            .gc-bottom-nav {
-                display: flex;
-            }
-
-            /* Push main content up so it isn't hidden behind the nav bar */
-            .gc-main {
-                padding-bottom: 72px;
-            }
-        }
-
-        /* Individual nav buttons */
-        .gc-bnav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            flex: 1;
-            font-size: 10px;
-            font-weight: 600;
-            color: #94a3b8;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px 0;
-            transition: color .2s, transform .15s;
-            letter-spacing: .01em;
-        }
-
-        .gc-bnav-item i {
-            font-size: 19px;
-            line-height: 1;
-            transition: transform .2s;
-        }
-
-        .gc-bnav-item.active {
-            color: #0ea5e9;
-        }
-
-        .gc-bnav-item.active i {
-            transform: scale(1.15);
-        }
-
-        .gc-bnav-item:active {
-            transform: scale(.92);
-        }
-
-        /* FAB wrapper (reserves space in centre position) */
-        .gc-bnav-fab-wrap {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        /* Centre FAB button */
-        .gc-bnav-fab {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #0ea5e9, #6366f1);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 22px;
-            box-shadow: 0 4px 20px rgba(14, 165, 233, .5);
-            transition: transform .25s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s, background .2s;
-            position: relative;
-            margin-top: -22px;
-            /* lift above nav bar */
-            z-index: 310;
-        }
-
-        .gc-bnav-fab:active {
-            transform: scale(.9);
-        }
-
-        .gc-bnav-fab.open {
-            background: linear-gradient(135deg, #ef4444, #f97316);
-            box-shadow: 0 4px 20px rgba(239, 68, 68, .45);
-            transform: rotate(45deg);
-        }
-
-        /* Backdrop */
-        .gc-fab-backdrop {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 305;
-            background: rgba(15, 23, 42, .5);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            opacity: 0;
-            transition: opacity .3s ease;
-        }
-
-        .gc-fab-backdrop.active {
-            display: block;
-            opacity: 1;
-        }
-
-        /* Action items bottom sheet */
-        .gc-fab-menu-sheet {
-            position: fixed;
-            bottom: calc(72px + env(safe-area-inset-bottom, 0px));
-            left: 16px;
-            right: 16px;
-            background: #fff;
-            border-radius: 24px;
-            z-index: 310;
-            padding: 24px 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, .15);
-            transform: translateY(120%) scale(0.95);
-            opacity: 0;
-            transition: transform .4s cubic-bezier(.16, 1, .3, 1), opacity .3s;
-            pointer-events: none;
-        }
-
-        @media (min-width: 600px) {
-            .gc-fab-menu-sheet {
-                left: 50%;
-                width: 400px;
-                margin-left: -200px;
-            }
-        }
-
-        .gc-fab-menu-sheet.open {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .gc-fab-sheet-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .gc-fab-sheet-header h3 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 700;
-            color: #1e293b;
-        }
-
-        /* Grid for action items inside the sheet */
-        .gc-fab-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px 10px;
-        }
-
-        /* Each action grid item */
-        .gc-fab-grid-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .gc-fab-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
-            transition: transform .15s, box-shadow .15s;
-        }
-
-        .gc-fab-grid-item:active .gc-fab-icon {
-            transform: scale(.9);
-            box-shadow: inset 0 2px 8px rgba(0, 0, 0, .1);
-        }
-
-        .gc-fab-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: #475569;
-            letter-spacing: .01em;
-        }
-    </style>
-
-    <script>
-        /* ══ BOTTOM NAV JS ══════════════════════════════════════════════ */
-        var _fabOpen = false;
-
-        function toggleFabMenu() {
-            _fabOpen = !_fabOpen;
-            var btn = document.getElementById('fabBtn');
-            var actions = document.getElementById('fabActions');
-            var backdrop = document.getElementById('fabBackdrop');
-            btn.classList.toggle('open', _fabOpen);
-            actions.classList.toggle('open', _fabOpen);
-            backdrop.classList.toggle('active', _fabOpen);
-        }
-
-        function closeFabMenu() {
-            _fabOpen = false;
-            var btn = document.getElementById('fabBtn');
-            var actions = document.getElementById('fabActions');
-            var backdrop = document.getElementById('fabBackdrop');
-            if (btn) btn.classList.remove('open');
-            if (actions) actions.classList.remove('open');
-            if (backdrop) backdrop.classList.remove('active');
-        }
-
-        function setBottomNav(section) {
-            closeFabMenu();
-            document.querySelectorAll('.gc-bnav-item').forEach(function (el) {
-                el.classList.remove('active');
-            });
-            var target = document.getElementById('bnav-' + section);
-            if (target) target.classList.add('active');
-        }
-
-        // Sync bottom nav when sidebar nav is used
-        (function patchShowSection() {
-            var origShow = window.showSection;
-            if (typeof origShow === 'function') {
-                window.showSection = function (sec) {
-                    origShow(sec);
-                    setBottomNav(sec);
-                };
-            }
-        })();
-
-        // Set initial active state
-        document.addEventListener('DOMContentLoaded', function () {
-            setBottomNav('overview');
-        });
-
-        // Also close fab if Escape is pressed
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeFabMenu();
-        });
-    </script>
 </body>
 
 </html>
