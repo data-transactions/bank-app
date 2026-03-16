@@ -37,6 +37,8 @@
             color: var(--gc-text);
             display: flex;
             min-height: 100vh;
+            overflow-x: hidden;
+            width: 100%;
         }
 
         /* ─── SIDEBAR (Dark Navy) ─────────────────────────── */
@@ -1747,7 +1749,7 @@
         }
 
         /* RESPONSIVE */
-        @media(max-width:1024px) {
+        @media(max-width:1023px) {
             .gc-grid {
                 grid-template-columns: 1fr;
             }
@@ -2025,6 +2027,10 @@
         }
 
         @media (max-width: 640px) {
+            .gc-stat-row {
+                flex-direction: column !important;
+                gap: 12px;
+            }
             .gc-stat-card {
                 flex: 1 1 100%;
             }
@@ -2047,7 +2053,63 @@
 
             .gc-content {
                 padding: 16px;
+                width: 100%;
+                overflow-x: hidden !important;
             }
+
+            /* Fix Cards section overflow */
+            .gc-cards-top-stats {
+                flex-direction: column !important;
+                gap: 12px !important;
+                width: 100% !important;
+                display: flex !important;
+            }
+            .gc-cards-stat-box {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                min-width: 0 !important;
+            }
+            
+            #section-cards .gc-credit-card-container {
+                flex-direction: column !important;
+                align-items: center !important;
+                gap: 20px !important;
+            }
+            
+            #section-cards .gc-credit-card {
+                width: 100% !important;
+                max-width: 320px !important;
+                transform: none !important;
+                margin: 0 auto !important;
+            }
+            
+            #section-cards .gc-card-details-text {
+                text-align: center !important;
+                width: 100% !important;
+                margin-left: 0 !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gc-cards-stat-box {
+                flex: 1 1 100%;
+            }
+            .gc-actions-grid {
+                grid-template-columns: 1fr;
+            }
+            .gc-topbar-left span {
+                display: none;
+            }
+            .gc-balance-badge {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+        }
+        
+        .overflow-x-auto {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .gc-notification-header {
@@ -2541,7 +2603,18 @@
         }
 
         .gc-main {
-            margin-left: 260px;
+            margin-left: 240px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Desktop Fluidity Override ── */
+        @media (min-width: 1025px) {
+            .gc-main, .gc-content {
+                max-width: none !important;
+                width: 100% !important;
+            }
         }
 
         .gc-grid {
@@ -2943,10 +3016,15 @@
             }
 
             .gc-stat-row {
-                display: grid;
-                grid-template-columns: 1fr;
-                gap: 10px;
-                margin-bottom: 12px;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 12px !important;
+                margin-bottom: 20px;
+                width: 100% !important;
+            }
+            .gc-stat-card {
+                flex: 1 1 100% !important;
+                width: 100% !important;
             }
 
             .gc-grid {
@@ -3023,7 +3101,14 @@
             }
 
             .gc-cards-top-stats {
-                grid-template-columns: 1fr;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 12px !important;
+                width: 100% !important;
+            }
+            .gc-cards-stat-box {
+                flex: 1 1 100% !important;
+                width: 100% !important;
             }
 
             .gc-promo-image {
@@ -3101,6 +3186,80 @@
             .gc-notification-dropdown {
                 width: min(290px, calc(100vw - 24px));
                 right: -40px;
+            }
+        }
+
+        /* ── GLOBAL MOBILE OVERRIDES — ENSURES STACKING ── */
+        @media (max-width: 767px) {
+            .gc-stat-row, 
+            .gc-cards-top-stats, 
+            .gc-credit-card-container {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 16px !important;
+                width: 100% !important;
+            }
+
+            .gc-stat-card, 
+            .gc-cards-stat-box {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+                min-width: 0 !important;
+            }
+            
+            .gc-credit-card {
+                width: 100% !important;
+                max-width: 340px !important;
+                margin: 0 auto !important;
+                transform: none !important;
+            }
+            
+            .gc-card-details-text {
+                margin-left: 0 !important;
+                text-align: center !important;
+                width: 100% !important;
+            }
+
+            .gc-content {
+                padding: 16px 12px !important;
+                width: 100% !important;
+                overflow-x: hidden !important;
+            }
+            
+            .gc-main {
+                width: 100% !important;
+                overflow-x: hidden !important;
+                margin-left: 0 !important;
+            }
+
+            /* Footer & Bottom Nav Fixes */
+            .gc-footer {
+                flex-direction: column !important;
+                gap: 16px !important;
+                padding: 20px 16px 100px !important; /* Extra padding for bottom nav */
+                text-align: center !important;
+            }
+
+            .gc-footer-links {
+                flex-wrap: wrap !important;
+                justify-content: center !important;
+                gap: 12px !important;
+            }
+
+            .gc-bottom-nav {
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                width: 100% !important;
+                display: flex !important;
+                z-index: 2100 !important;
+            }
+
+            /* Ensure main content is full width on mobile */
+            .gc-main, .gc-content {
+                max-width: none !important;
+                width: 100% !important;
             }
         }
 
@@ -3578,7 +3737,7 @@
             <div
                 style="background:#fff; border:1px solid var(--gc-border); border-radius:14px; padding:24px; margin-bottom:40px;">
                 <!-- Reusing the physical card representation horizontally -->
-                <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div class="gc-credit-card-container" style="display:flex; align-items:center; justify-content:space-between;">
                     <div class="gc-credit-card"
                         style="width:280px; transform:scale(0.85); transform-origin:left center; margin-bottom:-20px;">
                         <div class="card-top">
@@ -3590,7 +3749,7 @@
                         <div class="card-number">•••• •••• •••• <span id="cardsTabLast4">0000</span></div>
                     </div>
 
-                    <div style="flex:1; margin-left:-20px;">
+                    <div class="gc-card-details-text" style="flex:1; margin-left:-20px;">
                         <span class="gc-status-active"><i class="fas fa-check-circle"></i> Active</span>
                         <div style="margin-top:8px; font-size:13px; color:var(--gc-text-light);">American Express Black
                         </div>
@@ -5533,13 +5692,15 @@
         .gc-bottom-nav {
             display: none;
             position: fixed;
-            bottom: 0;
+            bottom: env(safe-area-inset-bottom, 0px);
             left: 0;
             right: 0;
-            z-index: 300;
+            width: 100%;
+            height: 72px;
+            z-index: 2000;
             background: #fff;
             border-top: 1px solid #e2e8f0;
-            padding: 8px 4px calc(8px + env(safe-area-inset-bottom, 0px));
+            padding: 8px 4px;
             flex-direction: row;
             align-items: center;
             justify-content: space-around;

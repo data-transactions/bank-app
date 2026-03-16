@@ -47,6 +47,7 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            padding: 16px;
         }
         .modal-overlay.open { display: flex; }
         .modal-card {
@@ -58,6 +59,11 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             animation: modalIn 0.3s ease-out;
         }
+        @media (max-width: 640px) {
+            .modal-card {
+                padding: 24px 16px;
+            }
+        }
         @keyframes modalIn {
             from { opacity: 0; transform: translateY(20px) scale(0.95); }
             to { opacity: 1; transform: translateY(0) scale(1); }
@@ -67,6 +73,24 @@
         .role-admin { background: #ede9fe; color: #7c3aed; }
         .role-super { background: #fff7ed; color: #c2410c; border: 1px solid #fb923c; }
         .status-suspended { background: #fee2e2; color: #dc2626; }
+        
+        body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+        .overflow-x-auto {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* ── Desktop Fluidity Override ── */
+        @media (min-width: 1025px) {
+            .dashboard-main, .dashboard-content {
+                max-width: none !important;
+                width: 100% !important;
+            }
+        }
     </style>
 </head>
 
@@ -158,7 +182,7 @@
                 <p class="text-slate-500 text-sm mt-1">System-wide statistics and platform management.</p>
             </div>
 
-            <div class="grid sm:grid-cols-3 gap-5 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
                 <div class="stat-ring fade-in-up">
                     <p class="text-white/50 text-xs uppercase tracking-widest mb-2">Total Users</p>
                     <p class="text-3xl font-extrabold" id="stat-users">—</p>
@@ -223,7 +247,7 @@
                     <p class="text-slate-500 text-sm mt-1">Full platform ledger across all accounts.</p>
                 </div>
                 <div class="flex gap-3">
-                    <select id="typeFilter" class="form-input" style="width:auto;padding:8px 12px;font-size:0.85rem;">
+                    <select id="typeFilter" class="form-input" style="padding:8px 12px;font-size:0.85rem;">
                         <option value="">All Types</option>
                         <option value="deposit">Deposit</option>
                         <option value="withdrawal">Withdrawal</option>

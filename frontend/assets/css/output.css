@@ -1852,7 +1852,7 @@ body {
   width: 100%;
   background: var(--brand-success);
 }
-@media (max-width: 1024px) {
+@media (max-width: 1023px) {
   .sidebar {
     transform: translateX(-100%);
   }
