@@ -1,15 +1,17 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from fastapi.staticfiles import StaticFiles
 from .routes import auth, accounts, transactions, admin, users, notifications
 from .config import settings
 from .database import Base, engine
 
 # Initialize database tables
-Base.metadata.create_all(bind=engine)
+if os.getenv("RESET_DATABASE") == "true":
+    print("WARNING: RESET_DATABASE is true. Dropping all tables...")
+    Base.metadata.drop_all(bind=engine)
 
-import os
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="NexaBank API",
