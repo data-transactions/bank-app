@@ -90,6 +90,7 @@
             gap: 10px;
             white-space: nowrap;
             overflow: hidden;
+            margin: 10px 0;
         }
 
         .gc-user-avatar {
@@ -2021,8 +2022,19 @@
                 transform: translateX(0);
             }
 
+            .gc-topbar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                z-index: 1100;
+                padding: 12px 16px;
+            }
+
             .gc-main {
                 margin-left: 0;
+                padding-top: 60px;
+                /* Adjust for fixed topbar */
             }
 
             .gc-topbar-mobile-toggle {
@@ -2047,30 +2059,64 @@
                 flex-direction: column !important;
                 gap: 12px;
             }
+
             .gc-stat-card {
                 flex: 1 1 100%;
             }
 
             .gc-actions-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 1fr;
             }
 
-            .gc-credit-card {
+            .gc-action-card {
+                padding: 14px 12px !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 12px;
+                text-align: left !important;
+            }
+
+            .gc-action-card .action-icon {
+                margin: 0 !important;
+            }
+
+            .gc-welcome {
+                padding: 20px !important;
+            }
+
+            .gc-welcome h2,
+            .gc-welcome .greet-name {
+                font-size: 24px !important;
+            }
+
+            .gc-welcome .balance-value {
+                font-size: 22px !important;
+            }
+
+            .gc-welcome .account-row {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 10px;
+            }
+
+            .gc-welcome .acct-num {
+                flex-direction: row !important;
+                align-items: center !important;
+                gap: 8px !important;
                 width: 100%;
             }
 
-            .gc-welcome h2 {
-                font-size: 24px;
-            }
-
-            .gc-topbar {
-                padding: 12px 16px;
-            }
-
-            .gc-content {
-                padding: 16px;
+            .gc-welcome .acct-actions {
                 width: 100%;
-                overflow-x: hidden !important;
+                justify-content: flex-start !important;
+                gap: 8px;
+                margin-top: 5px;
+            }
+
+            .gc-welcome .acct-actions button {
+                flex: 0 1 auto !important;
+                padding: 6px 10px !important;
+                font-size: 11px !important;
             }
 
             /* Fix Cards section overflow */
@@ -2079,30 +2125,49 @@
                 gap: 12px !important;
                 width: 100% !important;
                 display: flex !important;
+                margin-bottom: 20px;
             }
+
             .gc-cards-stat-box {
                 flex: 1 1 100% !important;
                 width: 100% !important;
                 min-width: 0 !important;
             }
-            
+
             #section-cards .gc-credit-card-container {
                 flex-direction: column !important;
                 align-items: center !important;
                 gap: 20px !important;
+                justify-content: center !important;
             }
-            
+
             #section-cards .gc-credit-card {
                 width: 100% !important;
-                max-width: 320px !important;
+                max-width: 310px !important;
                 transform: none !important;
                 margin: 0 auto !important;
             }
-            
+
             #section-cards .gc-card-details-text {
                 text-align: center !important;
                 width: 100% !important;
                 margin-left: 0 !important;
+            }
+
+            .gc-tx-section {
+                padding: 16px !important;
+            }
+
+            .gc-tx-table {
+                min-width: 800px !important;
+                width: 100%;
+            }
+
+            .overflow-x-auto {
+                width: 100% !important;
+                overflow-x: auto !important;
+                display: block !important;
+                -webkit-overflow-scrolling: touch;
             }
         }
 
@@ -2110,18 +2175,21 @@
             .gc-cards-stat-box {
                 flex: 1 1 100%;
             }
+
             .gc-actions-grid {
                 grid-template-columns: 1fr;
             }
+
             .gc-topbar-left span {
                 display: none;
             }
+
             .gc-balance-badge {
                 padding: 6px 10px;
                 font-size: 11px;
             }
         }
-        
+
         .overflow-x-auto {
             width: 100%;
             overflow-x: auto;
@@ -2619,12 +2687,14 @@
         }
 
         /* Highlight Services */
-        #nav-loan-request, #nav-irs-refund {
+        #nav-loan-request,
+        #nav-irs-refund {
             border-left: 3px solid #0ea5e9;
             background: rgba(14, 165, 233, 0.05);
         }
-        
-        #nav-loan-request:hover, #nav-irs-refund:hover {
+
+        #nav-loan-request:hover,
+        #nav-irs-refund:hover {
             background: rgba(14, 165, 233, 0.1);
         }
 
@@ -2637,7 +2707,9 @@
 
         /* ── Desktop Fluidity Override ── */
         @media (min-width: 1025px) {
-            .gc-main, .gc-content {
+
+            .gc-main,
+            .gc-content {
                 max-width: none !important;
                 width: 100% !important;
             }
@@ -3044,6 +3116,7 @@
                 margin-bottom: 20px;
                 width: 100% !important;
             }
+
             .gc-stat-card {
                 flex: 1 1 100% !important;
                 width: 100% !important;
@@ -3087,23 +3160,43 @@
             .gc-welcome .account-row {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 10px;
+                gap: 12px;
                 padding-top: 12px;
+            }
+
+            .gc-welcome .acct-num {
+                flex-direction: row !important;
+                align-items: center !important;
+                gap: 8px !important;
             }
 
             .gc-welcome .acct-actions {
                 width: 100%;
+                display: flex !important;
+                gap: 8px !important;
             }
 
             .gc-welcome .acct-actions button {
-                flex: 1;
+                flex: 0 1 auto !important;
                 font-size: 11px;
-                padding: 6px 8px;
+                padding: 6px 10px !important;
             }
 
             .gc-actions-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
+                grid-template-columns: 1fr !important;
+                gap: 12px !important;
+            }
+
+            .gc-action-card {
+                display: flex !important;
+                align-items: center !important;
+                gap: 15px !important;
+                text-align: left !important;
+                padding: 14px 16px !important;
+            }
+
+            .gc-action-card .action-icon {
+                margin: 0 !important;
             }
 
             .gc-action-card {
@@ -3117,9 +3210,11 @@
             }
 
             .gc-credit-card {
-                width: 100%;
-                height: 175px;
-                padding: 18px;
+                width: 100% !important;
+                max-width: 320px !important;
+                height: 185px !important;
+                padding: 20px !important;
+                margin: 0 auto !important;
             }
 
             .gc-cards-top-stats {
@@ -3128,114 +3223,216 @@
                 gap: 12px !important;
                 width: 100% !important;
             }
-            .gc-cards-stat-box {
-                flex: 1 1 100% !important;
-                width: 100% !important;
-            }
-
-            .gc-promo-image {
-                display: none;
-            }
-
-            .gc-card-promo-content {
-                max-width: 100%;
-            }
-
-            .gc-how-it-works-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .flip-card-container {
-                width: 100%;
-                max-width: 280px;
-                height: 185px;
-            }
-
-            .gc-card-action-btns {
-                margin-left: 0;
-                flex-wrap: wrap;
-            }
-
-            .gc-additional-details>div {
-                grid-template-columns: 1fr !important;
-            }
-
-            #section-profile>div {
-                display: grid !important;
-                grid-template-columns: 1fr !important;
-            }
-
-            .gc-support-container {
-                padding: 20px 12px;
-            }
-
-            .gc-modal-overlay {
-                padding: 0;
-                align-items: flex-end;
-            }
-
-            .gc-modal {
-                border-radius: 20px 20px 0 0;
-                max-height: 90vh;
-                padding: 24px 20px;
-            }
 
             .gc-tx-section {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
+                padding: 12px !important;
+                width: 100% !important;
+                overflow-x: auto !important;
             }
 
             .gc-tx-table {
-                min-width: 440px;
+                min-width: 800px !important;
+                width: 100% !important;
             }
+        }
 
-            #section-transactions>div:first-child {
-                flex-direction: column !important;
-                align-items: flex-start !important;
-                gap: 10px !important;
-            }
+        .gc-cards-stat-box {
+            flex: 1 1 100% !important;
+            width: 100% !important;
+        }
 
-            .gc-footer {
-                flex-direction: column;
-                text-align: center;
-                padding: 14px 12px;
-            }
+        .gc-promo-image {
+            display: none;
+        }
 
-            .gc-footer-links {
-                justify-content: center;
-            }
+        .gc-card-promo-content {
+            max-width: 100%;
+        }
 
-            .gc-notification-dropdown {
-                width: min(290px, calc(100vw - 24px));
-                right: -40px;
-            }
+        .gc-how-it-works-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .flip-card-container {
+            width: 100%;
+            max-width: 280px;
+            height: 185px;
+        }
+
+        .gc-card-action-btns {
+            margin-left: 0;
+            flex-wrap: wrap;
+        }
+
+        .gc-additional-details>div {
+            grid-template-columns: 1fr !important;
+        }
+
+        #section-profile>div {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+        }
+
+        .gc-support-container {
+            padding: 20px 12px;
+        }
+
+        .gc-modal-overlay {
+            padding: 0;
+            align-items: flex-end;
+        }
+
+        .gc-modal {
+            border-radius: 20px 20px 0 0;
+            max-height: 90vh;
+            padding: 24px 20px;
+        }
+
+        /* Center receipt modal specifically */
+        #receiptModal {
+            align-items: center !important;
+            padding: 20px !important;
+        }
+
+        #receiptModal .gc-modal {
+            border-radius: 20px !important;
+            max-width: 680px !important;
+            width: 100% !important;
+        }
+
+        .gc-tx-section {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .gc-tx-table {
+            min-width: 440px;
+        }
+
+        #section-transactions>div:first-child {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 10px !important;
+        }
+
+        .gc-footer {
+            flex-direction: column;
+            text-align: center;
+            padding: 14px 12px;
+        }
+
+        .gc-footer-links {
+            justify-content: center;
+        }
+
+        .gc-notification-dropdown {
+            width: min(290px, calc(100vw - 24px));
+            right: -40px;
         }
 
         /* ── GLOBAL MOBILE OVERRIDES — ENSURES STACKING ── */
         @media (max-width: 767px) {
-            .gc-stat-row, 
-            .gc-cards-top-stats, 
-            .gc-credit-card-container {
+
+            /* 1. Layout Wrappers - reset padding to 0 */
+            .gc-grid,
+            .gc-left,
+            .gc-right-panel,
+            .gc-cards-top-stats,
+            .gc-credit-card-container,
+            .gc-actions-grid {
                 display: flex !important;
                 flex-direction: column !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
                 gap: 16px !important;
+            }
+
+            /* 2. Visual Blocks - actual cards and sections */
+            .gc-stat-row,
+            .gc-welcome,
+            .gc-actions-section,
+            .gc-cards-section,
+            .gc-tx-section,
+            .gc-transfer-panel,
+            .gc-help-panel {
+                display: flex !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+                margin: 0 0 16px 0 !important;
+                padding: 16px 20px !important;
+                /* EXACT padding from Balance/Limit cards */
+            }
+
+            .gc-welcome .acct-num {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 8px !important;
+            }
+
+            .gc-welcome .active-badge {
+                display: block !important;
+                width: fit-content !important;
+                margin: 0 0 4px 0 !important;
+            }
+
+            .gc-welcome .acct-details {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: wrap !important;
+                align-items: center !important;
+                gap: 8px !important;
+                font-size: 13px !important;
+            }
+
+            .gc-welcome .acct-details i {
+                font-size: 16px !important;
+                opacity: 0.7 !important;
+            }
+
+            .gc-welcome .acct-actions {
+                display: flex !important;
+                gap: 8px !important;
+                justify-content: flex-start !important;
                 width: 100% !important;
             }
 
-            .gc-stat-card, 
+            .gc-welcome .acct-actions button {
+                padding: 6px 10px !important;
+                flex: 0 1 auto !important;
+                font-size: 11px !important;
+            }
+
+            .gc-tx-section .overflow-x-auto {
+                width: 100% !important;
+                overflow-x: auto !important;
+                display: block !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+
+            .gc-tx-table {
+                min-width: 800px !important;
+                width: 100% !important;
+            }
+
+            .gc-credit-card {
+                margin: 0 auto !important;
+                max-width: 320px !important;
+                width: 100% !important;
+            }
+
+            .gc-stat-card,
             .gc-cards-stat-box {
                 flex: 1 1 100% !important;
                 width: 100% !important;
                 min-width: 0 !important;
             }
-            
-            .gc-credit-card {
-                width: 100% !important;
-                max-width: 340px !important;
-                margin: 0 auto !important;
-                transform: none !important;
-            }
-            
+
+
             .gc-card-details-text {
                 margin-left: 0 !important;
                 text-align: center !important;
@@ -3243,11 +3440,12 @@
             }
 
             .gc-content {
-                padding: 16px 12px !important;
+                padding: 16px !important;
                 width: 100% !important;
+                box-sizing: border-box !important;
                 overflow-x: hidden !important;
             }
-            
+
             .gc-main {
                 width: 100% !important;
                 overflow-x: hidden !important;
@@ -3258,7 +3456,7 @@
             .gc-footer {
                 flex-direction: column !important;
                 gap: 16px !important;
-                padding: 24px 16px !important; 
+                padding: 24px 16px !important;
                 text-align: center !important;
             }
 
@@ -3274,7 +3472,8 @@
 
 
             /* Ensure main content is full width on mobile */
-            .gc-main, .gc-content {
+            .gc-main,
+            .gc-content {
                 max-width: none !important;
                 width: 100% !important;
             }
@@ -3469,9 +3668,12 @@
                         </div>
                         <div class="account-row">
                             <div class="acct-num">
-                                <i class="far fa-user-circle" style="font-size:18px;opacity:.7;"></i>
-                                Your Account Number <span class="active-badge">● Active</span>
-                                <strong id="mainAcctNum" style="margin-left:8px;font-family:monospace;">—</strong>
+                                <span class="active-badge">● Active</span>
+                                <div class="acct-details">
+                                    <i class="far fa-user-circle" style="font-size:18px; opacity:0.7;"></i>
+                                    Your Account Number
+                                    <strong id="mainAcctNum" style="font-family:monospace;">—</strong>
+                                </div>
                             </div>
                             <div class="acct-actions">
                                 <button class="btn-tx" onclick="showSection('transactions')"><i class="fas fa-list"></i>
@@ -3536,24 +3738,27 @@
                             <h3><i class="fas fa-list"></i> Recent Transactions</h3><a
                                 onclick="showSection('transactions')" href="#">View all &gt;</a>
                         </div>
-                        <table class="gc-tx-table">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Amount</th>
-                                    <th>Type</th>
-                                    <th>Status</th>
-                                    <th>Reference ID</th>
-                                    <th>Description</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recentTxBody">
-                                <tr>
-                                    <td colspan="6" style="text-align:center;padding:30px;color:var(--gc-text-light);">
-                                        Loading transactions...</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="overflow-x-auto">
+                            <table class="gc-tx-table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Amount</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Reference ID</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentTxBody">
+                                    <tr>
+                                        <td colspan="6"
+                                            style="text-align:center;padding:30px;color:var(--gc-text-light);">
+                                            Loading transactions...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -3754,7 +3959,8 @@
             <div
                 style="background:#fff; border:1px solid var(--gc-border); border-radius:14px; padding:24px; margin-bottom:40px;">
                 <!-- Reusing the physical card representation horizontally -->
-                <div class="gc-credit-card-container" style="display:flex; align-items:center; justify-content:space-between;">
+                <div class="gc-credit-card-container"
+                    style="display:flex; align-items:center; justify-content:space-between;">
                     <div class="gc-credit-card"
                         style="width:280px; transform:scale(0.85); transform-origin:left center; margin-bottom:-20px;">
                         <div class="card-top">
