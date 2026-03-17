@@ -4,6 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from .routes import auth, accounts, transactions, admin, users, notifications
 from .config import settings
+from .database import Base, engine
+
+# Initialize database tables
+Base.metadata.create_all(bind=engine)
 
 import os
 
