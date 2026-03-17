@@ -1,17 +1,34 @@
 import secrets
-from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
+from datetime import datetime, timedelta, timezone
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks, Request
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from ..database import get_db
 from ..models.user import User
 from ..models.account import Account
-from ..schemas.auth import RegisterRequest, LoginRequest, TokenResponse, SetPinRequest, UserResponse
+from ..models.security_attempt import SecurityAttempt
+from ..schemas.auth import RegisterRequest, LoginRequest, TokenResponse, SetPinRequest, UserResponse, ChangePasswordRequest, ChangePinRequest
 from ..core.security import hash_password, verify_password, create_access_token
 from ..core.dependencies import get_current_user
 from ..services.account_service import create_account_for_user
 from ..services.email_service import email_service
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
+
+def check_rate_limit(db: Session, user_id: int, attempt_type: str):
+    fifteen_mins_ago = datetime.now(timezone.utc) - timedelta(minutes=15)
+    attempts = db.query(SecurityAttempt).filter(
+        SecurityAttempt.user_id == user_id,
+        SecurityAttempt.type == attempt_type,
+        SecurityAttempt.is_successful == False,
+        SecurityAttempt.timestamp >= fifteen_mins_ago
+    ).count()
+    
+    if attempts >= 5:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Too many failed attempts. Please try again in 15 minutes."
+        )
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
@@ -120,6 +137,144 @@ def verify_email(token: str, email: str, db: Session = Depends(get_db)):
     user.token_expiry = None
     db.commit()
     return {"message": "Email verified successfully! You can now log in."}
+
+
+@router.post("/change-password")
+def change_password(
+    payload: ChangePasswordRequest,
+    background_tasks: BackgroundTasks,
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # 1. Rate Limiting
+    check_rate_limit(db, current_user.id, "password")
+
+    # 2. Verify current password
+    if not verify_password(payload.current_password, current_user.password_hash):
+        # Log failed attempt
+        attempt = SecurityAttempt(
+            user_id=current_user.id,
+            type="password",
+            is_successful=False,
+            ip_address=request.client.host
+        )
+        db.add(attempt)
+        db.commit()
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect current password."
+        )
+
+    # 3. New password constraints (Schema already handles complexity)
+    if payload.new_password != payload.confirm_new_password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="New passwords do not match."
+        )
+    
+    if verify_password(payload.new_password, current_user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="New password cannot be the same as the current password."
+        )
+
+    # 4. Update Security
+    current_user.password_hash = hash_password(payload.new_password)
+    current_user.password_changed_at = datetime.now(timezone.utc)
+    
+    # Log success
+    attempt = SecurityAttempt(
+        user_id=current_user.id,
+        type="password",
+        is_successful=True,
+        ip_address=request.client.host
+    )
+    db.add(attempt)
+    db.commit()
+
+    # 5. Background Notification
+    background_tasks.add_task(
+        email_service.send_security_alert,
+        current_user.email,
+        current_user.full_name,
+        "password",
+        datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    )
+
+    return {"message": "Password updated successfully. You have been logged out of all sessions."}
+
+
+@router.post("/change-pin")
+def change_pin(
+    payload: ChangePinRequest,
+    background_tasks: BackgroundTasks,
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    if not current_user.transaction_pin:
+         raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Transaction PIN is not set. Please set it first."
+        )
+
+    # 1. Rate Limiting
+    check_rate_limit(db, current_user.id, "pin")
+
+    # 2. Verify current PIN
+    if not verify_password(payload.current_pin, current_user.transaction_pin):
+        # Log failed attempt
+        attempt = SecurityAttempt(
+            user_id=current_user.id,
+            type="pin",
+            is_successful=False,
+            ip_address=request.client.host
+        )
+        db.add(attempt)
+        db.commit()
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect current PIN."
+        )
+
+    # 3. New PIN constraints
+    if payload.new_pin != payload.confirm_new_pin:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="New PINs do not match."
+        )
+    
+    if verify_password(payload.new_pin, current_user.transaction_pin):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="New PIN cannot be the same as the current PIN."
+        )
+
+    # 4. Update Security
+    current_user.transaction_pin = hash_password(payload.new_pin)
+    current_user.pin_changed_at = datetime.now(timezone.utc)
+    
+    # Log success
+    attempt = SecurityAttempt(
+        user_id=current_user.id,
+        type="pin",
+        is_successful=True,
+        ip_address=request.client.host
+    )
+    db.add(attempt)
+    db.commit()
+
+    # 5. Background Notification
+    background_tasks.add_task(
+        email_service.send_security_alert,
+        current_user.email,
+        current_user.full_name,
+        "transaction PIN",
+        datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    )
+
+    return {"message": "Transaction PIN updated successfully."}
 
 
 @router.get("/emergency-fix-card-numbers")

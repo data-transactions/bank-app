@@ -96,10 +96,13 @@ const api = {
     }),
     verifyEmail: (email, token) => api.get(`/api/auth/verify?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`),
     setPin: (pin) => api.post('/api/auth/set-pin', { pin }),
+    changePassword: (current_password, new_password) => api.post('/api/auth/change-password', { current_password, new_password }),
+    changePin: (current_pin, new_pin) => api.post('/api/auth/change-pin', { current_pin, new_pin }),
 
     // Users
     getMe: () => api.get('/api/auth/me'),
     updateMe: (data) => api.put('/api/users/me', data),
+    updateProfile: (data) => api.patch('/api/users/profile', data),
     uploadAvatar: (file) => {
         const fd = new FormData();
         fd.append('file', file);

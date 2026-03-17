@@ -13,6 +13,7 @@ from app.models.user import User
 from app.models.account import Account
 from app.models.transaction import Transaction
 from app.models.admin import AdminPermissions, AdminLog
+from app.models.security_attempt import SecurityAttempt
 from app.config import settings
 
 config = context.config
