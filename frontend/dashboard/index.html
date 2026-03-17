@@ -138,7 +138,7 @@
             font-size: 10px;
             color: #34d399;
             font-weight: 600;
-            margin: 0 20px 6px;
+            margin: 12px 20px;
             background: rgba(52, 211, 153, .1);
             padding: 3px 10px;
             border-radius: 20px;
@@ -154,7 +154,7 @@
         .gc-user-btns {
             display: flex;
             gap: 6px;
-            padding: 0 20px 14px;
+            padding: 8px 20px 14px;
         }
 
         .gc-user-btns button {
@@ -654,8 +654,8 @@
             color: #fff;
             position: relative;
             overflow: hidden;
-            width: 320px;
-            height: 190px;
+            width: 380px;
+            height: 210px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -710,15 +710,16 @@
         }
 
         .gc-credit-card .card-number {
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
             font-size: 15px;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             margin-bottom: 14px;
         }
 
         .gc-credit-card .card-bottom {
             display: flex;
             justify-content: space-between;
+            align-items: flex-end;
             font-size: 10px;
             text-transform: uppercase;
             opacity: .7;
@@ -1326,8 +1327,8 @@
 
         .flip-card-container {
             perspective: 1000px;
-            width: 340px;
-            height: 230px;
+            width: 380px;
+            height: 210px;
             margin: 30px auto;
         }
 
@@ -2000,6 +2001,96 @@
             animation: slideDown .2s ease-out;
         }
 
+        /* Modern Transaction List Enhancements */
+        .gc-tx-section {
+            background: #fff;
+            border-radius: 20px;
+            border: 1px solid var(--gc-border);
+            padding: 30px;
+            box-shadow: var(--gc-shadow-sm);
+        }
+
+        .gc-tx-table th {
+            padding: 16px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--gc-text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--gc-border);
+            background: #fcfdfe;
+        }
+
+        .gc-tx-table td {
+            padding: 18px 16px;
+            font-size: 14px;
+            border-bottom: 1px solid #f8fafc;
+        }
+
+        .gc-tx-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .gc-tx-icon-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .gc-tx-icon-circle.credit { background: #dcfce7; color: #10b981; }
+        .gc-tx-icon-circle.debit { background: #fee2e2; color: #ef4444; }
+
+        .gc-tx-type-badge {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .gc-tx-type-badge.credit { background: #ecfdf5; color: #10b981; }
+        .gc-tx-type-badge.debit { background: #fef2f2; color: #ef4444; }
+
+        .gc-tx-status {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .gc-tx-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        .gc-tx-status.processed { background: #eff6ff; color: #3b82f6; }
+        .gc-tx-status.processed::before { background: #3b82f6; }
+
+        .gc-tx-ref {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--gc-text-light);
+        }
+
+        .gc-receipt-link {
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .gc-receipt-link:hover {
+            color: var(--gc-blue-dark) !important;
+            transform: translateX(2px);
+        }
+
         @keyframes slideDown {
             from {
                 opacity: 0;
@@ -2168,6 +2259,11 @@
                 overflow-x: auto !important;
                 display: block !important;
                 -webkit-overflow-scrolling: touch;
+            }
+
+            #profileFormDetailed div[style*="grid-template-columns:1fr 1fr"] {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
             }
         }
 
@@ -2519,11 +2615,24 @@
 
         /* SETTINGS HEADER STYLES */
         .gc-settings-profile-header {
-            background: linear-gradient(to right, #0ea5e9, #a855f7);
-            padding: 40px;
-            border-radius: 16px 16px 0 0;
+            background: linear-gradient(135deg, #0ea5e9 0%, #a855f7 100%);
+            padding: 60px 40px;
+            border-radius: 20px 20px 0 0;
             text-align: center;
             color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gc-settings-profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -20%;
+            width: 140%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
         }
 
         .gc-settings-avatar-wrapper {
@@ -2553,7 +2662,7 @@
         .gc-settings-avatar-overlay {
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.35);
             border-radius: 50%;
             display: flex;
             flex-direction: column;
@@ -2563,13 +2672,14 @@
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
-            opacity: 0;
+            opacity: 1;
             transition: 0.3s;
-            backdrop-filter: blur(2px);
+            backdrop-filter: blur(1px);
         }
 
         .gc-settings-avatar-wrapper:hover .gc-settings-avatar-overlay {
-            opacity: 1;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
         }
 
         .gc-settings-avatar-overlay i {
@@ -2625,39 +2735,57 @@
 
         .gc-settings-container {
             display: flex;
+            flex-direction: column;
             background: #fff;
             border: 1px solid var(--gc-border);
-            border-radius: 0 0 16px 16px;
-            min-height: 500px;
+            border-radius: 0 0 20px 20px;
+            min-height: 550px;
+            box-shadow: var(--gc-shadow-sm);
         }
 
         .gc-settings-sidebar {
-            width: 260px;
-            border-right: 1px solid var(--gc-border);
-            padding: 20px 0;
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid var(--gc-border);
+            display: flex;
+            padding: 12px 20px;
+            gap: 8px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            background: #fafafa;
+        }
+
+        .gc-settings-sidebar::-webkit-scrollbar {
+            display: none;
         }
 
         .gc-settings-nav-item {
-            padding: 14px 24px;
+            padding: 10px 20px;
             font-size: 14px;
-            font-weight: 500;
-            color: var(--gc-text);
+            font-weight: 600;
+            color: var(--gc-text-light);
             cursor: pointer;
-            transition: .2s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            border-radius: 10px;
+            white-space: nowrap;
+        }
+
+        .gc-settings-nav-item i {
+            font-size: 16px;
         }
 
         .gc-settings-nav-item:hover {
-            background: #f8fafc;
             color: var(--gc-blue);
+            background: rgba(14, 165, 233, 0.05);
         }
 
         .gc-settings-nav-item.active {
-            background: #eff6ff;
-            color: var(--gc-blue);
-            font-weight: 600;
+            background: var(--gc-blue);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
         }
 
         .gc-settings-content {
@@ -3510,14 +3638,8 @@
                 style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#0ea5e9,#6366f1);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:14px;">
                 N</div><span>NexaBank</span>
         </div>
-        <div class="gc-user-card">
-            <div class="gc-user-avatar" id="sidebarAvatar"></div>
-            <div class="gc-user-info">
-                <strong id="sidebarName">Loading...</strong>
-                <small id="sidebarAcctId">ID: —</small>
-            </div>
-        </div>
-        <div class="gc-kyc-badge"><i class="fas fa-check-circle"></i> KYC Verified</div>
+
+        <div class="gc-kyc-badge"><i class="fas fa-check-circle"></i> Verified</div>
         <div class="gc-user-btns">
             <button onclick="showSection('profile')"><i class="fas fa-user"></i> Profile</button>
             <button class="logout-btn" onclick="Auth.logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -3962,14 +4084,19 @@
                 <div class="gc-credit-card-container"
                     style="display:flex; align-items:center; justify-content:space-between;">
                     <div class="gc-credit-card"
-                        style="width:280px; transform:scale(0.85); transform-origin:left center; margin-bottom:-20px;">
+                        style="width:320px; transform:scale(0.85); transform-origin:left center; margin-bottom:-20px;">
                         <div class="card-top">
                             <div>
                                 <div class="card-bank">NexaBank<small>Virtual Banking</small></div>
+                                <div class="card-active">✓ Active</div>
                             </div>
                             <div class="card-brand">AMERICAN<br>EXPRESS</div>
                         </div>
                         <div class="card-number">•••• •••• •••• <span id="cardsTabLast4">0000</span></div>
+                        <div class="card-bottom">
+                            <div>CARD HOLDER<strong id="cardsTabCardHolder">—</strong></div>
+                            <div>VALID THRU<strong>02/29</strong></div>
+                        </div>
                     </div>
 
                     <div class="gc-card-details-text" style="flex:1; margin-left:-20px;">
@@ -4413,26 +4540,33 @@
                 <div class="gc-settings-content">
                     <!-- PROFILE TAB -->
                     <div id="settings-tab-profile">
-                        <h3 style="font-size:18px; font-weight:700; margin-bottom:24px;">Personal Information</h3>
+                        <h3 style="font-size:16px; font-weight:700; margin-bottom:16px; color:var(--gc-dark); display:flex; align-items:center; gap:8px;">
+                            <i class="fas fa-id-card" style="color:var(--gc-blue); font-size:14px;"></i> Identity
+                        </h3>
                         <form id="profileFormDetailed">
-                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
                                 <div class="gc-form-group">
                                     <label>First Name</label>
                                     <input type="text" id="profileFirstName" class="form-input"
-                                        placeholder="First Name">
+                                        placeholder="First Name" readonly style="background: #f8fafc; color: var(--gc-text-light);">
                                 </div>
                                 <div class="gc-form-group">
                                     <label>Last Name</label>
-                                    <input type="text" id="profileLastName" class="form-input" placeholder="Last Name">
+                                    <input type="text" id="profileLastName" class="form-input" 
+                                        placeholder="Last Name" readonly style="background: #f8fafc; color: var(--gc-text-light);">
                                 </div>
                             </div>
 
-                            <div class="gc-form-group" style="margin-bottom:20px;">
+                            <div class="gc-form-group" style="margin-bottom:32px;">
                                 <label>Date of Birth</label>
                                 <input type="date" id="profileDob" class="form-input">
                             </div>
 
-                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;">
+                            <h3 style="font-size:16px; font-weight:700; margin-bottom:16px; color:var(--gc-dark); display:flex; align-items:center; gap:8px;">
+                                <i class="fas fa-envelope" style="color:var(--gc-blue); font-size:14px;"></i> Contact Information
+                            </h3>
+
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;">
                                 <div class="gc-form-group">
                                     <label>Phone Number</label>
                                     <input type="tel" id="profilePhone" class="form-input"
@@ -4440,8 +4574,7 @@
                                 </div>
                                 <div class="gc-form-group">
                                     <label>Email Address</label>
-                                    <input type="email" id="profileEmail" class="form-input" disabled
-                                        style="opacity:0.6;">
+                                    <input type="email" id="profileEmail" class="form-input" placeholder="Email Address">
                                 </div>
                             </div>
 
@@ -4471,7 +4604,7 @@
                             <label>Confirm New Password</label>
                             <input type="password" id="confirmNewPassword" class="form-input" placeholder="••••••••">
                         </div>
-                        <button class="gc-btn-primary" style="padding:12px 30px;"
+                        <button id="savePasswordBtn" class="gc-btn-primary" style="padding:12px 30px;"
                             onclick="Toast.info('Password update simulation')">Save Changes</button>
                     </div>
 
@@ -4493,7 +4626,7 @@
                             <label>Confirm New PIN</label>
                             <input type="password" maxlength="6" id="confirmPin" class="form-input" placeholder="••••">
                         </div>
-                        <button class="gc-btn-primary" style="padding:12px 30px;"
+                        <button id="savePinBtn" class="gc-btn-primary" style="padding:12px 30px;"
                             onclick="Toast.info('PIN update simulation')">Save Changes</button>
                     </div>
                 </div>
@@ -4568,9 +4701,9 @@
         <!-- CARD DETAILS SECTION -->
         <section id="section-cardDetails" class="gc-content" style="display:none;">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
-                <div class="gc-breadcrumb"><a onclick="showSection('overview')">Dashboard</a> &gt; <a>Cards</a> &gt;
+                <div class="gc-breadcrumb"><a onclick="showSection('overview')">Dashboard</a> &gt; <a onclick="showSection('cards')">Cards</a> &gt;
                     Details</div>
-                <button class="gc-back-btn" onclick="showSection('overview')"><i class="fas fa-arrow-left"></i> Back to
+                <button class="gc-back-btn" onclick="showSection('cards')"><i class="fas fa-arrow-left"></i> Back to
                     Cards</button>
             </div>
             <h2 style="font-size:22px;font-weight:800;color:var(--gc-dark);margin-bottom:12px;">Card Details</h2>
@@ -4596,8 +4729,6 @@
                                     </div>
                                     <div class="card-brand">AMERICAN<br>EXPRESS</div>
                                 </div>
-                                <div style="margin-top:8px;"><i class="fas fa-sim-card"
-                                        style="font-size:24px;color:#d4a843;"></i></div>
                                 <div class="card-number" id="cdCardHiddenNum">•••• •••• •••• <span
                                         id="cdCardLast4">0000</span></div>
                                 <div class="card-number" id="cdCardFullNum" style="display:none;"></div>
@@ -4676,17 +4807,6 @@
                 </div>
             </div>
 
-            <div class="gc-card-detail-grid" style="grid-template-columns:1fr;margin-top:1px;">
-                <div class="gc-card-detail-cell">
-                    <div class="cell-label">Current Balance</div>
-                    <div class="cell-value">
-                        <span id="cdBalance">$0.00</span>
-                        <i class="far fa-copy"
-                            onclick="copyText(document.getElementById('cdBalance').textContent, this)"
-                            style="cursor:pointer; color:var(--gc-text-light); margin-left:6px; font-size:12px;"></i>
-                    </div>
-                </div>
-            </div>
 
             <div class="gc-additional-details">
                 <h3>Additional Details</h3>
@@ -4997,23 +5117,34 @@
                 }
             });
 
-            document.getElementById('profileForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const name = document.getElementById('profileName').value.trim();
-                if (!name) return Toast.warning('Name cannot be empty');
-                const btn = document.getElementById('profileSaveBtn');
-                btn.disabled = true; btn.textContent = 'Saving...';
+            const profileForm = document.getElementById('profileFormDetailed');
+            if (profileForm) {
+                profileForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const btn = e.target.querySelector('button[type="submit"]');
+                    btn.disabled = true; 
+                    const oldText = btn.textContent;
+                    btn.textContent = 'Saving...';
 
-                const parts = name.split(' ');
-                const payload = {
-                    first_name: parts[0],
-                    last_name: parts.slice(1).join(' ') || ' '
-                };
+                    const payload = {
+                        email: document.getElementById('profileEmail').value.trim(),
+                        phone_number: document.getElementById('profilePhone').value.trim(),
+                        date_of_birth: document.getElementById('profileDob').value,
+                        home_address: document.getElementById('profileAddress').value.trim()
+                    };
 
-                try { state.user = await NexaAPI.updateMe(payload); updateAllUI(); Toast.success('Profile updated!'); }
-                catch (e) { Toast.error(e.message); }
-                btn.disabled = false; btn.textContent = 'Save Changes';
-            });
+                    try { 
+                        state.user = await NexaAPI.updateProfile(payload); 
+                        updateAllUI(); 
+                        Toast.success('Profile updated successfully!'); 
+                    } catch (err) { 
+                        Toast.error(err.message || 'Failed to update profile'); 
+                    } finally {
+                        btn.disabled = false; 
+                        btn.textContent = oldText;
+                    }
+                });
+            }
 
             document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
                 const file = e.target.files[0]; if (!file) return;
@@ -5022,6 +5153,67 @@
                 catch (e) { Toast.error(e.message); }
                 e.target.value = '';
             });
+
+            // Password Update logic
+            const savePasswordBtn = document.getElementById('savePasswordBtn');
+            if (savePasswordBtn) {
+                savePasswordBtn.onclick = async () => {
+                    const current = document.getElementById('currentPassword').value;
+                    const newPass = document.getElementById('newPassword').value;
+                    const confirmPass = document.getElementById('confirmNewPassword').value;
+
+                    if (!current || !newPass || !confirmPass) return Toast.warning('Please fill all password fields');
+                    if (newPass !== confirmPass) return Toast.error('New passwords do not match');
+
+                    savePasswordBtn.disabled = true;
+                    const oldText = savePasswordBtn.textContent;
+                    savePasswordBtn.textContent = 'Updating...';
+
+                    try {
+                        await NexaAPI.changePassword(current, newPass, confirmPass);
+                        Toast.success('Password updated successfully! Logging you out...');
+                        setTimeout(() => {
+                            localStorage.clear();
+                            window.location.href = '/login/';
+                        }, 2000);
+                    } catch (err) {
+                        Toast.error(err.message || 'Failed to update password');
+                    } finally {
+                        savePasswordBtn.disabled = false;
+                        savePasswordBtn.textContent = oldText;
+                    }
+                };
+            }
+
+            // PIN Update logic
+            const savePinBtn = document.getElementById('savePinBtn');
+            if (savePinBtn) {
+                savePinBtn.onclick = async () => {
+                    const current = document.getElementById('currentPin').value;
+                    const newPin = document.getElementById('newPin').value;
+                    const confirmPin = document.getElementById('confirmPin').value;
+
+                    if (!current || !newPin || !confirmPin) return Toast.warning('Please fill all PIN fields');
+                    if (newPin !== confirmPin) return Toast.error('New PINs do not match');
+
+                    savePinBtn.disabled = true;
+                    const oldText = savePinBtn.textContent;
+                    savePinBtn.textContent = 'Updating...';
+
+                    try {
+                        await NexaAPI.changePin(current, newPin, confirmPin);
+                        Toast.success('Transaction PIN updated successfully!');
+                        document.getElementById('currentPin').value = '';
+                        document.getElementById('newPin').value = '';
+                        document.getElementById('confirmPin').value = '';
+                    } catch (err) {
+                        Toast.error(err.message || 'Failed to update transaction PIN');
+                    } finally {
+                        savePinBtn.disabled = false;
+                        savePinBtn.textContent = oldText;
+                    }
+                };
+            }
         });
 
         function setDate() {
@@ -5147,6 +5339,9 @@
             if (document.getElementById('profileFirstName')) document.getElementById('profileFirstName').value = firstName;
             if (document.getElementById('profileLastName')) document.getElementById('profileLastName').value = lastName;
             if (document.getElementById('profileEmail')) document.getElementById('profileEmail').value = u.email;
+            if (document.getElementById('profilePhone')) document.getElementById('profilePhone').value = u.phone_number || '';
+            if (document.getElementById('profileDob')) document.getElementById('profileDob').value = u.date_of_birth || '';
+            if (document.getElementById('profileAddress')) document.getElementById('profileAddress').value = u.home_address || '';
 
             // Re-using profile fields for general sync
             if (document.getElementById('profileName')) document.getElementById('profileName').value = fullName;
@@ -5590,12 +5785,14 @@
             const fullName = u.full_name || (u.first_name + ' ' + (u.last_name || '')).trim() || 'User';
             const firstName = u.first_name || fullName.split(' ')[0];
             document.getElementById('cdCardHolder').textContent = fullName.toUpperCase();
-            document.getElementById('cdBalance').textContent = '';
-            document.getElementById('cdBalance').parentElement.style.display = 'none';
+
             const last4 = a.account_number.slice(-4);
             [document.getElementById('cardLast4'), document.getElementById('cardsTabLast4'), document.getElementById('cdCardLast4')].forEach(el => {
                 if (el) el.textContent = last4;
             });
+
+            const cardsTabHolder = document.getElementById('cardsTabCardHolder');
+            if (cardsTabHolder) cardsTabHolder.textContent = fullName.toUpperCase();
 
             // Re-apply current visibility state
             if (cardRevealed) {

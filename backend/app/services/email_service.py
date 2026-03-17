@@ -163,4 +163,71 @@ class EmailService:
             print(f"Error sending transaction email: {e}")
             return False
 
+    @staticmethod
+    def send_security_alert(email: str, user_name: str, action_type: str, timestamp: str):
+        sender_email = settings.GMAIL_USER
+        password = settings.GMAIL_APP_PASSWORD
+
+        subject = f"Security Alert: NexaBank {action_type.title()} Changed"
+        
+        message = MIMEMultipart("alternative")
+        message["Subject"] = subject
+        message["From"] = f"NexaBank Security <{sender_email}>"
+        message["To"] = email
+
+        html = f"""
+        <html>
+          <body style="font-family: 'Inter', sans-serif; color: #1e293b; line-height: 1.6; margin: 0; padding: 0; background-color: #f8fafc;">
+            <div style="max-width: 600px; margin: 20px auto; padding: 40px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+              <div style="text-align: center; margin-bottom: 32px;">
+                <h1 style="color: #0f172a; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.025em;">NexaBank Security</h1>
+              </div>
+              
+              <div style="margin-bottom: 32px;">
+                <p style="margin: 0 0 16px; font-size: 16px; color: #334155;">Hello {user_name},</p>
+                <p style="margin: 0 0 24px; font-size: 16px; color: #334155;">This is an automated alert to confirm that your <strong>{action_type}</strong> has been successfully updated.</p>
+                
+                <div style="padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #fff7ed;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                        <span style="color: #9a3412; font-size: 14px; font-weight: 600;">Activity:</span>
+                        <span style="color: #0f172a; font-size: 14px; font-weight: 600;">{action_type.title()} Update</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: #9a3412; font-size: 14px; font-weight: 600;">Date & Time:</span>
+                        <span style="color: #0f172a; font-size: 14px; font-weight: 600;">{timestamp}</span>
+                    </div>
+                </div>
+              </div>
+
+              <div style="margin-bottom: 32px;">
+                 <p style="color: #ef4444; font-weight: 700; margin-bottom: 8px;">Important:</p>
+                 <p style="font-size: 14px; color: #475569; margin: 0;">If you did not make this change, please contact our support team immediately or log in to your account and lock your cards.</p>
+              </div>
+
+              <div style="text-align: center; font-size: 14px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 24px;">
+                <p style="margin: 0 0 8px;">© 2026 NexaBank Security. All rights reserved.</p>
+              </div>
+            </div>
+          </body>
+        </html>
+        """
+
+        part2 = MIMEText(html, "html")
+        message.attach(part2)
+
+        try:
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+                server.login(sender_email, password)
+                server.sendmail(sender_email, email, message.as_string())
+            
+            # Simple log simulation
+            log_path = os.path.join(os.path.dirname(__file__), "email_logs.txt")
+            with open(log_path, "a") as f:
+                f.write(f"\nSECURITY ALERT [{timestamp}] To: {email} | Action: {action_type}")
+            
+            return True
+        except Exception as e:
+            print(f"Error sending security email: {e}")
+            return False
+
 email_service = EmailService()

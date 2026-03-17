@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
@@ -26,8 +27,21 @@ def get_current_user(
 
     user = db.query(User).filter(User.id == int(user_id)).first()
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
     
+    # Check for token invalidation (iat before password_changed_at)
+    if user.password_changed_at:
+        iat = payload.get("iat")
+        if iat:
+            # Jose iat is typically a timestamp, convert to aware datetime
+            iat_dt = datetime.fromtimestamp(iat, tz=timezone.utc)
+            if iat_dt < user.password_changed_at.replace(tzinfo=timezone.utc):
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Session expired due to password change. Please log in again.",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+
     if user.is_suspended:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
