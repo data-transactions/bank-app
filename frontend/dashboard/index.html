@@ -90,7 +90,6 @@
             gap: 10px;
             white-space: nowrap;
             overflow: hidden;
-            margin: 10px 0;
         }
 
         .gc-user-avatar {
@@ -3288,18 +3287,6 @@
             padding: 24px 20px;
         }
 
-        /* Center receipt modal specifically */
-        #receiptModal {
-            align-items: center !important;
-            padding: 20px !important;
-        }
-
-        #receiptModal .gc-modal {
-            border-radius: 20px !important;
-            max-width: 680px !important;
-            width: 100% !important;
-        }
-
         .gc-tx-section {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
@@ -3350,7 +3337,17 @@
             }
 
             /* 2. Visual Blocks - actual cards and sections */
-            .gc-stat-row,
+            .gc-stat-row {
+                display: flex !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+                margin: 0 0 16px 0 !important;
+                padding: 0 !important;
+                gap: 16px !important;
+            }
+
             .gc-welcome,
             .gc-actions-section,
             .gc-cards-section,
@@ -3364,7 +3361,7 @@
                 box-sizing: border-box !important;
                 margin: 0 0 16px 0 !important;
                 padding: 16px 20px !important;
-                /* EXACT padding from Balance/Limit cards */
+                /* spacing inside the cards/sections */
             }
 
             .gc-welcome .acct-num {
