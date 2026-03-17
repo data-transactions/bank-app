@@ -5094,7 +5094,7 @@
         </div>
     </div>
 
-    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/api.js?v=1.0.1"></script>
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/ui.js"></script>
     <script>
@@ -5325,15 +5325,24 @@
 
             if (document.getElementById('settingsNameDisplay')) document.getElementById('settingsNameDisplay').textContent = fullName;
             if (document.getElementById('settingsEmailDisplay')) document.getElementById('settingsEmailDisplay').textContent = u.email;
-            if (document.getElementById('settingsAvatarDisplay')) {
-                const av = document.getElementById('settingsAvatarDisplay');
-                av.textContent = initials;
-                av.style.display = 'flex';
-                av.style.alignItems = 'center';
-                av.style.justifyContent = 'center';
-                av.style.fontSize = '32px';
-                av.style.fontWeight = '800';
-                av.style.color = '#fff';
+            if (document.getElementById('profileAvatarDisplay')) {
+                const av = document.getElementById('profileAvatarDisplay');
+                if (u.profile_image_url) {
+                    av.innerHTML = '';
+                    av.style.backgroundImage = 'url(' + u.profile_image_url + ')';
+                    av.style.backgroundSize = 'cover';
+                    av.style.backgroundPosition = 'center';
+                } else {
+                    av.textContent = initials;
+                    av.style.backgroundImage = '';
+                    av.style.display = 'flex';
+                    av.style.alignItems = 'center';
+                    av.style.justifyContent = 'center';
+                    av.style.fontSize = '32px';
+                    av.style.fontWeight = '800';
+                    av.style.color = '#fff';
+                    av.style.backgroundColor = 'var(--gc-blue)';
+                }
             }
 
             if (document.getElementById('profileFirstName')) document.getElementById('profileFirstName').value = firstName;
