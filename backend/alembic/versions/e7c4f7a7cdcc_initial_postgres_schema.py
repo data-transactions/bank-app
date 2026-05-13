@@ -1,8 +1,8 @@
-"""create_base_tables
+"""initial_postgres_schema
 
-Revision ID: 81e65818b34d
-Revises: bb32fbda67e5
-Create Date: 2026-03-17 16:33:44.097884
+Revision ID: e7c4f7a7cdcc
+Revises: 
+Create Date: 2026-05-13 22:14:29.496850
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '81e65818b34d'
+revision: str = 'e7c4f7a7cdcc'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -28,20 +28,26 @@ def upgrade() -> None:
     sa.Column('password_hash', sa.String(length=255), nullable=False),
     sa.Column('role', sa.String(length=20), nullable=False),
     sa.Column('is_suspended', sa.Boolean(), nullable=False),
-    sa.Column('is_deleted', sa.Boolean(), nullable=True),
+    sa.Column('is_deleted', sa.Boolean(), nullable=False),
     sa.Column('deleted_at', sa.DateTime(), nullable=True),
     sa.Column('is_verified', sa.Boolean(), nullable=False),
     sa.Column('verification_token', sa.String(length=255), nullable=True),
     sa.Column('token_expiry', sa.DateTime(), nullable=True),
+    sa.Column('transaction_pin', sa.String(length=255), nullable=True),
     sa.Column('profile_image_url', sa.String(length=255), nullable=True),
+    sa.Column('phone_number', sa.String(length=20), nullable=True),
+    sa.Column('home_address', sa.String(length=255), nullable=True),
+    sa.Column('password_changed_at', sa.DateTime(), nullable=True),
+    sa.Column('pin_changed_at', sa.DateTime(), nullable=True),
+    sa.Column('login_count', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('phone_number')
     )
     op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
     op.create_index(op.f('ix_users_id'), 'users', ['id'], unique=False)
     op.create_index(op.f('ix_users_verification_token'), 'users', ['verification_token'], unique=False)
-    
     op.create_table('accounts',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
@@ -55,7 +61,56 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_accounts_account_number'), 'accounts', ['account_number'], unique=True)
     op.create_index(op.f('ix_accounts_id'), 'accounts', ['id'], unique=False)
-    
+    op.create_table('admin_logs',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('admin_id', sa.Integer(), nullable=False),
+    sa.Column('action', sa.String(length=100), nullable=False),
+    sa.Column('target_user_id', sa.Integer(), nullable=True),
+    sa.Column('details', sa.Text(), nullable=True),
+    sa.Column('timestamp', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.ForeignKeyConstraint(['admin_id'], ['users.id'], ),
+    sa.ForeignKeyConstraint(['target_user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_admin_logs_id'), 'admin_logs', ['id'], unique=False)
+    op.create_table('admin_permissions',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('admin_id', sa.Integer(), nullable=False),
+    sa.Column('can_deposit', sa.Boolean(), nullable=False),
+    sa.Column('can_delete', sa.Boolean(), nullable=False),
+    sa.Column('can_suspend', sa.Boolean(), nullable=False),
+    sa.Column('can_manage_admins', sa.Boolean(), nullable=False),
+    sa.Column('max_deposit_limit', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('updated_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.ForeignKeyConstraint(['admin_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('admin_id')
+    )
+    op.create_index(op.f('ix_admin_permissions_id'), 'admin_permissions', ['id'], unique=False)
+    op.create_table('notifications',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(length=100), nullable=False),
+    sa.Column('message', sa.String(length=255), nullable=False),
+    sa.Column('type', sa.String(length=20), nullable=False),
+    sa.Column('is_read', sa.Boolean(), nullable=False),
+    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_notifications_id'), 'notifications', ['id'], unique=False)
+    op.create_table('security_attempts',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('type', sa.String(length=20), nullable=False),
+    sa.Column('is_successful', sa.Boolean(), nullable=False),
+    sa.Column('timestamp', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
+    sa.Column('ip_address', sa.String(length=45), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index(op.f('ix_security_attempts_id'), 'security_attempts', ['id'], unique=False)
     op.create_table('transactions',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('sender_account_id', sa.Integer(), nullable=True),
@@ -73,29 +128,22 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_transactions_id'), 'transactions', ['id'], unique=False)
     op.create_index(op.f('ix_transactions_reference_code'), 'transactions', ['reference_code'], unique=True)
-
-    op.create_table('notifications',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('title', sa.String(length=100), nullable=False),
-    sa.Column('message', sa.String(length=255), nullable=False),
-    sa.Column('type', sa.String(length=20), nullable=False),
-    sa.Column('is_read', sa.Boolean(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_notifications_id'), 'notifications', ['id'], unique=False)
     # ### end Alembic commands ###
 
 
 def downgrade() -> None:
     # ### commands auto generated by Alembic - please adjust! ###
-    op.drop_index(op.f('ix_notifications_id'), table_name='notifications')
-    op.drop_table('notifications')
     op.drop_index(op.f('ix_transactions_reference_code'), table_name='transactions')
     op.drop_index(op.f('ix_transactions_id'), table_name='transactions')
     op.drop_table('transactions')
+    op.drop_index(op.f('ix_security_attempts_id'), table_name='security_attempts')
+    op.drop_table('security_attempts')
+    op.drop_index(op.f('ix_notifications_id'), table_name='notifications')
+    op.drop_table('notifications')
+    op.drop_index(op.f('ix_admin_permissions_id'), table_name='admin_permissions')
+    op.drop_table('admin_permissions')
+    op.drop_index(op.f('ix_admin_logs_id'), table_name='admin_logs')
+    op.drop_table('admin_logs')
     op.drop_index(op.f('ix_accounts_id'), table_name='accounts')
     op.drop_index(op.f('ix_accounts_account_number'), table_name='accounts')
     op.drop_table('accounts')
