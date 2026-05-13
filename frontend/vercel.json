@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://nexa-api-1uld.onrender.com/api/:path*"
+      "destination": "https://bank-app-1-xibc.onrender.com/api/:path*"
     }
   ]
 }
