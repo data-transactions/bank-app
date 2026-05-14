@@ -10,6 +10,7 @@ from ..core.dependencies import get_current_user
 from ..models.notification import Notification
 from ..services.account_service import generate_reference_code
 from ..services.email_service import email_service
+from ..services.ledger_service import credit_user, debit_user, InsufficientFundsError
 
 router = APIRouter(prefix="/api/transactions", tags=["transactions"])
 
@@ -115,7 +116,17 @@ def deposit(
         status=TransactionStatus.completed,
         reference_code=generate_reference_code(),
     )
-    account.balance += Decimal(str(payload.amount))
+    
+    # Delegate balance update and ledger entry to atomic ledger service
+    credit_user(
+        db, 
+        user_id=current_user.id, 
+        amount=Decimal(str(payload.amount)),
+        admin_id=current_user.id,  # Self initiated
+        description="Self deposit",
+        commit=False
+    )
+    
     db.add(tx)
     db.commit()
     db.refresh(tx)
@@ -162,8 +173,8 @@ def withdraw(
     if not current_user.transaction_pin or not verify_password(payload.pin, current_user.transaction_pin):
         raise HTTPException(status_code=403, detail="Invalid transaction PIN")
 
-    if account.balance < Decimal(str(payload.amount)):
-        raise HTTPException(status_code=400, detail="Insufficient funds")
+    if not current_user.transaction_pin or not verify_password(payload.pin, current_user.transaction_pin):
+        raise HTTPException(status_code=403, detail="Invalid transaction PIN")
 
     tx = Transaction(
         sender_account_id=account.id,
@@ -175,7 +186,19 @@ def withdraw(
         status=TransactionStatus.completed,
         reference_code=generate_reference_code(),
     )
-    account.balance -= Decimal(str(payload.amount))
+    
+    try:
+        debit_user(
+            db, 
+            user_id=current_user.id, 
+            amount=Decimal(str(payload.amount)),
+            admin_id=current_user.id,
+            description="Self withdrawal",
+            commit=False
+        )
+    except InsufficientFundsError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+        
     db.add(tx)
     db.commit()
     db.refresh(tx)
@@ -230,8 +253,6 @@ def transfer(
         raise HTTPException(status_code=400, detail="Cannot transfer to your own account")
 
     amount = Decimal(str(payload.amount))
-    if sender_acc.balance < amount:
-        raise HTTPException(status_code=400, detail="Insufficient funds")
     if amount > Decimal("500000"):
         raise HTTPException(status_code=400, detail="Transfer exceeds the $500,000 limit")
 
@@ -245,8 +266,27 @@ def transfer(
         status=TransactionStatus.completed,
         reference_code=generate_reference_code(),
     )
-    sender_acc.balance -= amount
-    receiver_acc.balance += amount
+    
+    try:
+        debit_user(
+            db,
+            user_id=current_user.id,
+            amount=amount,
+            admin_id=current_user.id,
+            description=f"Transfer to {payload.receiver_account_number}",
+            commit=False
+        )
+        credit_user(
+            db,
+            user_id=receiver_acc.user_id,
+            amount=amount,
+            admin_id=current_user.id,
+            description=f"Transfer from {sender_acc.account_number}",
+            commit=False
+        )
+    except InsufficientFundsError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+        
     db.add(tx)
     db.commit()
     db.refresh(tx)
