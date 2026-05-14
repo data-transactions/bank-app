@@ -1,7 +1,6 @@
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from .routes import auth, accounts, transactions, admin, users, notifications
 from .config import settings
 from .database import Base, engine
@@ -19,9 +18,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Ensure uploads directory exists for StaticFiles
-os.makedirs("uploads", exist_ok=True)
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 
 app.add_middleware(
     CORSMiddleware,
