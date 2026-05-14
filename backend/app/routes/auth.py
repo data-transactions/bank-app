@@ -73,7 +73,7 @@ def register(payload: RegisterRequest, background_tasks: BackgroundTasks, db: Se
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(payload: LoginRequest, db: Session = Depends(get_db)):
+def login(payload: LoginRequest, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == payload.email, User.is_deleted == False).first()
     if not user or not verify_password(payload.password, user.password_hash):
         raise HTTPException(
@@ -88,7 +88,7 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
             user.token_expiry = datetime.utcnow() + timedelta(hours=24)
             db.commit()
         
-        email_service.send_verification_email(user.email, user.verification_token)
+        background_tasks.add_task(email_service.send_verification_email, user.email, user.verification_token)
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Email not verified. A new verification link has been sent to your inbox."
