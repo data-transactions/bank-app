@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     # App
     APP_NAME: str = "NexaBank"
     ENVIRONMENT: str = "production"
+    # BASE_URL should point to the Frontend (e.g. Vercel) so verification links work correctly
     BASE_URL: str = "http://localhost:8000"
 
 

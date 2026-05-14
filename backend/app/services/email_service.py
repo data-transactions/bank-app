@@ -46,7 +46,8 @@ class EmailService:
 
     @staticmethod
     def send_verification_email(email: str, token: str):
-        verify_url = f"{settings.BASE_URL}/confirm/?token={token}&email={email}"
+        base_url = settings.BASE_URL.rstrip('/')
+        verify_url = f"{base_url}/confirm/?token={token}&email={email}"
         
         html = f"""
         <html>
