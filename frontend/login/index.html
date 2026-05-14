@@ -16,6 +16,7 @@
             border-color: #fee2e2 !important;
             color: #b91c1c !important;
         }
+
         #loginAlert.success {
             background-color: #ecfdf5 !important;
             border-color: #d1fae5 !important;
@@ -77,7 +78,8 @@
                 <p class="text-slate-500 leading-relaxed">Log in to your secure NexaBank dashboard.</p>
             </div>
 
-            <div id="loginAlert" class="hidden mb-8 p-4 rounded-2xl border flex items-start gap-3 text-sm transition-all duration-300">
+            <div id="loginAlert"
+                class="hidden mb-8 p-4 rounded-2xl border flex items-start gap-3 text-sm transition-all duration-300">
                 <div class="alert-icon shrink-0 mt-0.5"></div>
                 <div class="alert-message font-medium"></div>
             </div>
@@ -141,21 +143,95 @@
         </div>
     </div>
 
+    <!-- PIN Verification Modal -->
+    <div id="pinModal" class="fixed inset-0 z-50 hidden items-center justify-center transition-opacity"
+        style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(8px); padding: 1rem; z-index: 9999;">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 w-full shadow-2xl transform transition-transform scale-95 opacity-0 text-center"
+            id="pinModalContent" style="max-width: 400px; box-sizing: border-box;">
+            <div class="mb-6 flex flex-col items-center">
+                <img id="pinUserImg" src="" alt="User"
+                    class="rounded-full object-cover mb-4 shadow-md bg-slate-100 hidden"
+                    style="width: 80px; height: 80px;">
+                <div id="pinUserPlaceholder"
+                    class="rounded-full bg-blue-500 text-white flex items-center justify-center text-3xl font-bold mb-4 shadow-md hidden"
+                    style="width: 80px; height: 80px;">
+                </div>
+                <h3 class="text-xl font-bold text-slate-800" id="pinUserName">Welcome Back</h3>
+                <p class="text-slate-500 text-sm mt-1" id="pinSubtitle">Enter your 4-digit PIN</p>
+            </div>
+
+            <!-- Verification Flow -->
+            <div id="verifyPinFlow">
+                <div class="flex justify-center gap-3 mb-6" id="pinInputs"
+                    style="gap: 12px; display: flex; align-items: center; justify-content: center;">
+                    <input type="password" maxlength="1" inputmode="numeric"
+                        class="pin-digit text-center text-2xl font-bold rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none bg-slate-50"
+                        style="width: 56px; height: 56px; flex-shrink: 0;" />
+                    <input type="password" maxlength="1" inputmode="numeric"
+                        class="pin-digit text-center text-2xl font-bold rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none bg-slate-50"
+                        style="width: 56px; height: 56px; flex-shrink: 0;" />
+                    <input type="password" maxlength="1" inputmode="numeric"
+                        class="pin-digit text-center text-2xl font-bold rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none bg-slate-50"
+                        style="width: 56px; height: 56px; flex-shrink: 0;" />
+                    <input type="password" maxlength="1" inputmode="numeric"
+                        class="pin-digit text-center text-2xl font-bold rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 transition-all outline-none bg-slate-50"
+                        style="width: 56px; height: 56px; flex-shrink: 0;" />
+                </div>
+                <p id="pinErrorMsg" class="text-red-500 text-sm mb-4 hidden font-medium"></p>
+            </div>
+
+            <!-- Setup Flow -->
+            <div id="setPinFlow" class="hidden text-left mb-6">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Create 4-Digit PIN</label>
+                    <input type="password" id="newPinInput" inputmode="numeric" maxlength="4"
+                        class="w-full text-center text-2xl rounded-xl border-2 border-slate-200 focus:border-blue-500 outline-none"
+                        style="height: 56px; letter-spacing: 1em; padding-left: 1em;" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Confirm PIN</label>
+                    <input type="password" id="confirmPinInput" inputmode="numeric" maxlength="4"
+                        class="w-full text-center text-2xl rounded-xl border-2 border-slate-200 focus:border-blue-500 outline-none"
+                        style="height: 56px; letter-spacing: 1em; padding-left: 1em;" />
+                </div>
+                <p id="setPinErrorMsg" class="text-red-500 text-sm mt-3 hidden font-medium"></p>
+                <button id="submitSetPinBtn"
+                    class="w-full bg-blue-600 text-white rounded-xl py-3 font-semibold mt-4 hover:bg-blue-700 transition-colors disabled:opacity-50"
+                    style="height: 56px; background-color: #2563eb; color: #ffffff; display: flex; align-items: center; justify-content: center; width: 100%; border-radius: 0.75rem; margin-top: 1rem;">Set
+                    PIN</button>
+            </div>
+
+            <button id="pinCancelBtn" class="text-slate-400 text-sm hover:text-slate-600 transition-colors mt-2">Cancel
+                Login</button>
+        </div>
+    </div>
+
     <script src="/assets/js/api.js"></script>
     <script src="/assets/js/auth.js"></script>
     <script src="/assets/js/ui.js"></script>
     <script>
         // Redirect if already logged in
-        if (NexaAPI.getToken()) redirectToDashboard();
+        if (NexaAPI.getToken()) window.location.href = '/dashboard/';
+
+        // Recover PIN flow on unverified bounce
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('temp_token') && localStorage.getItem('pin_user')) {
+                const pinUsr = JSON.parse(localStorage.getItem('pin_user'));
+                if (typeof showPinModal === 'function') {
+                    showPinModal(pinUsr.is_pin_set);
+                }
+            }
+        });
 
         const loginAlert = document.getElementById('loginAlert');
+
         const showLoginAlert = (msg, type = 'error') => {
             const iconEl = loginAlert.querySelector('.alert-icon');
             const msgEl = loginAlert.querySelector('.alert-message');
-            
+
             msgEl.textContent = msg;
             loginAlert.style.display = 'flex';
-            
+
             if (type === 'error') {
                 loginAlert.className = 'mb-8 p-4 rounded-2xl border flex items-start gap-3 text-sm shadow-sm animate-in fade-in slide-in-from-top-2 error';
                 iconEl.innerHTML = '<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
@@ -211,7 +287,23 @@
 
             try {
                 const data = await NexaAPI.login(email, password);
-                if (data && data.access_token) {
+                if (data && data.pin_required) {
+                    // PIN flow intercepted
+                    localStorage.setItem('temp_token', data.access_token);
+                    localStorage.setItem('pin_user', JSON.stringify({
+                        full_name: data.user.full_name,
+                        profile_image_url: data.user.profile_image_url,
+                        is_pin_set: data.is_pin_set
+                    }));
+
+                    showPinModal(data.is_pin_set);
+
+                    // Reset login form visuals
+                    btn.disabled = false;
+                    btnText.classList.remove('hidden');
+                    spinner.classList.add('hidden');
+                    hideLoginAlert();
+                } else if (data && data.access_token) {
                     NexaAPI.setToken(data.access_token);
                     showLoginAlert('Welcome! Redirecting...', 'success');
                     setTimeout(() => { redirectToDashboard(); }, 800);
@@ -223,6 +315,161 @@
                 btn.disabled = false;
                 btnText.classList.remove('hidden');
                 spinner.classList.add('hidden');
+            }
+        });
+        const pinModal = document.getElementById('pinModal');
+        const pinModalContent = document.getElementById('pinModalContent');
+        const verifyPinFlow = document.getElementById('verifyPinFlow');
+        const setPinFlow = document.getElementById('setPinFlow');
+        const pinInputs = document.querySelectorAll('.pin-digit');
+        const pinErrorMsg = document.getElementById('pinErrorMsg');
+        const setPinErrorMsg = document.getElementById('setPinErrorMsg');
+
+        function showPinModal(isPinSet) {
+            pinModal.classList.remove('hidden');
+            pinModal.classList.add('flex');
+            setTimeout(() => {
+                pinModalContent.classList.remove('scale-95', 'opacity-0');
+                pinModalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            const pinUser = JSON.parse(localStorage.getItem('pin_user') || '{}');
+            if (pinUser.profile_image_url) {
+                document.getElementById('pinUserImg').src = pinUser.profile_image_url;
+                document.getElementById('pinUserImg').classList.remove('hidden');
+            } else {
+                document.getElementById('pinUserPlaceholder').textContent = (pinUser.full_name || 'U').charAt(0).toUpperCase();
+                document.getElementById('pinUserPlaceholder').classList.remove('hidden');
+            }
+            document.getElementById('pinUserName').textContent = pinUser.full_name || 'Welcome Back';
+
+            if (isPinSet) {
+                verifyPinFlow.classList.remove('hidden');
+                setPinFlow.classList.add('hidden');
+                document.getElementById('pinSubtitle').textContent = 'Enter your 4-digit PIN';
+                pinInputs[0].focus();
+            } else {
+                verifyPinFlow.classList.add('hidden');
+                setPinFlow.classList.remove('hidden');
+                document.getElementById('pinSubtitle').textContent = 'Initial Setup Required';
+                document.getElementById('newPinInput').focus();
+            }
+        }
+
+        document.getElementById('pinCancelBtn').addEventListener('click', () => {
+            localStorage.removeItem('temp_token');
+            localStorage.removeItem('pin_user');
+            pinModalContent.classList.add('scale-95', 'opacity-0');
+            pinModalContent.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                pinModal.classList.add('hidden');
+                pinModal.classList.remove('flex');
+            }, 300);
+        });
+
+        // Verification logic
+        pinInputs.forEach((input, index) => {
+            input.addEventListener('input', () => {
+                input.value = input.value.replace(/[^0-9]/g, '');
+                if (input.value && index < pinInputs.length - 1) {
+                    pinInputs[index + 1].focus();
+                }
+                if (Array.from(pinInputs).every(inp => inp.value.length === 1)) {
+                    const pin = Array.from(pinInputs).map(inp => inp.value).join('');
+                    submitPin(pin);
+                }
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !input.value && index > 0) {
+                    pinInputs[index - 1].focus();
+                }
+            });
+        });
+
+        async function submitPin(pin) {
+            const token = localStorage.getItem('temp_token');
+            pinErrorMsg.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/auth/verify-pin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ pin })
+                });
+                const data = await response.json();
+
+                if (response.ok && data.verified) {
+                    NexaAPI.setToken(token);
+                    localStorage.removeItem('temp_token');
+                    localStorage.removeItem('pin_user');
+                    window.location.href = '/dashboard/';
+                } else {
+                    Array.from(pinInputs).forEach(inp => inp.value = '');
+                    if (pinInputs.length > 0) pinInputs[0].focus();
+                    pinErrorMsg.textContent = data.detail || 'Invalid PIN';
+                    pinErrorMsg.classList.remove('hidden');
+                }
+            } catch (err) {
+                pinErrorMsg.textContent = 'Connection error. Please try again.';
+                pinErrorMsg.classList.remove('hidden');
+            }
+        }
+
+        // Set PIN logic
+        document.getElementById('confirmPinInput').addEventListener('input', (e) => {
+            if (e.target.value.length === 4) {
+                document.getElementById('submitSetPinBtn').click();
+            }
+        });
+
+        document.getElementById('submitSetPinBtn').addEventListener('click', async () => {
+            const newPin = document.getElementById('newPinInput').value;
+            const confirmPin = document.getElementById('confirmPinInput').value;
+            const btn = document.getElementById('submitSetPinBtn');
+            const token = localStorage.getItem('temp_token');
+
+            setPinErrorMsg.classList.add('hidden');
+            if (newPin.length !== 4) {
+                setPinErrorMsg.textContent = 'PIN must be exactly 4 digits';
+                setPinErrorMsg.classList.remove('hidden');
+                return;
+            }
+            if (newPin !== confirmPin) {
+                setPinErrorMsg.textContent = 'PINs do not match';
+                setPinErrorMsg.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Setting PIN...';
+
+            try {
+                const response = await fetch('/api/auth/set-pin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ pin: newPin })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    submitPin(newPin);
+                } else {
+                    setPinErrorMsg.textContent = data.detail?.[0]?.msg || data.detail || 'Error setting PIN';
+                    setPinErrorMsg.classList.remove('hidden');
+                    btn.disabled = false;
+                    btn.textContent = 'Set PIN';
+                }
+            } catch (err) {
+                setPinErrorMsg.textContent = 'Network error. Please try again.';
+                setPinErrorMsg.classList.remove('hidden');
+                btn.disabled = false;
+                btn.textContent = 'Set PIN';
             }
         });
     </script>
