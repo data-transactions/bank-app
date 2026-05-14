@@ -2,20 +2,19 @@ version: '3.3'
 
 services:
   db:
-    image: mysql:8
+    image: postgres:15-alpine
     container_name: nexabank_db
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: nexabank_db
-      MYSQL_USER: nexabank_user
-      MYSQL_PASSWORD: nexabank_password
-      MYSQL_ROOT_PASSWORD: root_password
+      POSTGRES_DB: nexabank_db
+      POSTGRES_USER: nexabank_user
+      POSTGRES_PASSWORD: nexabank_password
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - nexabank_net
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "nexabank_user", "-pnexabank_password"]
+      test: ["CMD-SHELL", "pg_isready -U nexabank_user -d nexabank_db"]
       interval: 5s
       timeout: 10s
       retries: 10
@@ -38,7 +37,6 @@ services:
       - ./backend/uploads:/app/uploads
     networks:
       - nexabank_net
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   nginx:
     image: nginx:alpine
@@ -55,23 +53,19 @@ services:
     networks:
       - nexabank_net
 
-  phpmyadmin:
-    image: phpmyadmin:latest
-    container_name: nexabank_phpmyadmin
+  adminer:
+    image: adminer:latest
+    container_name: nexabank_adminer
     restart: unless-stopped
     ports:
-      - "8181:80"
-    environment:
-      PMA_HOST: db
-      PMA_USER: nexabank_user
-      PMA_PASSWORD: nexabank_password
+      - "8181:8080"
     depends_on:
       - db
     networks:
       - nexabank_net
 
 volumes:
-  mysql_data:
+  postgres_data:
 
 networks:
   nexabank_net:
