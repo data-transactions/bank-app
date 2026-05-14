@@ -28,12 +28,12 @@ async function apiRequest(method, path, body = null, isFormData = false) {
 
     try {
         const res = await fetch(`${API_BASE}${path}`, opts);
-        
-        // Handle 401 Unauthorized
+
+        // Handle globals (401 Unauthorized globally)
         if (res.status === 401 && path !== '/api/auth/login') {
             clearToken();
             window.location.href = '/login/';
-            return;
+            throw new Error('Session expired');
         }
 
         let data = null;
@@ -46,7 +46,22 @@ async function apiRequest(method, path, body = null, isFormData = false) {
         }
         if (!res.ok) {
             let msg = data?.detail || `HTTP ${res.status}`;
-            
+
+            // Handle blocked users directly universally
+            if (res.status === 403 && data?.detail?.error === 'ACCOUNT_BLOCKED') {
+                const usrObj = data?.detail?.user;
+                if (usrObj) {
+                    sessionStorage.setItem('blocked_user', JSON.stringify(usrObj));
+                } else {
+                    const localUsr = localStorage.getItem('nexabank_user');
+                    if (localUsr) sessionStorage.setItem('blocked_user', localUsr);
+                }
+
+                clearToken();
+                window.location.href = '/blocked/';
+                throw new Error(data?.detail?.message || 'ACCOUNT_BLOCKED');
+            }
+
             // Handle validation errors (422 Unprocessable Entity)
             if (res.status === 422 && Array.isArray(data?.detail)) {
                 const firstError = data.detail[0];
@@ -54,21 +69,21 @@ async function apiRequest(method, path, body = null, isFormData = false) {
                 // Use backend error message if it exists and isn't a technical pydantic string
                 const backendMsg = firstError.msg;
                 const field = loc[loc.length - 1];
-                
+
                 if (field === 'email') msg = 'Please enter a valid email address.';
                 else if (field === 'password') msg = backendMsg || 'Password does not meet security requirements.';
                 else if (field === 'first_name' || field === 'last_name') msg = backendMsg || 'Please enter a valid name (min 3 characters, no numbers).';
                 else msg = backendMsg || 'Invalid data provided.';
-            } 
+            }
             // Handle specific auth errors
             else if (res.status === 401) {
                 msg = 'Invalid email or password.';
             }
             // Handle forbidden/unconfirmed errors
             else if (res.status === 403) {
-                msg = data?.detail || 'Access denied.';
+                msg = typeof data?.detail === 'string' ? data.detail : (data?.detail?.message || 'Access denied.');
             }
-            
+
             throw new Error(Array.isArray(msg) ? msg.map(e => e.msg || e).join(', ') : msg);
         }
         return data;
@@ -88,11 +103,11 @@ const api = {
 
     // Auth
     login: (email, password) => api.post('/api/auth/login', { email, password }),
-    signup: (firstName, lastName, email, password) => api.post('/api/auth/register', { 
-        first_name: firstName, 
-        last_name: lastName, 
-        email, 
-        password 
+    signup: (firstName, lastName, email, password) => api.post('/api/auth/register', {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        password
     }),
     verifyEmail: (email, token) => api.get(`/api/auth/verify?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`),
     setPin: (pin) => api.post('/api/auth/set-pin', { pin }),
