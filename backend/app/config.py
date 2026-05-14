@@ -15,11 +15,9 @@ class Settings(BaseSettings):
     # App
     APP_NAME: str = "NexaBank"
     ENVIRONMENT: str = "production"
+    # BASE_URL should point to the Frontend (e.g. Vercel) so verification links work correctly
     BASE_URL: str = "http://localhost:8000"
 
-    # SMTP
-    GMAIL_USER: str = "nexa10537@gmail.com" # TODO: Replace with custom domain email e.g. no-reply@yourdomain.com
-    GMAIL_APP_PASSWORD: str = "rbeomvxvoccyrpfl"
 
 
 settings = Settings()

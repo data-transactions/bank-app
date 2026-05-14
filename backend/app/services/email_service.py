@@ -1,9 +1,12 @@
 import logging
 import os
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 from app.config import settings
+
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+SENDGRID_FROM_EMAIL = os.getenv("SENDGRID_FROM_EMAIL")
 
 try:
     import dns.resolver
@@ -13,6 +16,20 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 class EmailService:
+    @staticmethod
+    def _send(to_email: str, subject: str, html_content: str):
+        try:
+            message = Mail(
+                from_email=SENDGRID_FROM_EMAIL,
+                to_emails=to_email,
+                subject=subject,
+                html_content=html_content
+            )
+            sg = SendGridAPIClient(SENDGRID_API_KEY)
+            response = sg.send(message)
+            logger.info(f"Email sent to {to_email}: status {response.status_code}")
+        except Exception as e:
+            logger.error(f"Email send failed to {to_email}: {e}")
     @staticmethod
     def validate_mx_record(email: str) -> bool:
         if dns is None:
@@ -29,23 +46,9 @@ class EmailService:
 
     @staticmethod
     def send_verification_email(email: str, token: str):
-        # TODO: Replace with custom domain email e.g. no-reply@yourdomain.com
-        sender_email = settings.GMAIL_USER
-        password = settings.GMAIL_APP_PASSWORD
+        base_url = settings.BASE_URL.rstrip('/')
+        verify_url = f"{base_url}/confirm/?token={token}&email={email}"
         
-        verify_url = f"{settings.BASE_URL}/confirm/?token={token}&email={email}"
-        
-        message = MIMEMultipart("alternative")
-        message["Subject"] = "Verify your NexaBank Account"
-        message["From"] = f"NexaBank Security <{sender_email}>" # TODO: Replace with custom domain email e.g. no-reply@yourdomain.com
-        message["To"] = email
-
-        # Create the plain-text and HTML version of your message
-        text = f"""
-        Welcome to NexaBank!
-        Please verify your account by clicking the link below:
-        {verify_url}
-        """
         html = f"""
         <html>
           <body style="font-family: 'Inter', sans-serif; color: #1e293b; line-height: 1.6;">
@@ -64,41 +67,18 @@ class EmailService:
         </html>
         """
 
-        # Turn these into plain/html MIMEText objects
-        part1 = MIMEText(text, "plain")
-        part2 = MIMEText(html, "html")
-
-        # Add HTML/plain-text parts to MIMEMultipart message
-        # The email client will try to render the last part first
-        message.attach(part1)
-        message.attach(part2)
-
-        try:
-            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-                server.login(sender_email, password)
-                server.sendmail(sender_email, email, message.as_string())
-            return True
-        except Exception as e:
-            print(f"Error sending email: {e}")
-            return False
+        EmailService._send(email, "Verify your NexaBank Account", html)
+        return True
 
     @staticmethod
     def send_transaction_email(email: str, user_name: str, tx_type: str, amount: float, balance: float, 
                                reference: str, date_time: str, recipient_name: str = None, 
                                sender_name: str = None):
-        sender_email = settings.GMAIL_USER
-        password = settings.GMAIL_APP_PASSWORD
-
         subject = f"NexaBank — {tx_type.capitalize()} of ${amount:,.2f}"
         if tx_type == "transfer_received":
             subject = f"NexaBank — You received ${amount:,.2f}"
         elif tx_type == "transfer_sent":
             subject = f"NexaBank — You sent ${amount:,.2f}"
-
-        message = MIMEMultipart("alternative")
-        message["Subject"] = subject
-        message["From"] = f"NexaBank <{sender_email}>"
-        message["To"] = email
 
         type_label = tx_type.replace("_", " ").title()
         details_html = ""
@@ -151,30 +131,13 @@ class EmailService:
         </html>
         """
 
-        part2 = MIMEText(html, "html")
-        message.attach(part2)
-
-        try:
-            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-                server.login(sender_email, password)
-                server.sendmail(sender_email, email, message.as_string())
-            return True
-        except Exception as e:
-            print(f"Error sending transaction email: {e}")
-            return False
+        EmailService._send(email, subject, html)
+        return True
 
     @staticmethod
     def send_security_alert(email: str, user_name: str, action_type: str, timestamp: str):
-        sender_email = settings.GMAIL_USER
-        password = settings.GMAIL_APP_PASSWORD
-
         subject = f"Security Alert: NexaBank {action_type.title()} Changed"
         
-        message = MIMEMultipart("alternative")
-        message["Subject"] = subject
-        message["From"] = f"NexaBank Security <{sender_email}>"
-        message["To"] = email
-
         html = f"""
         <html>
           <body style="font-family: 'Inter', sans-serif; color: #1e293b; line-height: 1.6; margin: 0; padding: 0; background-color: #f8fafc;">
@@ -212,22 +175,16 @@ class EmailService:
         </html>
         """
 
-        part2 = MIMEText(html, "html")
-        message.attach(part2)
-
+        EmailService._send(email, subject, html)
+        
+        # Simple log simulation
         try:
-            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-                server.login(sender_email, password)
-                server.sendmail(sender_email, email, message.as_string())
-            
-            # Simple log simulation
             log_path = os.path.join(os.path.dirname(__file__), "email_logs.txt")
             with open(log_path, "a") as f:
-                f.write(f"\nSECURITY ALERT [{timestamp}] To: {email} | Action: {action_type}")
-            
-            return True
+                f.write(f"\\nSECURITY ALERT [{timestamp}] To: {email} | Action: {action_type}")
         except Exception as e:
-            print(f"Error sending security email: {e}")
-            return False
+            logger.error(f"Failed to write to email log: {e}")
+            
+        return True
 
 email_service = EmailService()
