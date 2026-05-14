@@ -56,7 +56,8 @@ def register(payload: RegisterRequest, background_tasks: BackgroundTasks, db: Se
         email=payload.email,
         password_hash=hash_password(payload.password),
         role="user",
-        is_suspended=False,
+        status="ACTIVE",
+        token_version=0,
         is_verified=False,
         verification_token=token,
         token_expiry=expiry,
@@ -94,16 +95,28 @@ def login(payload: LoginRequest, background_tasks: BackgroundTasks, db: Session 
             detail="Email not verified. A new verification link has been sent to your inbox."
         )
 
-    if user.is_suspended:
+    # ── Check block status at login ──
+    if user.status == "BLOCKED":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Your account has been suspended. Please contact support."
+            detail={
+                "error": "ACCOUNT_BLOCKED", 
+                "message": "Your account has been blocked. Contact support.",
+                "user": {
+                    "full_name": f"{user.first_name} {user.last_name}",
+                    "profile_image_url": getattr(user, "profile_image_url", None)
+                }
+            },
         )
 
     user.login_count += 1
     db.commit()
 
-    token = create_access_token({"sub": str(user.id), "role": user.role})
+    token = create_access_token({
+        "sub": str(user.id),
+        "role": user.role,
+        "token_version": user.token_version,
+    })
     return TokenResponse(
         access_token=token,
         pin_required=(user.role == "user"),

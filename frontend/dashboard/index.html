@@ -1164,6 +1164,8 @@
             max-height: 90vh;
             display: flex;
             flex-direction: column;
+            height: fit-content;
+            margin: auto;
         }
 
         .gc-modal-overlay.open .gc-modal {
@@ -3427,15 +3429,17 @@
             padding: 20px 12px;
         }
 
-        .gc-modal-overlay {
-            padding: 0;
-            align-items: flex-end;
-        }
+        @media (max-width: 480px) {
+            .gc-modal-overlay {
+                padding: 0;
+                align-items: flex-end;
+            }
 
-        .gc-modal {
-            border-radius: 20px 20px 0 0;
-            max-height: 90vh;
-            padding: 24px 20px;
+            .gc-modal {
+                border-radius: 20px 20px 0 0;
+                max-height: 90vh;
+                padding: 24px 20px;
+            }
         }
 
         .gc-tx-section {
@@ -5331,6 +5335,7 @@
             const _fmtBal = fmt(a.balance) + ' USD';
             const _balEl = document.getElementById('mainBalance');
             const _topBalEl = document.getElementById('topbarBalance');
+            const _statBalEl = document.getElementById('statBalance');
 
             if (_balEl) {
                 _balEl.dataset.actualValue = _fmtBal;
@@ -5339,6 +5344,10 @@
             if (_topBalEl) {
                 _topBalEl.dataset.actualValue = fmt(a.balance);
                 _topBalEl.textContent = _balanceHidden ? '••••' : fmt(a.balance);
+            }
+            if (_statBalEl) {
+                _statBalEl.dataset.actualValue = fmt(a.balance);
+                _statBalEl.textContent = _balanceHidden ? '••••' : fmt(a.balance);
             }
             if (document.getElementById('mainAcctNum')) document.getElementById('mainAcctNum').textContent = a.account_number;
             if (document.getElementById('sendModalBalance')) document.getElementById('sendModalBalance').textContent = fmt(a.balance);

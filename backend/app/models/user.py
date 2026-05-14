@@ -1,5 +1,5 @@
 import datetime
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, func
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, func, ForeignKey
 from sqlalchemy.orm import relationship
 from ..database import Base
 
@@ -12,8 +12,15 @@ class User(Base):
     last_name = Column(String(50), nullable=False)
     email = Column(String(150), unique=True, nullable=False, index=True)
     password_hash = Column(String(255), nullable=False)
-    role = Column(String(20), default="user", nullable=False) # user, admin, super_admin
-    is_suspended = Column(Boolean, default=False, nullable=False)
+    role = Column(String(20), default="user", nullable=False)  # user, admin, super_admin
+
+    # ── Hard Block System ──
+    status = Column(String(20), default="ACTIVE", nullable=False)  # ACTIVE | BLOCKED
+    token_version = Column(Integer, default=0, nullable=False)
+    blocked_at = Column(DateTime, nullable=True)
+    blocked_by = Column(Integer, ForeignKey("users.id", use_alter=True, name="fk_user_blocked_by"), nullable=True)
+    block_reason = Column(String(255), nullable=True)
+
     is_deleted = Column(Boolean, default=False, nullable=False)
     deleted_at = Column(DateTime, nullable=True)
     is_verified = Column(Boolean, default=False, nullable=False)

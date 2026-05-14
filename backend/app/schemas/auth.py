@@ -163,7 +163,6 @@ class UserResponse(BaseModel):
     phone_number: Optional[str] = None
     home_address: Optional[str] = None
     role: str
-    is_suspended: bool
     is_verified: bool
     is_pin_set: bool
     profile_image_url: Optional[str] = None

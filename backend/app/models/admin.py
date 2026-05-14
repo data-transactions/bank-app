@@ -8,9 +8,7 @@ class AdminPermissions(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     admin_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
-    can_deposit = Column(Boolean, default=False, nullable=False)
     can_delete = Column(Boolean, default=False, nullable=False)
-    can_suspend = Column(Boolean, default=False, nullable=False)
     can_manage_admins = Column(Boolean, default=False, nullable=False)
     max_deposit_limit = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)

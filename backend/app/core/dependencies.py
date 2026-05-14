@@ -21,6 +21,7 @@ def get_current_user(
             detail="Invalid or expired token",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
     user_id = payload.get("sub")
     if user_id is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token payload")
@@ -28,12 +29,34 @@ def get_current_user(
     user = db.query(User).filter(User.id == int(user_id)).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
-    
-    # Check for token invalidation (iat before password_changed_at)
+
+    # ── Hard Block Check ──
+    if user.status == "BLOCKED":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail={
+                "error": "ACCOUNT_BLOCKED",
+                "message": "Your account has been blocked. Contact support.",
+                "user": {
+                    "full_name": f"{user.first_name} {user.last_name}",
+                    "profile_image_url": getattr(user, "profile_image_url", None)
+                }
+            },
+        )
+
+    # ── Token Version Check (invalidates all old JWTs after block/unblock) ──
+    jwt_token_version = payload.get("token_version")
+    if jwt_token_version is None or int(jwt_token_version) != user.token_version:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Session expired. Please log in again.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # ── Legacy: password-change token invalidation ──
     if user.password_changed_at:
         iat = payload.get("iat")
         if iat:
-            # Jose iat is typically a timestamp, convert to aware datetime
             iat_dt = datetime.fromtimestamp(iat, tz=timezone.utc)
             if iat_dt < user.password_changed_at.replace(tzinfo=timezone.utc):
                 raise HTTPException(
@@ -42,11 +65,6 @@ def get_current_user(
                     headers={"WWW-Authenticate": "Bearer"},
                 )
 
-    if user.is_suspended:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Your account has been suspended. Please contact support."
-        )
     return user
 
 

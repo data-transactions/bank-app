@@ -409,7 +409,12 @@
                 } else {
                     Array.from(pinInputs).forEach(inp => inp.value = '');
                     if (pinInputs.length > 0) pinInputs[0].focus();
-                    pinErrorMsg.textContent = data.detail || 'Invalid PIN';
+
+                    let errMsg = 'Invalid PIN';
+                    if (data.detail) {
+                        errMsg = typeof data.detail === 'string' ? data.detail : (data.detail.message || 'Invalid PIN');
+                    }
+                    pinErrorMsg.textContent = errMsg;
                     pinErrorMsg.classList.remove('hidden');
                 }
             } catch (err) {

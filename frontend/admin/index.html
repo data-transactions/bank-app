@@ -5,9 +5,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin — NexaBank</title>
-    <meta name="description" content="NexaBank admin dashboard: manage users, view all transactions and system statistics." />
+    <meta name="description"
+        content="NexaBank admin dashboard: manage users, view all transactions and system statistics." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="/assets/css/output.css" />
     <style>
         .admin-badge {
@@ -20,6 +22,7 @@
             letter-spacing: 0.05em;
             text-transform: uppercase;
         }
+
         .stat-ring {
             background: linear-gradient(135deg, #1e293b, #0f172a);
             border-radius: 20px;
@@ -28,19 +31,25 @@
             position: relative;
             overflow: hidden;
         }
+
         .stat-ring::before {
             content: '';
             position: absolute;
-            top: -30px; right: -30px;
-            width: 100px; height: 100px;
+            top: -30px;
+            right: -30px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.04);
+            background: rgba(255, 255, 255, 0.04);
         }
 
         /* Modal Styles */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(4px);
             display: none;
@@ -49,7 +58,11 @@
             z-index: 1000;
             padding: 16px;
         }
-        .modal-overlay.open { display: flex; }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
         .modal-card {
             background: white;
             width: 100%;
@@ -59,25 +72,59 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             animation: modalIn 0.3s ease-out;
         }
+
         @media (max-width: 640px) {
             .modal-card {
                 padding: 24px 16px;
             }
         }
+
         @keyframes modalIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
-        .role-badge { padding: 4px 12px; border-radius: 9999px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-        .role-user { background: #f0fdf4; color: #16a34a; }
-        .role-admin { background: #ede9fe; color: #7c3aed; }
-        .role-super { background: #fff7ed; color: #c2410c; border: 1px solid #fb923c; }
-        .status-suspended { background: #fee2e2; color: #dc2626; }
-        
+
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .role-user {
+            background: #f0fdf4;
+            color: #16a34a;
+        }
+
+        .role-admin {
+            background: #ede9fe;
+            color: #7c3aed;
+        }
+
+        .role-super {
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #fb923c;
+        }
+
+        .status-suspended {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
         body {
             overflow-x: hidden;
             width: 100%;
         }
+
         .overflow-x-auto {
             width: 100%;
             overflow-x: auto;
@@ -86,9 +133,127 @@
 
         /* ── Desktop Fluidity Override ── */
         @media (min-width: 1025px) {
-            .dashboard-main, .dashboard-content {
+            .dashboard-main {
+                max-width: none !important;
+                width: calc(100% - 260px) !important;
+            }
+
+            .dashboard-content {
                 max-width: none !important;
                 width: 100% !important;
+            }
+        }
+
+        /* ── Responsive Table ── */
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 12px;
+        }
+
+        .table-wrap table {
+            min-width: 600px;
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        /* ── Mobile: Users as cards ── */
+        @media (max-width: 640px) {
+            .users-card-view {
+                display: block !important;
+            }
+
+            .users-table-view {
+                display: none !important;
+            }
+
+            .user-card {
+                background: white;
+                border-radius: 16px;
+                padding: 16px;
+                margin-bottom: 12px;
+                border: 1px solid #f1f5f9;
+                cursor: pointer;
+                transition: box-shadow 0.2s;
+            }
+
+            .user-card:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            }
+
+            .user-card-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 6px;
+            }
+
+            .user-card-label {
+                font-size: 11px;
+                color: #94a3b8;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+
+            .user-card-value {
+                font-size: 13px;
+                color: #1e293b;
+                font-weight: 500;
+                text-align: right;
+            }
+
+            /* section heading + button stacked */
+            .section-header {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 12px !important;
+            }
+
+            .section-header .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            /* stat cards single column already (grid-cols-1) */
+            .stat-ring {
+                padding: 20px;
+            }
+
+            /* topbar admin name hidden on tiny screens */
+            .topbar-admin-info {
+                display: none !important;
+            }
+        }
+
+        @media (min-width: 641px) {
+            .users-card-view {
+                display: none !important;
+            }
+
+            .users-table-view {
+                display: block !important;
+            }
+        }
+
+        /* ── Transactions / Logs table: always scrollable ── */
+        .txns-wrap,
+        .logs-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .txns-wrap table,
+        .logs-wrap table {
+            min-width: 700px;
+        }
+
+        /* ── Create User button: full width on mobile ── */
+        @media (max-width: 480px) {
+            #btn-create-user-trigger {
+                width: 100%;
+                margin-top: 8px;
             }
         }
     </style>
@@ -110,29 +275,40 @@
         <nav class="sidebar-nav">
             <a class="sidebar-item active" id="nav-overview" onclick="showSection('overview')">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
-                    <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
                 </svg>
                 Overview
             </a>
             <a class="sidebar-item" id="nav-users" onclick="showSection('users')">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                 </svg>
                 Users
             </a>
             <a class="sidebar-item" id="nav-transactions" onclick="showSection('transactions')">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" />
-                    <line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" />
-                    <line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+                    <line x1="8" y1="6" x2="21" y2="6" />
+                    <line x1="8" y1="12" x2="21" y2="12" />
+                    <line x1="8" y1="18" x2="21" y2="18" />
+                    <line x1="3" y1="6" x2="3.01" y2="6" />
+                    <line x1="3" y1="12" x2="3.01" y2="12" />
+                    <line x1="3" y1="18" x2="3.01" y2="18" />
                 </svg>
                 Transactions
             </a>
             <a class="sidebar-item" id="nav-logs" onclick="showSection('logs')">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" />
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10 9 9 9 8 9" />
                 </svg>
                 Activity Logs
             </a>
@@ -143,7 +319,8 @@
                 style="width:100%; cursor:pointer; background:none; border:none; text-align:left;">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
                 </svg>
                 Log Out
             </button>
@@ -157,7 +334,8 @@
             <div class="flex items-center gap-3">
                 <button class="topbar-hamburger" id="topbarHamburger" onclick="toggleSidebar()">
                     <svg width="22" height="22" fill="none" stroke="#334155" stroke-width="2" viewBox="0 0 24 24">
-                        <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" />
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <line x1="3" y1="12" x2="21" y2="12" />
                         <line x1="3" y1="18" x2="21" y2="18" />
                     </svg>
                 </button>
@@ -214,25 +392,43 @@
 
         <!-- SECTION: USERS -->
         <section id="section-users" class="dashboard-content" style="display:none;">
-            <div class="mb-6">
-                <h1 class="text-2xl font-extrabold text-slate-900">Users</h1>
-                <p class="text-slate-500 text-sm mt-1">All registered accounts on the platform.</p>
+            <div class="mb-6"
+                style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:12px;">
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-900">Users</h1>
+                    <p class="text-slate-500 text-sm mt-1">All registered accounts on the platform.</p>
+                </div>
+                <button id="btn-create-user-trigger" type="button" onclick="openCreateUserModal()"
+                    style="padding:10px 20px; border-radius:10px; font-weight:600; background:#4f46e5; color:white; border:none; cursor:pointer; white-space:nowrap;">
+                    + Create User
+                </button>
             </div>
-            <div class="card">
-                <div class="overflow-x-auto">
-                    <table style="width:100%; border-collapse:collapse; font-size:0.88rem;">
+
+            <!-- Mobile card view -->
+            <div class="users-card-view" id="users-cards"></div>
+
+            <!-- Desktop table view -->
+            <div class="card users-table-view">
+                <div class="table-wrap">
+                    <table>
                         <thead>
                             <tr style="border-bottom:2px solid #f1f5f9;">
                                 <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Name</th>
                                 <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Email</th>
-                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Account No.</th>
-                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Balance</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Account No.
+                                </th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Balance
+                                </th>
                                 <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Role</th>
                                 <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Joined</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody id="users-body">
-                            <tr><td colspan="6" style="text-align:center;padding:32px;color:#94a3b8;">Loading…</td></tr>
+                            <tr>
+                                <td colspan="7" style="text-align:center;padding:32px;color:#94a3b8;">Loading…</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -246,18 +442,20 @@
                     <h1 class="text-2xl font-extrabold text-slate-900">All Transactions</h1>
                     <p class="text-slate-500 text-sm mt-1">Full platform ledger across all accounts.</p>
                 </div>
-                <div class="flex gap-3">
+                <div class="flex gap-3" style="flex-wrap:wrap;">
                     <select id="typeFilter" class="form-input" style="padding:8px 12px;font-size:0.85rem;">
                         <option value="">All Types</option>
                         <option value="deposit">Deposit</option>
                         <option value="withdrawal">Withdrawal</option>
                         <option value="transfer">Transfer</option>
+                        <option value="credit">Credit (Admin)</option>
+                        <option value="debit">Debit (Admin)</option>
                     </select>
                 </div>
             </div>
             <div class="card">
-                <div class="overflow-x-auto">
-                    <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                <div class="txns-wrap">
+                    <table style="border-collapse:collapse; font-size:0.85rem;">
                         <thead>
                             <tr style="border-bottom:2px solid #f1f5f9;">
                                 <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Date</th>
@@ -266,11 +464,14 @@
                                 <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">To</th>
                                 <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Amount</th>
                                 <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Status</th>
-                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Reference</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Reference
+                                </th>
                             </tr>
                         </thead>
                         <tbody id="txns-body">
-                            <tr><td colspan="7" style="text-align:center;padding:32px;color:#94a3b8;">Loading…</td></tr>
+                            <tr>
+                                <td colspan="7" style="text-align:center;padding:32px;color:#94a3b8;">Loading…</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -284,19 +485,23 @@
                 <p class="text-slate-500 text-sm mt-1">Audit trail of all administrative actions.</p>
             </div>
             <div class="card">
-                <div class="overflow-x-auto">
-                    <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+                <div class="logs-wrap">
+                    <table style="border-collapse:collapse; font-size:0.85rem;">
                         <thead>
                             <tr style="border-bottom:2px solid #f1f5f9;">
-                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Timestamp</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Timestamp
+                                </th>
                                 <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Admin</th>
                                 <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Action</th>
                                 <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Target</th>
-                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Details</th>
+                                <th style="text-align:left;padding:12px 16px;color:#64748b;font-weight:600;">Details
+                                </th>
                             </tr>
                         </thead>
                         <tbody id="logs-body">
-                            <tr><td colspan="5" style="text-align:center;padding:32px;color:#94a3b8;">Loading…</td></tr>
+                            <tr>
+                                <td colspan="5" style="text-align:center;padding:32px;color:#94a3b8;">Loading…</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -304,20 +509,96 @@
         </section>
     </main>
 
+    <!-- Create User Modal -->
+    <div class="modal-overlay" id="createUserModal">
+        <div class="modal-card">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-slate-800">Create New User</h2>
+                <button class="text-slate-400 hover:text-slate-600" onclick="closeCreateUserModal()">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="createUserForm" onsubmit="handleCreateUser(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Full Name</label>
+                        <input type="text" id="createFullName" class="form-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Email Address</label>
+                        <input type="email" id="createEmail" class="form-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Password</label>
+                        <div style="position:relative;">
+                            <input type="password" id="createPassword" class="form-input w-full"
+                                style="padding-right:40px;" minlength="8" required>
+                            <button type="button" tabindex="-1" onclick="toggleVisibility('createPassword')"
+                                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;padding:4px;">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Transaction PIN</label>
+                        <div style="position:relative;">
+                            <input type="password" id="createPin" class="form-input w-full" style="padding-right:40px;"
+                                minlength="4" maxlength="6" pattern="\d+" title="Must be a 4-6 digit sequence" required>
+                            <button type="button" tabindex="-1" onclick="toggleVisibility('createPin')"
+                                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;padding:4px;">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                    <circle cx="12" cy="12" r="3" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" id="btn-create-user" class="btn btn-primary w-full mt-4"
+                        style="background:#4f46e5;color:white;padding:12px;border-radius:12px;font-weight:600;">Create
+                        Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- User Detail Modal -->
     <div class="modal-overlay" id="userModal">
         <div class="modal-card">
             <div class="flex justify-between items-start mb-6">
                 <div class="flex items-center gap-4">
-                    <div id="modal-user-avatar" class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-400 text-lg"></div>
+                    <div id="modal-user-avatar"
+                        class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-400 text-lg">
+                    </div>
                     <div>
                         <h2 class="text-xl font-bold text-slate-800" id="modal-user-name">User Details</h2>
                         <p class="text-xs text-slate-400" id="modal-user-email"></p>
                     </div>
                 </div>
-                <button class="text-slate-400 hover:text-slate-600" onclick="closeUserModal()">
-                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button"
+                        class="text-xs px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded font-semibold transition-colors flex items-center gap-1"
+                        onclick="alert('Edit user functionality pending backend connection')">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Edit User
+                    </button>
+                    <button type="button" class="text-slate-400 hover:text-slate-600 ml-2" onclick="closeUserModal()">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path d="M18 6L6 18M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <div class="grid grid-cols-2 gap-4 mb-4">
@@ -331,53 +612,74 @@
                 </div>
             </div>
 
-            <div id="modal-status-message" class="mb-6 p-4 bg-amber-50 text-amber-800 rounded-xl text-sm font-medium border border-amber-100" style="display:none;"></div>
+            <div id="modal-status-message"
+                class="mb-6 p-4 bg-amber-50 text-amber-800 rounded-xl text-sm font-medium border border-amber-100"
+                style="display:none;"></div>
 
             <div class="space-y-4">
-                <!-- Deposit -->
-                <div id="admin-deposit-section" style="display:none;">
-                    <label class="block text-xs font-bold text-slate-500 mb-2 uppercase">Manual Deposit</label>
+                <!-- Financials -->
+                <div id="admin-financials-section">
+                    <label class="block text-xs font-bold text-slate-500 mb-2 uppercase">Ledger Adjustment</label>
+                    <div class="flex gap-2 mb-2">
+                        <input type="number" id="ledgerAmount" class="form-input flex-1" placeholder="Amount ($)"
+                            min="0.01" step="0.01">
+                    </div>
                     <div class="flex gap-2">
-                        <input type="number" id="depositAmount" class="form-input flex-1" placeholder="Amount ($)">
-                        <button class="btn btn-primary" onclick="handleAdminDeposit()">Deposit</button>
+                        <button type="button"
+                            class="btn btn-outline border-emerald-200 text-emerald-700 bg-emerald-50 flex-1 hover:bg-emerald-100"
+                            onclick="handleAdminCredit()">Credit User</button>
+                        <button type="button"
+                            class="btn btn-outline border-rose-200 text-rose-700 bg-rose-50 flex-1 hover:bg-rose-100"
+                            onclick="handleAdminDebit()">Debit User</button>
                     </div>
                 </div>
 
-                <!-- Super Admin Controls -->
-                <div id="super-admin-controls" style="display:none;" class="pt-4 border-t border-slate-100">
-                    <label class="block text-xs font-bold text-slate-500 mb-3 uppercase">Admin Permissions</label>
-                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-xl mb-3">
-                        <span class="text-sm font-medium text-slate-700">Admin Privileges</span>
-                        <button id="btn-toggle-role" class="btn btn-sm btn-outline" onclick="handleRoleToggle()">Promote to Admin</button>
-                    </div>
-                    <div id="permissions-panel" class="p-4 bg-slate-50 rounded-xl space-y-3">
-                        <p class="text-xs font-bold text-slate-400 uppercase">Admin Permissions</p>
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" id="perm-deposit"> <span class="text-sm">Can Deposit</span>
-                        </label>
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" id="perm-delete"> <span class="text-sm">Can Delete</span>
-                        </label>
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" id="perm-suspend"> <span class="text-sm">Can Suspend</span>
-                        </label>
-                        <label class="flex items-center gap-3 cursor-pointer">
-                            <input type="checkbox" id="perm-manage"> <span class="text-sm">Can Manage Admins</span>
-                        </label>
-                        <div class="pt-2">
-                            <label class="block text-[10px] font-bold text-slate-400 mb-1 uppercase">Max Deposit Limit</label>
-                            <input type="number" id="perm-max-deposit" class="form-input text-sm" placeholder="Limit ($)">
-                        </div>
-                        <button class="btn btn-sm btn-outline w-full mt-2" onclick="saveAdminPermissions()">Save Permissions</button>
-                    </div>
-                </div>
-
-                <!-- Danger Zone -->
-                <div class="pt-4 flex gap-3">
-                    <button id="btn-suspend" class="btn btn-outline flex-1 border-slate-200 text-slate-700" onclick="handleAdminSuspend()">Suspend</button>
-                    <button id="btn-delete" class="btn btn-outline flex-1 border-red-100 text-red-600 hover:bg-red-50" onclick="handleAdminDelete()">Delete</button>
+                <!-- Action Zone -->
+                <div class="pt-4 flex gap-3 border-t border-slate-100">
+                    <button type="button"
+                        class="btn btn-outline flex-1 border-slate-200 text-slate-700 hover:bg-slate-50"
+                        onclick="openEditUserModal()">
+                        <svg width="14" height="14" fill="none" class="inline mb-[2px] mr-1" stroke="currentColor"
+                            stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Edit User
+                    </button>
+                    <button type="button" id="btn-block" class="btn btn-outline flex-1 border-slate-200 text-slate-700"
+                        onclick="handleAdminBlock()">Block User</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div class="modal-overlay" id="editUserModal">
+        <div class="modal-card">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-slate-800">Edit User Details</h2>
+                <button class="text-slate-400 hover:text-slate-600" onclick="closeEditUserModal()">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="editUserForm" onsubmit="handleEditUser(event)">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Full Name</label>
+                        <input type="text" id="editFullName" class="form-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Email Address</label>
+                        <input type="email" id="editEmail" class="form-input w-full" required>
+                    </div>
+                    <button type="submit" id="btn-edit-user" class="btn w-full mt-4"
+                        style="background:#4f46e5;color:white;padding:12px;border-radius:12px;font-weight:600;">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
     </main>
@@ -427,46 +729,58 @@
         });
 
         async function loadAdminData() {
-            try {
-                const [stats, users, txns, logs, perms] = await Promise.all([
-                    NexaAPI.get('/api/admin/stats'),
-                    NexaAPI.get('/api/admin/users'),
-                    NexaAPI.get('/api/admin/transactions'),
-                    NexaAPI.get('/api/admin/logs'),
-                    NexaAPI.get('/api/admin/permissions/me')
-                ]);
+            // Use allSettled so a single failing endpoint doesn't kill all data
+            const [statsRes, usersRes, txnsRes, logsRes, permsRes] = await Promise.allSettled([
+                NexaAPI.get('/api/admin/stats'),
+                NexaAPI.get('/api/admin/users'),
+                NexaAPI.get('/api/admin/transactions'),
+                NexaAPI.get('/api/admin/logs'),
+                NexaAPI.get('/api/admin/permissions/me')
+            ]);
 
-                // Stats
+            // Stats
+            if (statsRes.status === 'fulfilled' && statsRes.value) {
+                const stats = statsRes.value;
                 document.getElementById('stat-users').textContent = stats.total_users ?? '—';
                 document.getElementById('stat-volume').textContent =
                     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(stats.total_volume ?? 0);
                 document.getElementById('stat-txns').textContent = stats.total_transactions ?? '—';
+            } else {
+                console.warn('Stats failed:', statsRes.reason?.message);
+            }
 
-                // Set admin name
-                if (users && users.length) {
-                    const meId = parseJwt(NexaAPI.getToken())?.sub;
-                    const me = users.find(u => String(u.id) === String(meId));
-                    if (me) {
-                        document.getElementById('topbar-name').textContent = me.full_name;
-                        const av = document.getElementById('topbar-avatar');
-                        av.textContent = me.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
-                    }
+            // Users
+            const users = usersRes.status === 'fulfilled' ? (usersRes.value || []) : [];
+            if (usersRes.status === 'rejected') console.warn('Users failed:', usersRes.reason?.message);
+
+            // Set admin name from users list
+            if (users.length) {
+                const meId = parseJwt(NexaAPI.getToken())?.sub;
+                const me = users.find(u => String(u.id) === String(meId));
+                if (me) {
+                    document.getElementById('topbar-name').textContent = me.full_name;
+                    const av = document.getElementById('topbar-avatar');
+                    av.textContent = me.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
                 }
+            }
 
-                allUsers = users || [];
-                allTxns = txns || [];
-                allLogs = logs || [];
+            allUsers = users;
+            allTxns = txnsRes.status === 'fulfilled' ? (txnsRes.value || []) : [];
+            allLogs = logsRes.status === 'fulfilled' ? (logsRes.value || []) : [];
 
-                const payload = parseJwt(NexaAPI.getToken());
-                currentUserRole = payload?.role;
-                currentUserPermissions = perms;
+            const payload = parseJwt(NexaAPI.getToken());
+            currentUserRole = payload?.role;
+            currentUserPermissions = permsRes.status === 'fulfilled' ? permsRes.value : null;
 
-                renderRecentTxns();
-                renderUsers();
-                renderTxns();
-                renderLogs();
-            } catch (e) {
-                Toast.error('Failed to load admin data: ' + e.message);
+            renderRecentTxns();
+            renderUsers();
+            renderTxns();
+            renderLogs();
+
+            // Surface any errors non-blocking
+            const failed = [statsRes, usersRes, txnsRes, logsRes, permsRes].filter(r => r.status === 'rejected');
+            if (failed.length === 5) {
+                Toast.error('Could not connect to backend. Check you are logged in.');
             }
         }
 
@@ -482,8 +796,8 @@
                     <div class="tx-icon" style="background:${tx.transaction_type === 'deposit' ? '#dcfce7' : '#fee2e2'};">
                         <svg width="14" height="14" fill="none" stroke="${tx.transaction_type === 'deposit' ? '#16a34a' : '#dc2626'}" stroke-width="2.5" viewBox="0 0 24 24">
                             ${tx.transaction_type === 'deposit'
-                                ? '<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>'
-                                : '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>'}
+                    ? '<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>'
+                    : '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>'}
                         </svg>
                     </div>
                     <div class="tx-info">
@@ -500,24 +814,66 @@
 
         function renderUsers() {
             const tbody = document.getElementById('users-body');
+            const cardsEl = document.getElementById('users-cards');
+
             if (!allUsers.length) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:#94a3b8;">No users found.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:#94a3b8;">No users found.</td></tr>';
+                cardsEl.innerHTML = '<p style="text-align:center;color:#94a3b8;padding:32px;">No users found.</p>';
                 return;
             }
+
+            // Desktop table rows with explicit Manage button
             tbody.innerHTML = allUsers.map(u => `
-                <tr style="border-bottom:1px solid #f1f5f9; cursor:pointer;" onclick="openUserModal(${u.id})" class="hover:bg-slate-50 transition-colors">
+                <tr style="border-bottom:1px solid #f1f5f9;" class="hover:bg-slate-50 transition-colors">
                     <td style="padding:14px 16px;font-weight:500;color:#1e293b;">${escHtml(u.full_name)}</td>
-                    <td style="padding:14px 16px;color:#64748b;">${escHtml(u.email)}</td>
-                    <td style="padding:14px 16px;font-family:monospace;color:#475569;">${escHtml(u.account_number || '—')}</td>
+                    <td style="padding:14px 16px;color:#64748b;font-size:0.85rem;">${escHtml(u.email)}</td>
+                    <td style="padding:14px 16px;font-family:monospace;color:#475569;font-size:0.82rem;">${escHtml(u.account_number || '—')}</td>
                     <td style="padding:14px 16px;font-weight:600;color:#1e293b;">${formatCurrency(u.balance ?? 0)}</td>
                     <td style="padding:14px 16px;">
                         <span class="role-badge ${u.role === 'super_admin' ? 'role-super' : (u.role === 'admin' ? 'role-admin' : 'role-user')}">
-                            ${u.role === 'user' ? 'user' : 'admin'}
+                            ${u.role === 'user' ? 'User' : u.role === 'super_admin' ? 'Super Admin' : 'Admin'}
                         </span>
-                        ${u.is_suspended ? '<span class="role-badge status-suspended ml-1">Suspended</span>' : ''}
+                        ${u.status === 'BLOCKED' ? '<span class="role-badge status-suspended ml-1">Blocked</span>' : ''}
                     </td>
                     <td style="padding:14px 16px;color:#94a3b8;font-size:0.8rem;">${u.created_at ? new Date(u.created_at).toLocaleDateString() : '—'}</td>
+                    <td style="padding:10px 16px;">
+                        <button type="button" onclick="openUserModal(${u.id})"
+                            style="padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;cursor:pointer;white-space:nowrap;transition:background 0.15s,color 0.15s;"
+                            onmouseover="this.style.background='#4f46e5';this.style.color='white';"
+                            onmouseout="this.style.background='#f1f5f9';this.style.color='#475569';">
+                            Manage →
+                        </button>
+                    </td>
                 </tr>
+            `).join('');
+
+            // Mobile card rows with explicit Manage button
+            cardsEl.innerHTML = allUsers.map(u => `
+                <div class="user-card">
+                    <div class="user-card-row">
+                        <span style="font-size:15px;font-weight:700;color:#1e293b;">${escHtml(u.full_name)}</span>
+                        <span class="role-badge ${u.role === 'super_admin' ? 'role-super' : (u.role === 'admin' ? 'role-admin' : 'role-user')}">
+                            ${u.role === 'user' ? 'User' : u.role === 'super_admin' ? 'Super Admin' : 'Admin'}
+                        </span>
+                    </div>
+                    <div class="user-card-row">
+                        <span class="user-card-label">Email</span>
+                        <span class="user-card-value" style="font-size:12px;">${escHtml(u.email)}</span>
+                    </div>
+                    <div class="user-card-row">
+                        <span class="user-card-label">Balance</span>
+                        <span class="user-card-value" style="color:#4f46e5;font-weight:700;">${formatCurrency(u.balance ?? 0)}</span>
+                    </div>
+                    <div class="user-card-row">
+                        <span class="user-card-label">Account No.</span>
+                        <span class="user-card-value" style="font-family:monospace;font-size:12px;">${escHtml(u.account_number || '—')}</span>
+                    </div>
+                    ${u.status === 'BLOCKED' ? '<div style="margin-top:4px;"><span class="role-badge status-suspended">Blocked</span></div>' : ''}
+                    <button type="button" onclick="openUserModal(${u.id})"
+                        style="margin-top:12px;width:100%;padding:10px;border-radius:10px;font-size:13px;font-weight:600;background:#4f46e5;color:white;border:none;cursor:pointer;">
+                        Manage User →
+                    </button>
+                </div>
             `).join('');
         }
 
@@ -578,82 +934,27 @@
             const user = allUsers.find(u => u.id === userId);
             if (!user) return;
             selectedUserId = userId;
-            
+
             // Populate basic info
             document.getElementById('modal-user-name').textContent = user.full_name;
             document.getElementById('modal-user-email').textContent = user.email;
             document.getElementById('modal-user-balance').textContent = formatCurrency(user.balance);
             document.getElementById('modal-user-avatar').textContent = user.full_name.split(' ').map(n => n[0]).join('').toUpperCase();
-            
+
             const statusBox = document.getElementById('modal-user-status');
             statusBox.innerHTML = `
                 <span class="role-badge ${user.role === 'super_admin' ? 'role-super' : (user.role === 'admin' ? 'role-admin' : 'role-user')}">
                     ${user.role === 'user' ? 'user' : 'admin'}
                 </span>
-                ${user.is_suspended ? '<span class="role-badge status-suspended">Suspended</span>' : ''}
+                ${user.status === 'BLOCKED' ? '<span class="role-badge status-suspended">Blocked</span>' : ''}
             `;
 
             // Reset inputs
-            document.getElementById('depositAmount').value = '';
-            document.getElementById('btn-suspend').textContent = user.is_suspended ? 'Unsuspend' : 'Suspend';
+            document.getElementById('ledgerAmount').value = '';
+            document.getElementById('btn-block').textContent = user.status === 'BLOCKED' ? 'Unblock User' : 'Block User';
+            document.getElementById('modal-status-message').style.display = 'none';
 
-            // Fetch backend-defined actions
-            try {
-                const actions = await NexaAPI.get(`/api/admin/users/${userId}/actions`);
-                
-                // Status Message Area
-                const msgArea = document.getElementById('modal-status-message');
-                if (actions.message) {
-                    msgArea.textContent = actions.message;
-                    msgArea.style.display = 'block';
-                } else {
-                    msgArea.style.display = 'none';
-                }
-
-                // Deposit Section
-                document.getElementById('admin-deposit-section').style.display = actions.show_deposit ? 'block' : 'none';
-
-                // Super Admin / Management Controls
-                const superControls = document.getElementById('super-admin-controls');
-                if (actions.show_role_toggle || actions.show_permissions_panel) {
-                    superControls.style.display = 'block';
-                    
-                    const roleBtn = document.getElementById('btn-toggle-role');
-                    if (actions.show_role_toggle === 'promote') {
-                        roleBtn.style.display = 'inline-flex';
-                        roleBtn.textContent = 'Promote to Admin';
-                    } else if (actions.show_role_toggle === 'demote') {
-                        roleBtn.style.display = 'inline-flex';
-                        roleBtn.textContent = 'Demote to User';
-                    } else {
-                        roleBtn.style.display = 'none';
-                    }
-
-                    const permPanel = document.getElementById('permissions-panel');
-                    if (actions.show_permissions_panel) {
-                        permPanel.style.display = 'block';
-                        // Load permissions
-                        const perms = await NexaAPI.get(`/api/admin/users/${userId}/permissions`);
-                        document.getElementById('perm-deposit').checked = perms.can_deposit;
-                        document.getElementById('perm-delete').checked = perms.can_delete;
-                        document.getElementById('perm-suspend').checked = perms.can_suspend;
-                        document.getElementById('perm-manage').checked = perms.can_manage_admins;
-                        document.getElementById('perm-max-deposit').value = perms.max_deposit_limit || 0;
-                    } else {
-                        permPanel.style.display = 'none';
-                    }
-                } else {
-                    superControls.style.display = 'none';
-                }
-
-                // Action buttons
-                document.getElementById('btn-suspend').style.display = actions.show_suspend ? 'block' : 'none';
-                document.getElementById('btn-delete').style.display = actions.show_delete ? 'block' : 'none';
-
-                document.getElementById('userModal').classList.add('open');
-            } catch (e) {
-                Toast.error('Failed to load user actions: ' + e.message);
-            }
+            document.getElementById('userModal').classList.add('open');
         }
 
         function closeUserModal() {
@@ -661,14 +962,107 @@
             selectedUserId = null;
         }
 
+        // ── Create User Actions ──
+        function openCreateUserModal() {
+            document.getElementById('createUserForm').reset();
+            // Reset types back to password in case they were left as text
+            document.getElementById('createPassword').type = 'password';
+            document.getElementById('createPin').type = 'password';
+            document.getElementById('createUserModal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCreateUserModal() {
+            document.getElementById('createUserModal').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        function openEditUserModal() {
+            const user = allUsers.find(u => u.id === selectedUserId);
+            if (!user) return;
+            document.getElementById('editFullName').value = user.full_name;
+            document.getElementById('editEmail').value = user.email;
+            document.getElementById('editUserModal').classList.add('open');
+        }
+
+        function closeEditUserModal() {
+            document.getElementById('editUserModal').classList.remove('open');
+        }
+
+        async function handleEditUser(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('editFullName').value.trim();
+            const email = document.getElementById('editEmail').value.trim();
+
+            const btn = document.getElementById('btn-edit-user');
+            const oldText = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            // Split name simple logic
+            const parts = fullName.split(' ');
+            const firstName = parts[0];
+            const lastName = parts.slice(1).join(' ') || '';
+
+            try {
+                await NexaAPI.patch(`/api/admin/users/${selectedUserId}/profile`, {
+                    first_name: firstName,
+                    last_name: lastName || undefined,
+                    email: email
+                });
+                Toast.success('User updated successfully');
+                loadAdminData();
+                closeEditUserModal();
+                closeUserModal();
+            } catch (err) {
+                Toast.error(err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = oldText;
+            }
+        }
+
+        function toggleVisibility(id) {
+            const el = document.getElementById(id);
+            if (el.type === 'password') {
+                el.type = 'text';
+            } else {
+                el.type = 'password';
+            }
+        }
+
+        async function handleCreateUser(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-create-user');
+            btn.disabled = true;
+            btn.textContent = 'Creating...';
+            try {
+                const payload = {
+                    full_name: document.getElementById('createFullName').value,
+                    email: document.getElementById('createEmail').value,
+                    password: document.getElementById('createPassword').value,
+                    pin: document.getElementById('createPin').value,
+                };
+                await NexaAPI.post('/api/admin/users/create', payload);
+                Toast.success('User created successfully');
+                loadAdminData();
+                closeCreateUserModal();
+            } catch (err) {
+                Toast.error(err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Create Account';
+            }
+        }
+
         // ── Admin Actions ──
-        async function handleAdminDeposit() {
-            const amount = parseFloat(document.getElementById('depositAmount').value);
+        async function handleAdminCredit() {
+            const amount = parseFloat(document.getElementById('ledgerAmount').value);
             if (!amount || amount <= 0) return Toast.error('Please enter a valid amount');
-            
+
             try {
-                await NexaAPI.post(`/api/admin/users/${selectedUserId}/deposit`, { amount });
-                Toast.success('Deposit successful');
+                await NexaAPI.post(`/api/admin/users/${selectedUserId}/credit`, { amount });
+                Toast.success('Credit successful funds added');
                 loadAdminData();
                 closeUserModal();
             } catch (e) {
@@ -676,73 +1070,28 @@
             }
         }
 
-        async function handleAdminSuspend() {
+        async function handleAdminDebit() {
+            const amount = parseFloat(document.getElementById('ledgerAmount').value);
+            if (!amount || amount <= 0) return Toast.error('Please enter a valid amount');
+
+            try {
+                await NexaAPI.post(`/api/admin/users/${selectedUserId}/debit`, { amount });
+                Toast.success('Debit successful funds subtracted');
+                loadAdminData();
+                closeUserModal();
+            } catch (e) {
+                Toast.error(e.message);
+            }
+        }
+
+        async function handleAdminBlock() {
             const user = allUsers.find(u => u.id === selectedUserId);
-            const action = user.is_suspended ? 'unsuspend' : 'suspend';
-            
+            const action = user.status === 'BLOCKED' ? 'unblock' : 'block';
+
             try {
-                await NexaAPI.post(`/api/admin/users/${selectedUserId}/${action}`);
-                Toast.success(`User ${action}ed`);
-                loadAdminData();
-                closeUserModal();
-            } catch (e) {
-                Toast.error(e.message);
-            }
-        }
-
-        async function handleAdminDelete() {
-            const meId = parseJwt(NexaAPI.getToken())?.sub;
-            if (String(selectedUserId) === String(meId)) {
-                return Toast.error('You cannot delete your own account from the admin panel.');
-            }
-
-            const user = allUsers.find(u => u.id === selectedUserId);
-            if (currentUserRole === 'admin' && user.role !== 'user') {
-                return Toast.error('You do not have permission to delete other administrative accounts.');
-            }
-
-            if (user.role === 'super_admin') {
-                return Toast.error('Administrative accounts with full system access cannot be deleted.');
-            }
-
-            if (!confirm(`Are you serious? This will permanently delete the user (${user.email}) and all their data.`)) return;
-            
-            try {
-                await NexaAPI.del(`/api/admin/users/${selectedUserId}`);
-                Toast.success('User deleted successfully');
-                loadAdminData();
-                closeUserModal();
-            } catch (e) {
-                Toast.error(e.message);
-            }
-        }
-
-        async function handleRoleToggle() {
-            const user = allUsers.find(u => u.id === selectedUserId);
-            const newRole = user.role === 'user' ? 'admin' : 'user';
-            
-            try {
-                await NexaAPI.post(`/api/admin/users/${selectedUserId}/role`, { role: newRole });
-                Toast.success(`User role updated to ${newRole}`);
-                loadAdminData();
-                closeUserModal();
-            } catch (e) {
-                Toast.error(e.message);
-            }
-        }
-
-        async function saveAdminPermissions() {
-            const payload = {
-                can_deposit: document.getElementById('perm-deposit').checked,
-                can_delete: document.getElementById('perm-delete').checked,
-                can_suspend: document.getElementById('perm-suspend').checked,
-                can_manage_admins: document.getElementById('perm-manage').checked,
-                max_deposit_limit: parseInt(document.getElementById('perm-max-deposit').value) || 0
-            };
-            
-            try {
-                await NexaAPI.patch(`/api/admin/users/${selectedUserId}/permissions`, payload);
-                Toast.success('Permissions updated');
+                const payload = action === 'block' ? { reason: 'Blocked via admin dashboard' } : undefined;
+                await NexaAPI.post(`/api/admin/users/${selectedUserId}/${action}`, payload);
+                Toast.success(`User ${action}ed successfully`);
                 loadAdminData();
                 closeUserModal();
             } catch (e) {
@@ -790,14 +1139,14 @@
             return `${Math.floor(h / 24)}d ago`;
         }
         function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
-        function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+        function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
         function typeColor(t) {
-            const m = { deposit: { bg:'#dcfce7', fg:'#16a34a' }, withdrawal: { bg:'#fee2e2', fg:'#dc2626' }, transfer: { bg:'#eff6ff', fg:'#2563eb' }};
-            return m[t] || { bg:'#f1f5f9', fg:'#64748b' };
+            const m = { deposit: { bg: '#dcfce7', fg: '#16a34a' }, withdrawal: { bg: '#fee2e2', fg: '#dc2626' }, transfer: { bg: '#eff6ff', fg: '#2563eb' } };
+            return m[t] || { bg: '#f1f5f9', fg: '#64748b' };
         }
         function statusColor(s) {
-            const m = { completed: { bg:'#dcfce7', fg:'#16a34a' }, pending: { bg:'#fef9c3', fg:'#ca8a04' }, failed: { bg:'#fee2e2', fg:'#dc2626' }};
-            return m[s] || { bg:'#f1f5f9', fg:'#64748b' };
+            const m = { completed: { bg: '#dcfce7', fg: '#16a34a' }, pending: { bg: '#fef9c3', fg: '#ca8a04' }, failed: { bg: '#fee2e2', fg: '#dc2626' } };
+            return m[s] || { bg: '#f1f5f9', fg: '#64748b' };
         }
     </script>
 </body>
