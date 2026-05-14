@@ -39,6 +39,8 @@ app.include_router(users.router)
 app.include_router(notifications.router)
 
 
-@app.get("/health")
-def health():
+
+
+@app.api_route("/health", methods=["GET", "HEAD"])
+def health_check():
     return {"status": "ok", "app": settings.APP_NAME}
