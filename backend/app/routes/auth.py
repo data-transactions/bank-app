@@ -7,7 +7,7 @@ from ..database import get_db
 from ..models.user import User
 from ..models.account import Account
 from ..models.security_attempt import SecurityAttempt
-from ..schemas.auth import RegisterRequest, LoginRequest, TokenResponse, SetPinRequest, UserResponse, ChangePasswordRequest, ChangePinRequest
+from ..schemas.auth import RegisterRequest, LoginRequest, TokenResponse, SetPinRequest, UserResponse, ChangePasswordRequest, ChangePinRequest, PinVerifySchema
 from ..core.security import hash_password, verify_password, create_access_token
 from ..core.dependencies import get_current_user
 from ..services.account_service import create_account_for_user
@@ -104,7 +104,15 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
     db.commit()
 
     token = create_access_token({"sub": str(user.id), "role": user.role})
-    return TokenResponse(access_token=token)
+    return TokenResponse(
+        access_token=token,
+        pin_required=(user.role == "user"),
+        is_pin_set=user.is_pin_set,
+        user={
+            "full_name": user.full_name,
+            "profile_image_url": user.profile_image_url
+        }
+    )
 
 
 @router.get("/me", response_model=UserResponse)
@@ -121,6 +129,42 @@ def set_pin(
     current_user.transaction_pin = hash_password(payload.pin)
     db.commit()
     return {"message": "Transaction PIN set successfully."}
+
+
+@router.post("/verify-pin")
+def verify_pin(
+    payload: PinVerifySchema,
+    request: Request,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    check_rate_limit(db, current_user.id, "pin")
+    
+    if not current_user.transaction_pin or not verify_password(payload.pin, current_user.transaction_pin):
+        attempt = SecurityAttempt(
+            user_id=current_user.id,
+            type="pin",
+            is_successful=False,
+            ip_address=request.client.host
+        )
+        db.add(attempt)
+        db.commit()
+        
+        fifteen_mins_ago = datetime.now(timezone.utc) - timedelta(minutes=15)
+        attempts = db.query(SecurityAttempt).filter(
+            SecurityAttempt.user_id == current_user.id,
+            SecurityAttempt.type == "pin",
+            SecurityAttempt.is_successful == False,
+            SecurityAttempt.timestamp >= fifteen_mins_ago
+        ).count()
+        attempts_remaining = max(0, 5 - attempts)
+        
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Incorrect PIN. You have {attempts_remaining} attempts remaining before a 15-minute lockout." if attempts_remaining > 0 else "Too many failed attempts. Please try again in 15 minutes."
+        )
+        
+    return {"verified": True}
 
 
 @router.get("/verify")
