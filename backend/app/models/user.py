@@ -30,6 +30,8 @@ class User(Base):
     profile_image_url = Column(String(255), nullable=True)
     phone_number = Column(String(20), unique=True, nullable=True)
     home_address = Column(String(255), nullable=True)
+    date_of_birth = Column(DateTime, nullable=True)
+
     password_changed_at = Column(DateTime, nullable=True)
     pin_changed_at = Column(DateTime, nullable=True)
     login_count = Column(Integer, default=0, nullable=False)

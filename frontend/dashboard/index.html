@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard — NexaBank</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet" />
@@ -3894,6 +3895,9 @@
                                         <th>Status</th>
                                         <th>Reference ID</th>
                                         <th>Description</th>
+                                        <th>Method</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="recentTxBody">
@@ -5490,7 +5494,7 @@
             document.getElementById('receiptContent').innerHTML = `
                 <div style="background:#fff; padding:40px; border-radius:12px; max-width:600px; margin:0 auto; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:40px;">
-                        <h1 style="font-size:24px; font-weight:900; color:var(--gc-dark); letter-spacing:-1px;">GRAND</h1>
+                        <h1 style="font-size:24px; font-weight:900; color:var(--gc-dark); letter-spacing:-1px;">NexaBank</h1>
                         <span style="background:#dcfce7; color:#166534; padding:6px 16px; border-radius:20px; font-size:12px; font-weight:700; display:flex; align-items:center; gap:6px;">
                             <i class="fas fa-check-circle"></i> Successful
                         </span>
@@ -5573,46 +5577,53 @@
         }
 
         function renderTransactions(overrideTxs) {
-            const txs = overrideTxs || state.transactions;
-            const a = state.account;
-            const fmt = (v) => {
-                const num = Number(v || 0);
-                if (num % 1 === 0) return '$' + num.toLocaleString('en-US');
-                return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            };
+            try {
+                const txs = overrideTxs || state.transactions || [];
+                const a = state.account || { id: -1 };
 
-            const renderRow = (tx, isShort = false) => {
-                const isDeposit = tx.transaction_type === 'deposit';
-                const credit = isDeposit || (tx.receiver_account_id === a.id && tx.sender_account_id !== a.id);
-                const type = credit ? 'Credit' : 'Debit';
-                const iconClass = credit ? 'credit' : 'debit';
-                const icon = credit ? '+' : '−';
-                const refId = tx.reference_code || '—';
-                const desc = tx.description || '—';
-                const scope = tx.scope || '—';
+                const fmt = (v) => {
+                    const num = Number(v || 0);
+                    if (num % 1 === 0) return '$' + num.toLocaleString('en-US');
+                    return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                };
 
-                let html = '<tr style="cursor:pointer;" onclick="showTxDetail(' + tx.id + ')">' +
-                    '<td class="tx-icon-cell"><div class="gc-tx-icon-circle ' + iconClass + '">' + icon + '</div></td>' +
-                    '<td><strong>' + fmt(tx.amount) + ' USD</strong></td>' +
-                    '<td><span class="gc-tx-type-badge ' + iconClass + '">' + type + '</span></td>' +
-                    '<td><span class="gc-tx-status processed">Processed</span></td>' +
-                    '<td class="gc-tx-ref">' + refId + '</td>' +
-                    '<td>' + desc + '</td>';
+                const renderRow = (tx) => {
+                    if (!tx) return '';
+                    const isDeposit = tx.transaction_type === 'deposit';
+                    const credit = isDeposit || (tx.receiver_account_id === a.id && tx.sender_account_id !== a.id);
+                    const type = credit ? 'Credit' : 'Debit';
+                    const iconClass = credit ? 'credit' : 'debit';
+                    const icon = credit ? '+' : '−';
+                    const refId = tx.reference_code || '—';
+                    const desc = tx.description || '—';
+                    const scope = tx.scope || '—';
 
-                if (!isShort) {
-                    html += '<td>' + scope + '</td>' +
-                        '<td>' + formatDate(tx.created_at) + '</td>' +
-                        '<td><a href="#" class="gc-receipt-link" onclick="event.stopPropagation(); showReceipt(' + tx.id + ');" style="color:var(--gc-blue);text-decoration:none;font-size:12px;font-weight:600;"><i class="far fa-file-alt"></i> Receipt</a></td>';
+                    return `<tr style="cursor:pointer;" onclick="showTxDetail(${tx.id})">
+                        <td class="tx-icon-cell"><div class="gc-tx-icon-circle ${iconClass}">${icon}</div></td>
+                        <td><strong>${fmt(tx.amount)} USD</strong></td>
+                        <td><span class="gc-tx-type-badge ${iconClass}">${type}</span></td>
+                        <td><span class="gc-tx-status processed">Processed</span></td>
+                        <td class="gc-tx-ref">${refId}</td>
+                        <td>${desc}</td>
+                        <td>${scope}</td>
+                        <td>${formatDate(tx.created_at)}</td>
+                        <td><a href="#" class="gc-receipt-link" onclick="event.stopPropagation(); showReceipt(${tx.id});" style="color:var(--gc-blue);text-decoration:none;font-size:12px;font-weight:600;"><i class="far fa-file-alt"></i> Receipt</a></td>
+                    </tr>`;
+                };
+
+                const empty = (cols) => '<tr><td colspan="' + cols + '" style="text-align:center;padding:30px;color:var(--gc-text-light);">No transactions yet.</td></tr>';
+
+                if (document.getElementById('recentTxBody')) {
+                    const recentTxs = txs.slice(0, 5);
+                    document.getElementById('recentTxBody').innerHTML = recentTxs.length ? recentTxs.map(tx => renderRow(tx)).join('') : empty(6);
                 }
 
-                html += '</tr>';
-                return html;
-            };
-
-            const empty = (cols) => '<tr><td colspan="' + cols + '" style="text-align:center;padding:30px;color:var(--gc-text-light);">No transactions yet. Make a deposit to get started!</td></tr>';
-
-            document.getElementById('recentTxBody').innerHTML = txs.length ? txs.slice(0, 5).map(tx => renderRow(tx, true)).join('') : empty(6);
-            document.getElementById('allTxBody').innerHTML = txs.length ? txs.map(tx => renderRow(tx, false)).join('') : empty(9);
+                if (document.getElementById('allTxBody')) {
+                    document.getElementById('allTxBody').innerHTML = txs.length ? txs.map(tx => renderRow(tx)).join('') : empty(9);
+                }
+            } catch (err) {
+                console.error("Critical error rendering transactions:", err);
+            }
         }
 
         function showTxDetail(txId) {

@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NexaBank — Digital Banking for the Future</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
   <meta name="description"
     content="NexaBank is a modern fintech platform for instant transfers, smart savings, and seamless digital banking — built for the next generation." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -237,6 +238,19 @@
       .rates-table td:nth-child(5) {
         grid-area: action;
         justify-self: end;
+      }
+    }
+
+    .responsive-lobby-img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      display: block;
+    }
+
+    @media (min-width: 768px) {
+      .responsive-lobby-img {
+        height: 500px;
       }
     }
   </style>
@@ -535,6 +549,25 @@
             style="color: #2563eb; font-weight: 700; text-decoration: none; font-size: 14px; text-transform: uppercase;">Create
             Alert <i class="fas fa-chevron-right" style="font-size: 10px; margin-left: 5px;"></i></a>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ BANKING EXPERIENCE IMAGE ══════════════ -->
+  <section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="mb-12">
+        <p
+          style="text-transform: uppercase; letter-spacing: 2px; color: #2563eb; font-weight: 700; font-size: 14px; margin-bottom: 12px;">
+          Global Experience</p>
+        <h2 style="font-size: 36px; font-weight: 800; color: #111827; line-height: 1.2;">World-Class Banking<br>at Your
+          Fingertips</h2>
+        <p style="color: #64748b; font-size: 18px; max-width: 800px; margin-top: 16px;">Our dedicated team and
+          cutting-edge technology work in harmony to ensure your financial success, wherever you are in the world.</p>
+      </div>
+      <div class="relative rounded-3xl overflow-hidden shadow-2xl group">
+        <img src="assets/img/nexabank-lobby.jpeg" alt="Professional Banking Experience"
+          class="responsive-lobby-img transition-transform duration-700 group-hover:scale-105">
       </div>
     </div>
   </section>
