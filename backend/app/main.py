@@ -12,13 +12,23 @@ if os.getenv("RESET_DATABASE") == "true":
 
 Base.metadata.create_all(bind=engine)
 
+from sqlalchemy.exc import SQLAlchemyError
+from fastapi.responses import JSONResponse
+
 app = FastAPI(
     title="NexaBank API",
     description="Full-stack banking app API",
     version="1.0.0",
 )
 
-
+@app.exception_handler(SQLAlchemyError)
+async def sqlalchemy_exception_handler(request, exc):
+    # Log the actual error for developers (Render logs will show this)
+    print(f"DATABASE ERROR: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Our systems are experiencing a brief technical issue. Please try again in a few minutes or contact support if the problem persists."},
+    )
 
 app.add_middleware(
     CORSMiddleware,
