@@ -6,6 +6,5 @@
       "source": "/api/:path*",
       "destination": "https://bank-app-1-xibc.onrender.com/api/:path*"
     }
-  ],
-  "outputDirectory": "."
+  ]
 }
