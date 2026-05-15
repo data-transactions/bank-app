@@ -117,6 +117,10 @@ class AdminEditProfileRequest(BaseModel):
     email: Optional[EmailStr] = None
     phone_number: Optional[str] = None
     home_address: Optional[str] = None
+    date_of_birth: Optional[str] = None  # ISO format string
+    new_password: Optional[str] = None
+    new_pin: Optional[str] = None
+
 
 
 # ── Reset Password ──
