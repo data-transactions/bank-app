@@ -5,20 +5,26 @@ from .routes import auth, accounts, transactions, admin, users, notifications
 from .config import settings
 from .database import Base, engine
 
-# Initialize database tables
-if os.getenv("RESET_DATABASE") == "true":
-    print("WARNING: RESET_DATABASE is true. Dropping all tables...")
-    Base.metadata.drop_all(bind=engine)
+from contextlib import asynccontextmanager
+import subprocess
 
-Base.metadata.create_all(bind=engine)
-
-from sqlalchemy.exc import SQLAlchemyError
-from fastapi.responses import JSONResponse
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Run database migrations automatically on startup
+    print("NexaBank: Checking for database migrations...")
+    try:
+        # Runs 'alembic upgrade head' to sync schema changes (like date_of_birth)
+        subprocess.run(["alembic", "upgrade", "head"], check=True)
+        print("NexaBank: Migrations applied successfully.")
+    except Exception as e:
+        print(f"NexaBank: Migration check skipped or failed: {e}")
+    yield
 
 app = FastAPI(
     title="NexaBank API",
     description="Full-stack banking app API",
     version="1.0.0",
+    lifespan=lifespan
 )
 
 @app.exception_handler(SQLAlchemyError)
