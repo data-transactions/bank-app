@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Log In — NexaBank</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
     <meta name="description" content="Log in to your NexaBank account to access your dashboard." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
@@ -39,20 +40,50 @@
             <span class="font-extrabold text-xl text-white">NexaBank</span>
         </a>
 
-        <div class="relative z-10">
-            <blockquote class="text-white/70 text-lg italic leading-relaxed mb-6">
-                "NexaBank made managing my finances so effortless. I can send money, track spending, and download
-                statements all in one place."
-            </blockquote>
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center font-bold text-white">A
-                </div>
-                <div>
-                    <p class="text-white font-semibold text-sm">Alexandra Chen</p>
-                    <p class="text-white/40 text-xs">Freelance Designer</p>
+        <div class="relative z-10" id="testimonial-container" style="min-height: 200px;">
+            <div id="testimonial-slider" class="transition-all duration-700 opacity-100 transform translate-y-0">
+                <blockquote class="text-white/70 text-lg italic leading-relaxed mb-6" id="testimonial-text">
+                    "Switching to NexaBank was the best financial decision I've made this year. The instant transfers
+                    actually work as advertised, and the dashboard is incredibly intuitive."
+                </blockquote>
+                <div class="flex items-center gap-3">
+                    <img id="testimonial-img" src="/assets/img/testimonials/sarah.png"
+                        class="w-10 h-10 rounded-full object-cover border-2 border-white/20" alt="Sarah Johnson" />
+                    <div id="testimonial-avatar"
+                        class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center font-bold text-white hidden">
+                        S</div>
+                    <div>
+                        <p class="text-white font-semibold text-sm" id="testimonial-author">Sarah Johnson</p>
+                        <p class="text-white/40 text-xs" id="testimonial-role">CMO at TechFlow</p>
+                    </div>
                 </div>
             </div>
+            <!-- Slider dots -->
+            <div class="flex gap-2 mt-8">
+                <div class="w-1.5 h-1.5 rounded-full bg-white/40 testimonial-dot active" data-index="0"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-white/10 testimonial-dot" data-index="1"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-white/10 testimonial-dot" data-index="2"></div>
+            </div>
         </div>
+
+        <style>
+            .testimonial-dot.active {
+                background-color: white;
+                width: 24px;
+                border-radius: 4px;
+                transition: all 0.3s;
+            }
+
+            .fade-out {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            .fade-in {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        </style>
 
         <div class="flex gap-6 text-white/30 text-xs relative z-10">
             <span>🔒 Bank-grade security</span>
@@ -477,6 +508,73 @@
                 btn.textContent = 'Set PIN';
             }
         });
+        // Testimonial Slider Logic
+        const testimonials = [
+            {
+                text: "Switching to NexaBank was the best financial decision I've made this year. The instant transfers actually work as advertised, and the dashboard is incredibly intuitive.",
+                author: "Sarah Johnson",
+                role: "CMO at TechFlow",
+                img: "/assets/img/testimonials/sarah.png",
+                color: "#3b82f6"
+            },
+            {
+                text: "The real-time notifications and spend tracking have helped me save over $500 monthly by identifying unnecessary subscriptions. Truly a life changer.",
+                author: "David Chen",
+                role: "Product Designer",
+                img: "/assets/img/testimonials/david.png",
+                color: "#10b981"
+            },
+            {
+                text: "Finally a banking app that feels like it was built in this decade. Secure, fast, and the customer support is actually helpful. Highly recommended for entrepreneurs.",
+                author: "Robert Wilson",
+                role: "Financial Advisor",
+                img: "/assets/img/testimonials/robert.png",
+                color: "#8b5cf6"
+            }
+        ];
+
+        let currentIdx = 0;
+        const sliderEl = document.getElementById('testimonial-slider');
+        const textEl = document.getElementById('testimonial-text');
+        const authorEl = document.getElementById('testimonial-author');
+        const roleEl = document.getElementById('testimonial-role');
+        const imgEl = document.getElementById('testimonial-img');
+        const avatarEl = document.getElementById('testimonial-avatar');
+        const dots = document.querySelectorAll('.testimonial-dot');
+
+        function updateSlider(idx) {
+            sliderEl.classList.add('fade-out');
+
+            setTimeout(() => {
+                const t = testimonials[idx];
+                textEl.textContent = `"${t.text}"`;
+                authorEl.textContent = t.author;
+                roleEl.textContent = t.role;
+
+                if (t.img) {
+                    imgEl.src = t.img;
+                    imgEl.classList.remove('hidden');
+                    avatarEl.classList.add('hidden');
+                } else {
+                    imgEl.classList.add('hidden');
+                    avatarEl.classList.remove('hidden');
+                    avatarEl.textContent = t.initial || (t.author ? t.author[0] : 'U');
+                    avatarEl.style.backgroundColor = t.color;
+                }
+
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === idx);
+                });
+
+                sliderEl.classList.remove('fade-out');
+                sliderEl.classList.add('fade-in');
+            }, 700);
+        }
+
+        setInterval(() => {
+            currentIdx = (currentIdx + 1) % testimonials.length;
+            updateSlider(currentIdx);
+        }, 6000);
     </script>
 </body>
 
