@@ -129,7 +129,7 @@ const api = {
     getStats: () => api.get('/api/accounts/stats'),
 
     // Transactions
-    getTransactions: (limit = 50) => api.get(`/api/transactions/?limit=${limit}`),
+    getTransactions: (limit = 50) => api.get(`/api/transactions?limit=${limit}`),
     getTransaction: (id) => api.get(`/api/transactions/${id}`),
     deposit: (amount, pin) => api.post('/api/transactions/deposit', { amount, pin }),
     transfer: (receiver_account_number, amount, pin, description) =>

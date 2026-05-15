@@ -9,7 +9,7 @@ from ..core.dependencies import get_current_user
 
 router = APIRouter(prefix="/api/notifications", tags=["notifications"])
 
-@router.get("/", response_model=List[NotificationResponse])
+@router.get("", response_model=List[NotificationResponse])
 def get_notifications(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)

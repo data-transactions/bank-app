@@ -5308,10 +5308,10 @@
                 return '$' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             };
 
-            const fullName = u.full_name || (u.first_name + ' ' + (u.last_name || '')).trim() || 'User';
+            const fullName = u.full_name || (u.first_name + ' ' + (u.last_name || '')).trim() || '...';
             const firstName = u.first_name || fullName.split(' ')[0];
             const lastName = u.last_name || fullName.split(' ').slice(1).join(' ') || '';
-            const initials = fullName !== 'User' ? fullName.split(' ').map(w => w[0]).join('').toUpperCase() : '?';
+            const initials = fullName !== '...' ? fullName.split(' ').map(w => w[0]).join('').toUpperCase() : '?';
 
             // Avatars
             [document.getElementById('sidebarAvatar'), document.getElementById('topbarAvatar'), document.getElementById('profileAvatarDisplay')].forEach(el => {
@@ -5323,7 +5323,7 @@
             // Names
             if (document.getElementById('sidebarName')) document.getElementById('sidebarName').textContent = fullName;
             if (document.getElementById('sidebarAcctId')) document.getElementById('sidebarAcctId').textContent = 'ID: ' + (a ? a.account_number : '—');
-            if (document.getElementById('greetingName')) document.getElementById('greetingName').textContent = firstName.trim() || 'User';
+            if (document.getElementById('greetingName')) document.getElementById('greetingName').textContent = firstName.trim() || '...';
 
             if (!u.is_pin_set && !state.pinModalShown) {
                 openModal('setPinModal');

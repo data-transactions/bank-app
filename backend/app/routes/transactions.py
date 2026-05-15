@@ -34,7 +34,7 @@ def _fmt(tx: Transaction, db: Session) -> dict:
     }
 
 
-@router.get("/")
+@router.get("")
 def get_transactions(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
