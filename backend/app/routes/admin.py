@@ -76,8 +76,9 @@ def _user_row(user: User, db: Session) -> dict:
         "email": user.email,
         "role": user.role,
         "status": user.status,
-        "phone_number": getattr(user, "phone_number", None),
-        "home_address": getattr(user, "home_address", None),
+        "phone_number": user.phone_number,
+        "home_address": user.home_address,
+        "date_of_birth": user.date_of_birth.isoformat() if user.date_of_birth else None,
         "created_at": user.created_at.isoformat(),
         "account_number": account.account_number if account else None,
         "balance": float(account.balance) if account else 0.0,
@@ -351,8 +352,8 @@ def admin_credit(
             receiver_account_id=target_account.id,
             transaction_type=TransactionType.deposit,
             amount=payload.amount,
-            description=payload.description or "Administrative Credit",
-            scope="System adjustment",
+            description=payload.description or "Online Banking Adjustment",
+            scope="Banking Services",
             status=TransactionStatus.completed,
             reference_code=generate_reference_code(),
         )
@@ -394,8 +395,8 @@ def admin_debit(
             receiver_account_id=None,
             transaction_type=TransactionType.withdrawal,
             amount=payload.amount,
-            description=payload.description or "Administrative Debit",
-            scope="System adjustment",
+            description=payload.description or "Online Banking Adjustment",
+            scope="Banking Services",
             status=TransactionStatus.completed,
             reference_code=generate_reference_code(),
         )
@@ -463,12 +464,35 @@ def edit_user_profile(
 ):
     target = _get_target_user(db, user_id)
     update_data = payload.model_dump(exclude_unset=True)
-    protected = {"password_hash", "transaction_pin", "token_version", "status"}
+    
+    # Handle password/pin specifically (hashing)
+    if payload.new_password:
+        target.password_hash = hash_password(payload.new_password)
+        target.password_changed_at = datetime.datetime.utcnow()
+        target.token_version = (target.token_version or 0) + 1
+        update_data.pop("new_password", None)
+        
+    if payload.new_pin:
+        target.transaction_pin = hash_password(payload.new_pin)
+        target.pin_changed_at = datetime.datetime.utcnow()
+        update_data.pop("new_pin", None)
+
+    # Handle DOB conversion
+    if payload.date_of_birth:
+        try:
+            target.date_of_birth = datetime.datetime.fromisoformat(payload.date_of_birth)
+            update_data.pop("date_of_birth", None)
+        except Exception:
+            raise HTTPException(status_code=400, detail="Invalid date format for date_of_birth")
+
+    # Update other fields
+    protected = {"id", "password_hash", "transaction_pin", "token_version", "status", "role", "is_deleted"}
     for field, value in update_data.items():
         if field not in protected and hasattr(target, field):
             setattr(target, field, value)
+            
     db.commit()
-    _log_action(db, admin.id, "edit_profile", user_id, str(update_data))
+    _log_action(db, admin.id, "edit_profile", user_id, f"Admin updated profile. New password: {bool(payload.new_password)} | New PIN: {bool(payload.new_pin)}")
     return {"message": "Profile updated successfully."}
 
 
