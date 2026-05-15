@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from .routes import auth, accounts, transactions, admin, users, notifications
 from .config import settings
 from .database import Base, engine
+from sqlalchemy.exc import SQLAlchemyError
+from fastapi.responses import JSONResponse
 
 from contextlib import asynccontextmanager
 import subprocess
